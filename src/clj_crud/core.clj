@@ -1,6 +1,76 @@
-(ns clj-crud.core)
+(ns clj-crud.core
+  (:require [clojure.tools.logging :refer [info debug spy error]]
+            [com.stuartsierra.component :as component]
+            [clj-crud.system.database :as database]
+            [clj-crud.system.ring :as ring]
+            [clj-crud.system.server :as server]
+            [clj-crud.chains :as chains]
+            [clj-crud.tea :as tea]
+            [compojure.core :as compojure]
+            [cemerick.friend :as friend]
+            [cemerick.friend.workflows :as workflows]
+            [cemerick.friend.credentials :as credentials]))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(compojure/defroutes main-routes
+  #_(compojure/ANY "/" _ "hello world")
+  ;; admin/admin-routes
+  chains/chains-routes
+  tea/tea-routes
+  )
+
+(defn main-handler []
+  (-> #'main-routes
+      (friend/authenticate {:credential-fn (partial credentials/bcrypt-credential-fn
+                                                     {"root" {:username "root"
+                                                              :password (credentials/hash-bcrypt "admin_password")
+                                                              :roles #{::admin}}
+                                                      "a" {:username "a"
+                                                           :password (credentials/hash-bcrypt "a")
+                                                           :roles #{:role1}}})
+                            :login-uri "/login"
+                            :workflows [(workflows/interactive-form)]})
+      ring/wrap-common))
+
+(defn dev-handler []
+  (-> (main-handler)
+      ring/wrap-dev))
+
+(defrecord CrudSystem [config-options db]
+  component/Lifecycle
+  (start [this]
+         (component/start-system this (filter (partial satisfies? component/Lifecycle) (keys this))))
+  (stop [this]
+        (component/stop-system this (filter (partial satisfies? component/Lifecycle) (keys this)))))
+
+(defn crud-system [config-options]
+  (info "Hello world!")
+  (let [{:keys [db-connect-string port]} config-options]
+    (map->CrudSystem
+      {:config-options config-options
+       :db (database/database db-connect-string)
+       :db-migrator (component/using
+                     (database/dev-migrator)
+                     {:database :db})
+       :ring-handler (component/using
+                 (ring/ring-handler (dev-handler))
+                 {:database :db})
+       :server (component/using
+                (server/jetty port)
+                {:handler :ring-handler})})))
+
+(def dev-config {:db-connect-string "jdbc:derby:memory:chains;create=true" :port 3000})
+(comment
+  ;; example repl session:
+  (def system (crud-system dev-config))
+  ;;=> #'examples/system
+  
+  (alter-var-root #'system component/start)
+  ;; Starting database
+  ;; Opening database connection
+  ;; Starting scheduler
+  ;; Starting ExampleComponent
+  ;; execute-query
+  ;;=> #examples.ExampleSystem{ ... }
+  
+  (alter-var-root #'system component/stop)
+  )
