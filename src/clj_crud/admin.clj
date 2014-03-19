@@ -43,15 +43,33 @@
           [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
                            (html/do->
                             (html/content rel)
-                            (html/set-attr :href uri)))))
+                            (html/set-attr :href uri)))
+          [:table#users :tbody [:tr html/first-of-type]]
+          (html/clone-for [user (get-in ctx [:data :users])]
+                          [:tr] (let [{:keys [id slug name created_at updated_at]} user]
+                                  (html/transform-content
+                                   [:td.id] (html/content (str id))
+                                   [:td.slug] (html/content (str slug))
+                                   [:td.name] (html/content (str name))
+                                   [:td.created_at] (html/content (str created_at))
+                                   [:td.updated_at] (html/content (str updated_at))
+                                   [:td.edit :a] (let [link (get-in user [:links :edit :uri])]
+                                                   (html/set-attr :href link))
+)))))
+
+(defn with-user-links [{:keys [id] :as user}]
+  (assoc user :links {:self {:rel "self"
+                             :uri (str "/admin/user/" id)}
+                      :edit {:rel "edit"
+                             :uri (str "/admin/user/" id "/edit")}}))
 
 (defresource admin-users-list
   :available-media-types ["text/html" "application/edn"]
   :exists? (fn [ctx]
-             {:data (users/users-list (h/db ctx))})
+             {:users (map with-user-links (users/users-list (h/db ctx)))})
   :handle-ok (fn [ctx]
                {:main "Hello admin world!"
-                :data (:data ctx)
+                :users (:users ctx)
                 :links {:home {:uri "/admin"
                                :rel "home"}
                         :users {:uri "/admin/users"

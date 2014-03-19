@@ -2,7 +2,8 @@
   (:require [clojure.tools.logging :refer [spy debug]]
             [liberator.core :as lib-core]
             [liberator.representation :as lib-rep]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [clojure.walk :as walk]))
 
 (defn db [ctx]
   (get-in ctx [:request :database]))
@@ -79,8 +80,12 @@
 
 (defn with-home-uri [d ctx]
   (let [home-uri (home-uri ctx)]
-    (update-in d [:links]
-               (fn [l]
-                 (zipmap (keys l)
-                         (map (fn [link]
-                                (update-in link [:uri] (partial str home-uri))) (vals l)))))))
+    (walk/prewalk
+     (fn [n]
+       (if (and (map? n)
+                (contains? n :uri)
+                (not (.startsWith (:uri n) "http")))
+         (update-in n [:uri] (fn [old]
+                               (str home-uri old)))
+         n))
+     d)))

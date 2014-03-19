@@ -26,14 +26,14 @@
               (has (text? "clj-crud")))))
 
 (deftest edn-admin-users-list-test
-  (let [users (-> (p/session (tc/reuse-handler))
+  (let [data (-> (p/session (tc/reuse-handler))
                   (p/header "Accept" "application/edn")
                   (p/request "/admin/users")
                   :response
                   :body
                   edn/read-string)]
-    (is (map? users))
-    (is (= (map #(select-keys % [:id :slug :name]) (:data users))
+    (is (map? data))
+    (is (= (map #(select-keys % [:id :slug :name]) (:users data))
            [{:id 1 :slug "user1" :name "User 1"}
             {:id 2 :slug "user2" :name "Second User"}]))))
 
