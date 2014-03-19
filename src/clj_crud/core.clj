@@ -4,6 +4,7 @@
             [clj-crud.system.database :as database]
             [clj-crud.system.ring :as ring]
             [clj-crud.system.server :as server]
+            [clj-crud.admin :as admin]
             [clj-crud.chains :as chains]
             [clj-crud.tea :as tea]
             [compojure.core :as compojure]
@@ -13,7 +14,7 @@
 
 (compojure/defroutes main-routes
   #_(compojure/ANY "/" _ "hello world")
-  ;; admin/admin-routes
+  admin/admin-routes
   chains/chains-routes
   tea/tea-routes
   )
@@ -35,7 +36,7 @@
   (-> (main-handler)
       ring/wrap-dev))
 
-(defrecord CrudSystem [config-options db]
+(defrecord CrudSystem []
   component/Lifecycle
   (start [this]
          (component/start-system this (filter (partial satisfies? component/Lifecycle) (keys this))))

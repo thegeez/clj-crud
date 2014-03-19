@@ -23,13 +23,15 @@
                    (jdbc/db-do-commands
                     db (jdbc/drop-table-ddl
                         table)))}])
-      (let [table :entries]
+      (let [table :users]
         [2 {:up (fn [db]
                   (jdbc/db-do-commands
                    db (jdbc/create-table-ddl
                        table
                        (serial-id db)
-                       [:data "VARCHAR(256)"]
+                       [:slug "VARCHAR(256)"]
+                       [:name "VARCHAR(256)"]
+                       [:created_at "BIGINT"]
                        [:updated_at "BIGINT"])))
             :down (fn [db]
                     (jdbc/db-do-commands
