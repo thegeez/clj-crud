@@ -5,7 +5,8 @@
             [clj-crud.test-core :as tc]
             [peridot.core :as p]
             [kerodon.core :refer :all]
-            [kerodon.test :refer :all]))
+            [kerodon.test :refer :all]
+            [net.cgrand.enlive-html :as html]))
 
 (deftest edn-admin-index-test
   (let [home (-> (p/session (tc/reuse-handler))
@@ -33,13 +34,23 @@
                   :body
                   edn/read-string)]
     (is (map? data))
-    (is (= (map #(select-keys % [:id :slug :name]) (:users data))
-           [{:id 1 :slug "user1" :name "User 1"}
-            {:id 2 :slug "user2" :name "Second User"}]))))
+    (is (= (map #(select-keys % [:id :slug :name :links]) (:users data))
+           [{:links {:self {:rel "self", :uri "http://localhost:80/admin/users/user1"},
+                     :edit {:rel "edit", :uri "http://localhost:80/admin/users/user1/edit"}},
+             :name "User 1", :slug "user1", :id 1}
+            {:links {:self {:rel "self", :uri "http://localhost:80/admin/users/user2"},
+                     :edit {:rel "edit", :uri "http://localhost:80/admin/users/user2/edit"}},
+             :name "Second User", :slug "user2", :id 2}]))))
 
-#_(deftest html-admin-user-list-test
+(deftest html-admin-user-list-test
   (-> (session (tc/reuse-handler))
-      (visit "/admin")
+      (visit "/admin/users")
       (has (attr? [:a.rel-users] :href "http://localhost:80/admin/users"))
+      (within [:table#users :tbody [:tr (html/nth-of-type 1)]]
+              (within [:td.slug]
+                      (has (text? "user1"))
+                      (has (attr? [:a] :href "http://localhost:80/admin/users/user1"))))
+      (within [:table#users :tbody [:tr (html/nth-of-type 2)] :td.edit]
+              (has (attr? [:a] :href "http://localhost:80/admin/users/user2/edit")))
       (within [:div.container :footer :p]
               (has (text? "clj-crud")))))
