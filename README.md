@@ -1,6 +1,5 @@
 # clj-crud
 
-
 ## About
 
 Written by:
