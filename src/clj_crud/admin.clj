@@ -6,7 +6,7 @@
             [clj-crud.data.users :as users]
             [liberator.core :refer [resource defresource]]
             [liberator.representation :refer [as-response] :as lib-rep]
-            [compojure.core :refer [defroutes ANY GET]]
+            [compojure.core :refer [defroutes ANY GET context]]
             [net.cgrand.enlive-html :as html]
             [cemerick.friend :as friend]))
 
@@ -83,6 +83,7 @@
   )
 
 (defroutes admin-routes
-  (ANY "/admin" [] (fn [req]
-                     (admin-index req)))
-  (ANY "/admin/users" [] admin-users-list))
+  (context "/admin" _
+           (ANY "/" _ (fn [req]
+                         (admin-index req)))
+           (ANY "/users" _ admin-users-list)))
