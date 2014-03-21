@@ -6,9 +6,6 @@
                                        :updated_at (.getTime (java.util.Date.))})]
     (-> res first :1)))
 
-(defn get-entry [db id]
-  (first (jdbc/query db ["SELECT * FROM entries WHERE id = ?" id])))
-
 (defn update-entry [e new]
   [(merge {} (when-not (seq (:data new))
                {:data "Data cannot be empty"}))
@@ -20,6 +17,9 @@
                                   :updated_at (.getTime (java.util.Date.)))
                     ["id = ?" (:id entry)])
       nil))
+
+(defn get-user [db slug]
+  (first (jdbc/query db ["SELECT * FROM users WHERE slug = ?" slug])))
 
 (defn users-list [db]
   (jdbc/query db ["SELECT * FROM users"])

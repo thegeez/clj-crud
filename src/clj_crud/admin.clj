@@ -82,8 +82,52 @@
   :as-response (l/as-template-response admin-users-list-layout)
   )
 
+(def admin-user-html (html/html-resource "templates/admin/user.html"))
+
+(defn admin-user-layout [ctx]
+  (l/emit c/application-html
+          [:#flash] (when-let [identity (friend/identity (:request ctx))]
+                      (html/content (str "Identity: " identity)))
+          [:#content] (html/content admin-user-html)
+          [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
+          [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
+                           (html/do->
+                            (html/content rel)
+                            (html/set-attr :href uri)))
+          [:table#users :tbody [:tr html/first-of-type]]
+          (html/clone-for [user (get-in ctx [:data :users])]
+                          [:tr] (let [{:keys [id slug name created_at updated_at]} user
+                                      edit-link (get-in user [:links :edit :uri])
+                                      self-link (get-in user [:links :self :uri])]
+                                  (html/transform-content
+                                   [:td.id] (html/content (str id))
+                                   [:td.slug :a] (html/do->
+                                                  (html/content slug)
+                                                  (html/set-attr :href self-link))
+                                   [:td.name :a] (html/do->
+                                                  (html/content name)
+                                                  (html/set-attr :href self-link))
+                                   [:td.created_at] (html/content (str created_at))
+                                   [:td.updated_at] (html/content (str updated_at))
+                                   [:td.edit :a] (html/set-attr :href edit-link)
+)))))
+
+(defresource admin-user
+  :available-media-types ["text/html" "application/edn"]
+  :exists? (fn [ctx]
+             (let [slug (get-in ctx [:request :route-params :slug])] 
+               (spy {:user (with-user-links (users/get-user (h/db ctx) slug))})))
+  :handle-ok (fn [ctx] 
+               {:user (:user ctx)
+                :links {:home {:rel "home"
+                               :uri "/admin"}
+                        :users {:rel "users"
+                                :uri "/admin/users"}}})
+  :as-response (l/as-template-response admin-user-layout))
+
 (defroutes admin-routes
   (context "/admin" _
            (ANY "/" _ (fn [req]
                          (admin-index req)))
-           (ANY "/users" _ admin-users-list)))
+           (ANY "/users" _ admin-users-list)
+           (ANY "/users/:slug" _ admin-user)))

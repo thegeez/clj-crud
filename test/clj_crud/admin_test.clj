@@ -54,3 +54,18 @@
               (has (attr? [:a] :href "http://localhost:80/admin/users/user2/edit")))
       (within [:div.container :footer :p]
               (has (text? "clj-crud")))))
+
+(deftest edn-admin-user-get-test
+  (let [data (-> (p/session (tc/reuse-handler))
+                  (p/header "Accept" "application/edn")
+                  (p/request "/admin/users/user2")
+                  :response
+                  :body
+                  edn/read-string)]
+    (debug "Data: " data)
+    (is (map? data))
+    (is (= (-> (:user data) 
+               (select-keys [:id :slug :name :links]))
+           {:links {:self {:rel "self", :uri "http://localhost:80/admin/users/user2"}, 
+                    :edit {:rel "edit", :uri "http://localhost:80/admin/users/user2/edit"}}, 
+            :name "Second User", :slug "user2", :id 2}))))
