@@ -6,6 +6,7 @@
             [clj-crud.system.server :as server]
             [clj-crud.admin :as admin]
             [clj-crud.chains :as chains]
+            [clj-crud.data.users :as users]
             [clj-crud.tea :as tea]
             [compojure.core :as compojure]
             [cemerick.friend :as friend]
@@ -43,6 +44,24 @@
   (stop [this]
         (component/stop-system this (filter (partial satisfies? component/Lifecycle) (keys this)))))
 
+(defrecord DevDBFixtures [database]
+  component/Lifecycle
+  (start [component]
+         (info "Insert test fixtures")
+         (let [db (:connection database)]
+           (doseq [[slug name] [["user1" "User 1"]
+                                ["user2" "Second User"]]]
+             (users/create-user db {:slug slug
+                                    :name name})))
+         component)
+  (stop [component]
+        (info "Not bothering to remove test fixtures")
+        component))
+
+(defn dev-db-fixtures []
+  (map->DevDBFixtures {}))
+
+
 (defn crud-system [config-options]
   (info "Hello world!")
   (let [{:keys [db-connect-string port]} config-options]
@@ -51,6 +70,9 @@
        :db (database/database db-connect-string)
        :db-migrator (component/using
                      (database/dev-migrator)
+                     {:database :db})
+       :db-fixtures (component/using
+                     (dev-db-fixtures)
                      {:database :db})
        :ring-handler (component/using
                  (ring/ring-handler (dev-handler))

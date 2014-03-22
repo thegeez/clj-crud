@@ -22,9 +22,7 @@
   (first (jdbc/query db ["SELECT * FROM users WHERE slug = ?" slug])))
 
 (defn users-list [db]
-  (jdbc/query db ["SELECT * FROM users"])
-  #_[{:id 1 :slug "u1" :name "U1" :created_at 0 :updated_at 0}
-   {:id 1 :slug "u2" :name "U2" :created_at 0 :updated_at 0}])
+  (jdbc/query db ["SELECT * FROM users"]))
 
 (defn create-user [db {:keys [slug name] :as data}]
   (let [now (.getTime (java.util.Date.))
