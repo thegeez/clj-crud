@@ -94,23 +94,26 @@
                            (html/do->
                             (html/content rel)
                             (html/set-attr :href uri)))
-          [:table#users :tbody [:tr html/first-of-type]]
-          (html/clone-for [user (get-in ctx [:data :users])]
-                          [:tr] (let [{:keys [id slug name created_at updated_at]} user
-                                      edit-link (get-in user [:links :edit :uri])
-                                      self-link (get-in user [:links :self :uri])]
-                                  (html/transform-content
-                                   [:td.id] (html/content (str id))
-                                   [:td.slug :a] (html/do->
-                                                  (html/content slug)
-                                                  (html/set-attr :href self-link))
-                                   [:td.name :a] (html/do->
-                                                  (html/content name)
-                                                  (html/set-attr :href self-link))
-                                   [:td.created_at] (html/content (str created_at))
-                                   [:td.updated_at] (html/content (str updated_at))
-                                   [:td.edit :a] (html/set-attr :href edit-link)
-)))))
+          [:a.rel-edit] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :edit])]
+                          (html/do->
+                           (html/content rel)
+                           (html/set-attr :href uri)))
+          [:div.user-panel]
+          (let [user (get-in ctx [:data :user])
+                {:keys [id slug name created_at updated_at]} user
+                edit-link (get-in user [:links :edit :uri])
+                self-link (get-in user [:links :self :uri])]
+            (html/transform-content
+             [:p#id] (html/content (str id))
+             [:p#slug :a] (html/do->
+                            (html/content slug)
+                            (html/set-attr :href self-link))
+             [:p#name :a] (html/do->
+                                (html/content name)
+                                (html/set-attr :href self-link))
+             [:p#created_at] (html/content (str created_at))
+             [:p#updated_at] (html/content (str updated_at))
+             ))))
 
 (defresource admin-user
   :available-media-types ["text/html" "application/edn"]

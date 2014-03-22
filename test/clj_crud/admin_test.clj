@@ -69,3 +69,14 @@
            {:links {:self {:rel "self", :uri "http://localhost:80/admin/users/user2"}, 
                     :edit {:rel "edit", :uri "http://localhost:80/admin/users/user2/edit"}}, 
             :name "Second User", :slug "user2", :id 2}))))
+
+(deftest html-admin-user-get-test
+  (-> (session (tc/reuse-handler))
+      (visit "/admin/users/user1")
+      (has (attr? [:a.rel-edit] :href "http://localhost:80/admin/users/user1/edit"))
+      (within [:p#slug]
+              (has (text? "user1"))
+              (has (attr? [:a] :href "http://localhost:80/admin/users/user1")))
+      (within [:p#name]
+              (has (text? "User 1"))
+              (has (attr? [:a] :href "http://localhost:80/admin/users/user1")))))
