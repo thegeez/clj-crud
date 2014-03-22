@@ -1,8 +1,9 @@
-<div>Admin User</div>
+<div>Admin User edit</div>
 <ol class="breadcrumb" id="trail">
   <li><a id="home" href="#" class="rel-home">Admin Home</a></li>
   <li><a id="users" href="#" class="rel-users">Users</a></li>
-  <li>user - <a id="user-edit" href="" class="rel-edit">edit</a></li>
+  <li><a id="user" href="" class="rel-user">user</a>
+  - edit</li>
 </ol>
 <div class="user-panel">
   <form class="form-horizontal" role="form">
@@ -21,7 +22,7 @@
     <div class="form-group">
       <label class="col-sm-2 control-label">Name</label>
       <div class="col-sm-10">
-        <p class="form-control-static" id="name"><a href=""></a></p>
+        <input type="text" class="form-control" placeholder="Name" id="name"/>
       </div>
     </div>
     <div class="form-group">
@@ -37,6 +38,10 @@
       </div>
     </div>
   </form>
-
+  <div class="form-group">
+    <div class="col-sm-offset-2">
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+  </div>
 
 </div>

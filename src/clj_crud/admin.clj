@@ -101,7 +101,6 @@
           [:div.user-panel]
           (let [user (get-in ctx [:data :user])
                 {:keys [id slug name created_at updated_at]} user
-                edit-link (get-in user [:links :edit :uri])
                 self-link (get-in user [:links :self :uri])]
             (html/transform-content
              [:p#id] (html/content (str id))
@@ -111,6 +110,37 @@
              [:p#name :a] (html/do->
                                 (html/content name)
                                 (html/set-attr :href self-link))
+             [:p#created_at] (html/content (str created_at))
+             [:p#updated_at] (html/content (str updated_at))
+             ))))
+
+(def admin-user-edit-html (html/html-resource "templates/admin/user_edit.html"))
+
+(defn admin-user-edit-layout [ctx]
+  (l/emit c/application-html
+          [:#flash] (when-let [identity (friend/identity (:request ctx))]
+                      (html/content (str "Identity: " identity)))
+          [:#content] (html/content admin-user-edit-html)
+          [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
+          [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
+                           (html/do->
+                            (html/content rel)
+                            (html/set-attr :href uri)))
+          [:a.rel-user] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :self])]
+                          (html/do->
+                           (html/content "user")
+                           (html/set-attr :href uri)))
+          [:div.user-panel]
+          (let [user (get-in ctx [:data :user])
+                {:keys [id slug name created_at updated_at]} user
+                edit-link (get-in user [:links :edit :uri])
+                self-link (get-in user [:links :self :uri])]
+            (html/transform-content
+             [:p#id] (html/content (str id))
+             [:p#slug :a] (html/do->
+                            (html/content slug)
+                            (html/set-attr :href self-link))
+             [:input#name] (html/set-attr :value name)
              [:p#created_at] (html/content (str created_at))
              [:p#updated_at] (html/content (str updated_at))
              ))))
@@ -126,11 +156,16 @@
                                :uri "/admin"}
                         :users {:rel "users"
                                 :uri "/admin/users"}}})
-  :as-response (l/as-template-response admin-user-layout))
+  :as-response (l/as-template-response 
+                (fn [ctx] 
+                  (if (h/edit? ctx)
+                    (admin-user-edit-layout ctx)
+                    (admin-user-layout ctx)))))
 
 (defroutes admin-routes
   (context "/admin" _
            (ANY "/" _ (fn [req]
                          (admin-index req)))
            (ANY "/users" _ admin-users-list)
-           (ANY "/users/:slug" _ admin-user)))
+           (ANY "/users/:slug" _ admin-user)
+           (ANY "/users/:slug/edit" _ admin-user)))
