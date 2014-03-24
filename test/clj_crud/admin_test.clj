@@ -17,12 +17,12 @@
                  edn/read-string)]
     (is (map? home))
     (is (= (set (keys (:links home))) #{:home :users}))
-    (is (.contains (spy (get-in home [:links :home :uri])) "http://localhost:80/admin"))))
+    (is (.contains (spy (get-in home [:links :home :uri])) "http://localhost/admin"))))
 
 (deftest html-admin-index-test
   (-> (session (tc/reuse-handler))
       (visit "/admin")
-      (has (attr? [:a.rel-users] :href "http://localhost:80/admin/users"))
+      (has (attr? [:a.rel-users] :href "http://localhost/admin/users"))
       (within [:div.container :footer :p]
               (has (text? "clj-crud")))))
 
@@ -35,23 +35,23 @@
                   edn/read-string)]
     (is (map? data))
     (is (= (map #(select-keys % [:id :slug :name :links]) (:users data))
-           [{:links {:self {:rel "self", :uri "http://localhost:80/admin/users/user1"},
-                     :edit {:rel "edit", :uri "http://localhost:80/admin/users/user1/edit"}},
+           [{:links {:self {:rel "self", :uri "http://localhost/admin/users/user1"},
+                     :edit {:rel "edit", :uri "http://localhost/admin/users/user1/edit"}},
              :name "User 1", :slug "user1", :id 1}
-            {:links {:self {:rel "self", :uri "http://localhost:80/admin/users/user2"},
-                     :edit {:rel "edit", :uri "http://localhost:80/admin/users/user2/edit"}},
+            {:links {:self {:rel "self", :uri "http://localhost/admin/users/user2"},
+                     :edit {:rel "edit", :uri "http://localhost/admin/users/user2/edit"}},
              :name "Second User", :slug "user2", :id 2}]))))
 
 (deftest html-admin-user-list-test
   (-> (session (tc/reuse-handler))
       (visit "/admin/users")
-      (has (attr? [:a.rel-users] :href "http://localhost:80/admin/users"))
+      (has (attr? [:a.rel-users] :href "http://localhost/admin/users"))
       (within [:table#users :tbody [:tr (html/nth-of-type 1)]]
               (within [:td.slug]
                       (has (text? "user1"))
-                      (has (attr? [:a] :href "http://localhost:80/admin/users/user1"))))
+                      (has (attr? [:a] :href "http://localhost/admin/users/user1"))))
       (within [:table#users :tbody [:tr (html/nth-of-type 2)] :td.edit]
-              (has (attr? [:a] :href "http://localhost:80/admin/users/user2/edit")))
+              (has (attr? [:a] :href "http://localhost/admin/users/user2/edit")))
       (within [:div.container :footer :p]
               (has (text? "clj-crud")))))
 
@@ -64,19 +64,66 @@
                   edn/read-string)]
     (debug "Data: " data)
     (is (map? data))
-    (is (= (-> (:user data) 
+    (is (= (-> (:user data)
                (select-keys [:id :slug :name :links]))
-           {:links {:self {:rel "self", :uri "http://localhost:80/admin/users/user2"}, 
-                    :edit {:rel "edit", :uri "http://localhost:80/admin/users/user2/edit"}}, 
+           {:links {:self {:rel "self", :uri "http://localhost/admin/users/user2"},
+                    :edit {:rel "edit", :uri "http://localhost/admin/users/user2/edit"}},
             :name "Second User", :slug "user2", :id 2}))))
 
 (deftest html-admin-user-get-test
   (-> (session (tc/reuse-handler))
       (visit "/admin/users/user1")
-      (has (attr? [:a.rel-edit] :href "http://localhost:80/admin/users/user1/edit"))
+      (has (attr? [:a.rel-edit] :href "http://localhost/admin/users/user1/edit"))
       (within [:p#slug]
               (has (text? "user1"))
-              (has (attr? [:a] :href "http://localhost:80/admin/users/user1")))
+              (has (attr? [:a] :href "http://localhost/admin/users/user1")))
       (within [:p#name]
               (has (text? "User 1"))
-              (has (attr? [:a] :href "http://localhost:80/admin/users/user1")))))
+              (has (attr? [:a] :href "http://localhost/admin/users/user1")))))
+
+(deftest html-admin-user-update-name-test
+  (-> (session (tc/reuse-handler))
+      (visit "/admin/users/user1")
+      (has (attr? [:a.rel-edit] :href "http://localhost/admin/users/user1/edit"))
+      (within [:p#slug]
+              (has (text? "user1"))
+              (has (attr? [:a] :href "http://localhost/admin/users/user1")))
+      (within [:p#name]
+              (has (text? "User 1"))
+              (has (attr? [:a] :href "http://localhost/admin/users/user1")))
+      (has (missing? [:#flash]))
+      (within [:div#name]
+              (has (missing? [:span.help-block])))
+      ;; edit to fail
+      (follow "edit")
+      (has (attr? [:form#user-form] :action "http://localhost/admin/users/user1/edit"))
+      (has (attr? [:form#user-form] :method "POST"))
+      (fill-in "Name" "")
+      (press "Save Changes")
+      (has (attr? [:form#user-form] :action "http://localhost/admin/users/user1/edit"))
+      (has (attr? [:div#name] :class "has-error form-group"))
+      (within [:div#name :span.help-block]
+              (has (text? "Name can not be empty")))
+      ;;edit to success
+      (fill-in "Name" "Name One")
+      (press "Save Changes")
+      (follow-redirect)
+      (has (status? 200))
+      (within [:#flash]
+              (has (text? "User updated")))
+      ;; check change is persisted, and change back for clean slate
+      (follow "users")
+      (within [:table#users [:tr (html/nth-of-type 1)]]
+              (within [:td.name]
+                      (has (text? "Name One")))
+              (follow "Edit"))
+      (fill-in "Name" "User 1")
+      (press "Save Changes")
+      (follow-redirect)
+      (within [:#flash]
+              (has (text? "User updated")))
+      (within [:p#name]
+              (has (text? "User 1")))
+))
+
+

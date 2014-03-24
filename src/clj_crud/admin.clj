@@ -1,5 +1,6 @@
 (ns clj-crud.admin
   (:require [clojure.tools.logging :refer [debug spy]]
+            [clojure.edn :as edn]
             [clj-crud.util.layout :as l]
             [clj-crud.util.helpers :as h]
             [clj-crud.common :as c]
@@ -86,8 +87,8 @@
 
 (defn admin-user-layout [ctx]
   (l/emit c/application-html
-          [:#flash] (when-let [identity (friend/identity (:request ctx))]
-                      (html/content (str "Identity: " identity)))
+          [:#flash] (when-let [flash (get-in ctx [:request :flash])]
+                      (html/content flash))
           [:#content] (html/content admin-user-html)
           [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
           [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
@@ -118,8 +119,7 @@
 
 (defn admin-user-edit-layout [ctx]
   (l/emit c/application-html
-          [:#flash] (when-let [identity (friend/identity (:request ctx))]
-                      (html/content (str "Identity: " identity)))
+          [:#flash] nil
           [:#content] (html/content admin-user-edit-html)
           [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
           [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
@@ -136,28 +136,56 @@
                 edit-link (get-in user [:links :edit :uri])
                 self-link (get-in user [:links :self :uri])]
             (html/transform-content
+             [:form] (html/do->
+                      (html/set-attr :method "POST")
+                      (html/set-attr :action edit-link))
              [:p#id] (html/content (str id))
              [:p#slug :a] (html/do->
                             (html/content slug)
                             (html/set-attr :href self-link))
-             [:input#name] (html/set-attr :value name)
+             [:div#name] (l/maybe-error (get-in user [:errors :name]))
+             [:div#name :input] (html/set-attr :value name)
              [:p#created_at] (html/content (str created_at))
              [:p#updated_at] (html/content (str updated_at))
              ))))
 
 (defresource admin-user
+  :allowed-methods [:get :post]
   :available-media-types ["text/html" "application/edn"]
+  ;;:processable? (fn [ctx] [false {:response {:body "hello world
+  ;;FAIL"}}])
   :exists? (fn [ctx]
-             (let [slug (get-in ctx [:request :route-params :slug])] 
+             (let [slug (get-in ctx [:request :route-params :slug])]
                (spy {:user (with-user-links (users/get-user (h/db ctx) slug))})))
-  :handle-ok (fn [ctx] 
+  :post! (fn [ctx]
+           (let [params (get-in ctx [:request :params])
+                 errors (reduce merge {}
+                                [(when-not (contains? params :name)
+                                   [:name "Must have name attr"])
+                                 (when (zero? (count (get params :name)))
+                                   [:name "Name can not be empty"])])
+                 user-update {:slug (:slug params) 
+                              :name (:name params)}]
+             (when-not (seq errors)
+               (users/update-user (h/db ctx) user-update))
+             {:user (merge user-update
+                           (when (seq errors)
+                             {:errors errors}))}))
+  :post-redirect? (fn [ctx]
+                    (not (get-in ctx [:user :errors])))
+  :handle-see-other (fn [ctx]
+                      (h/location-flash (get-in ctx [:user :links :self :uri])
+                                        "User updated"))
+  :new? false
+  :respond-with-entity? true
+  :handle-ok (fn [ctx]
                {:user (:user ctx)
                 :links {:home {:rel "home"
                                :uri "/admin"}
                         :users {:rel "users"
                                 :uri "/admin/users"}}})
-  :as-response (l/as-template-response 
-                (fn [ctx] 
+  :as-response (l/as-template-response
+                (fn [ctx]
                   (if (h/edit? ctx)
                     (admin-user-edit-layout ctx)
                     (admin-user-layout ctx)))))

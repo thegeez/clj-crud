@@ -45,6 +45,17 @@
     (apply html/do-> trans)
     identity))
 
+(defn maybe-error [msg]
+  (if msg
+    (html/do->
+     (html/add-class "has-error")
+     (html/transform-content
+      [:span.help-block]
+      (html/do->
+       (html/remove-class "hidden")
+       (html/content msg))))
+    identity))
+
 (def edn "application/edn")
 (def html "text/html")
 (defn by-media [media+handlers]
@@ -57,10 +68,14 @@
 
 (defn as-template-response [transform]
   (fn [d ctx]
-    (let [d (h/with-home-uri d ctx)]
-      (if (= (get-in ctx [:representation :media-type]) "text/html")
-        {:body (transform (assoc ctx :data d))}
-        (lib-rep/as-response d ctx)))))
+    (debug "as-template-response" d ctx)
+    (let [status (get ctx :status)]
+      (if-not (<= 200 status 299)
+        d
+        (let [d (h/with-home-uri d ctx)]
+          (if (= (get-in ctx [:representation :media-type]) "text/html")
+            {:body (transform (assoc ctx :data d))}
+            (lib-rep/as-response d ctx)))))))
 
 (defn emit [root & clauses]
   (apply str

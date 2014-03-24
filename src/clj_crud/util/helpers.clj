@@ -1,6 +1,5 @@
 (ns clj-crud.util.helpers
   (:require [clojure.tools.logging :refer [spy debug]]
-            [liberator.core :as lib-core]
             [liberator.representation :as lib-rep]
             [clojure.string :as string]
             [clojure.walk :as walk]))
@@ -8,16 +7,18 @@
 (defn db [ctx]
   (get-in ctx [:request :database]))
 
-;; to make location-flash work
-(defmethod lib-core/to-location liberator.representation.RingResponse [rr]
-           rr)
-
 (defn location-flash [uri flash]
-  (assoc-in (lib-core/to-location uri)
-            [:response :flash] flash))
+  {:headers {"Location" uri}
+   :flash flash})
+
+(defn get? [ctx]
+  (= :get (get-in ctx [:request :request-method])))
 
 (defn put? [ctx]
   (= :put (get-in ctx [:request :request-method])))
+
+(defn post? [ctx]
+  (= :post (get-in ctx [:request :request-method])))
 
 (defn edit? [ctx]
   (let [^String uri (get-in ctx [:request :uri])]
@@ -56,12 +57,19 @@
     (assoc-in ctx [:request :params] data)))
 
 (defn home-uri [ctx]
-  (let [request (get ctx :request)]
-    (format "%s://%s:%s"
-            ;; is this the url or the listening host?
-            (name (:scheme request))
-            (:server-name request)
-            (:server-port request))))
+  (let [request (get ctx :request)
+        scheme (name (:scheme request))
+        ;; is this the url or the listening host?
+        server-name (:server-name request)
+        port (:server-port request)]
+    (if-not (= port 80)
+      (format "%s://%s:%s"
+              scheme
+              server-name
+              port)
+      (format "%s://%s"
+              scheme
+              server-name))))
 
 (defn uri-parts [ctx]
   (let [request (get ctx :request)
