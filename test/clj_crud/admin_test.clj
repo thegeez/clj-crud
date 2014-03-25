@@ -36,13 +36,17 @@
     (is (map? data))
     (is (= (map #(select-keys % [:id :slug :name :links]) (:users data))
            [{:links {:self {:rel "self", :uri "http://localhost/admin/users/user1"},
-                     :edit {:rel "edit", :uri "http://localhost/admin/users/user1/edit"}},
+                     :edit {:rel "edit", :uri "http://localhost/admin/users/user1/edit"}
+                     :delete {:rel "delete", :uri "http://localhost/admin/users/user1/delete"}
+                     :users {:uri "http://localhost/admin/users", :rel "users"}},
              :name "User 1", :slug "user1", :id 1}
             {:links {:self {:rel "self", :uri "http://localhost/admin/users/user2"},
-                     :edit {:rel "edit", :uri "http://localhost/admin/users/user2/edit"}},
+                     :edit {:rel "edit", :uri "http://localhost/admin/users/user2/edit"}
+                     :delete {:rel "delete", :uri "http://localhost/admin/users/user2/delete"}
+                     :users {:uri "http://localhost/admin/users", :rel "users"}},
              :name "Second User", :slug "user2", :id 2}]))))
 
-(deftest html-admin-user-list-test
+(deftest html-admin-users-list-test
   (-> (session (tc/reuse-handler))
       (visit "/admin/users")
       (has (attr? [:a.rel-users] :href "http://localhost/admin/users"))
@@ -67,7 +71,9 @@
     (is (= (-> (:user data)
                (select-keys [:id :slug :name :links]))
            {:links {:self {:rel "self", :uri "http://localhost/admin/users/user2"},
-                    :edit {:rel "edit", :uri "http://localhost/admin/users/user2/edit"}},
+                    :edit {:rel "edit", :uri "http://localhost/admin/users/user2/edit"}
+                    :delete {:rel "delete", :uri "http://localhost/admin/users/user2/delete"}
+                    :users {:uri "http://localhost/admin/users", :rel "users"}},
             :name "Second User", :slug "user2", :id 2}))))
 
 (deftest html-admin-user-get-test
@@ -95,7 +101,7 @@
       (within [:div#name]
               (has (missing? [:span.help-block])))
       ;; edit to fail
-      (follow "edit")
+      (follow "Edit")
       (has (attr? [:form#user-form] :action "http://localhost/admin/users/user1/edit"))
       (has (attr? [:form#user-form] :method "POST"))
       (fill-in "Name" "")
@@ -163,9 +169,19 @@
               (within [:td.slug]
                       (has (text? "name3")))
               (within [:td.name]
-                      (has (text? "Name 3"))))
-      ;; ;; delete to revert state
-
+                      (has (text? "Name 3")))
+              ;; delete to revert state
+              (follow "Name 3"))
+      (has (attr? [:form#delete-form] :action "http://localhost/admin/users/name3/delete"))
+      (has (attr? [:form#delete-form] :method "POST"))
+      (press "Delete")
+      (follow-redirect)
+      (within [:table#users [:tr (html/nth-of-type 2)]]
+              (within [:td.slug]
+                      (has (text? "user2"))))
+      (has (missing? [:table#users [:tr (html/nth-of-type 3)]]))
+      (visit "http://localhost/admin/users/name3")
+      (has (status? 404))
 ))
 
 

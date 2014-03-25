@@ -68,7 +68,11 @@
   (assoc user :links {:self {:rel "self"
                              :uri (str "/admin/users/" slug)}
                       :edit {:rel "edit"
-                             :uri (str "/admin/users/" slug "/edit")}}))
+                             :uri (str "/admin/users/" slug "/edit")}
+                      :delete {:rel "delete"
+                               :uri (str "/admin/users/" slug "/delete")}
+                      :users {:rel "users"
+                              :uri "/admin/users"}}))
 
 (defn with-users-links [users]
   (assoc users :links {:home {:uri "/admin"
@@ -162,9 +166,11 @@
                             (html/content rel)
                             (html/set-attr :href uri)))
           [:a.rel-edit] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :edit])]
-                          (html/do->
-                           (html/content rel)
-                           (html/set-attr :href uri)))
+                          (html/set-attr :href uri))
+          [:form#delete-form] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :delete])]
+                                (html/do->
+                                 (html/set-attr :method "POST")
+                                 (html/set-attr :action uri)))
           [:div.user-panel]
           (let [user (get-in ctx [:data :user])
                 {:keys [id slug name created_at updated_at]} user
@@ -193,9 +199,7 @@
                             (html/content rel)
                             (html/set-attr :href uri)))
           [:a.rel-user] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :self])]
-                          (html/do->
-                           (html/content "user")
-                           (html/set-attr :href uri)))
+                          (html/set-attr :href uri))
           [:div.user-panel]
           (let [user (get-in ctx [:data :user])
                 {:keys [id slug name created_at updated_at]} user
@@ -220,7 +224,8 @@
   :available-media-types ["text/html" "application/edn"]
   :exists? (fn [ctx]
              (let [slug (get-in ctx [:request :route-params :slug])]
-               (spy {:user (with-user-links (users/get-user (h/db ctx) slug))})))
+               (when-let [user (users/get-user (h/db ctx) slug)]
+                 {:user (with-user-links user)})))
   :post! (fn [ctx]
            (let [params (get-in ctx [:request :params])
                  errors (reduce merge {}
@@ -254,11 +259,31 @@
                     (admin-user-edit-layout ctx)
                     (admin-user-layout ctx)))))
 
+(defresource admin-user-delete
+  :allowed-methods [:post]
+  :available-media-types ["text/html"]
+  :exists? (fn [ctx]
+             (let [slug (get-in ctx [:request :route-params :slug])]
+               (when-let [user (users/get-user (h/db ctx) slug)]
+                 {:user (with-user-links user)})))
+  :post! (fn [ctx]
+           (let [slug (get-in ctx [:request :route-params :slug])]
+             (users/delete-user (h/db ctx) slug)))
+  :post-redirect? true
+  :handle-see-other (fn [ctx]
+                      (h/location-flash (get-in ctx [:user :links :users :uri])
+                                        "User deleted"))
+  :as-response (l/as-template-response nil))
+
+
 (defroutes admin-routes
   (context "/admin" _
            (ANY "/" _ (fn [req]
                          (admin-index req)))
-           (ANY "/users" _ admin-users-list)
-           (ANY "/users/new" _ admin-users-new)
-           (ANY "/users/:slug" _ admin-user)
-           (ANY "/users/:slug/edit" _ admin-user)))
+           (context "/users" _
+                    (ANY "/" _ admin-users-list)
+                    (ANY "/new" _ admin-users-new)
+                    (context "/:slug" _
+                             (ANY "/" _ admin-user)
+                             (ANY "/edit" _ admin-user)
+                             (ANY "/delete" _ admin-user-delete)))))

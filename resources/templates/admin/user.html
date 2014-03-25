@@ -4,7 +4,11 @@
   <li><a id="users" href="#" class="rel-users">Users</a></li>
   <li>user</li>
 </ol>
-<p><a id="user-edit" href="" class="btn btn-primary rel-edit">Edit</a></p>
+<div class="btn-toolbar" role="toolbar">
+  <div class="btn-group"><a href="" class="btn btn-primary rel-edit">Edit</a></div>
+  <div class="btn-group"><form name="delete-form" id="delete-form" class="form-inline" role="form"><input type="submit" class="btn btn-danger rel-delete" onclick="javascript:return confirm('Are you sure?');" value="Delete"/>
+    </form></div>
+</div>
 <div class="user-panel">
   <form class="form-horizontal" role="form">
     <div class="form-group">
@@ -38,6 +42,4 @@
       </div>
     </div>
   </form>
-
-
 </div>

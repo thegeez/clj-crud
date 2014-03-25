@@ -68,10 +68,15 @@
 
 (defn as-template-response [transform]
   (fn [d ctx]
-    (debug "as-template-response" d ctx)
     (let [status (get ctx :status)]
       (if-not (<= 200 status 299)
-        d
+        (if (<= 300 status 399)
+          (update-in d [:headers "Location"]
+                     (fn [loc]
+                       (if (.startsWith loc "http")
+                         loc
+                         (str (h/home-uri ctx) loc))))
+          d)
         (let [d (h/with-home-uri d ctx)]
           (if (= (get-in ctx [:representation :media-type]) "text/html")
             {:body (transform (assoc ctx :data d))}

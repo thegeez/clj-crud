@@ -3,23 +3,6 @@
             [clojure.string :as string]
             [clojure.java.jdbc :as jdbc]))
 
-(defn create-entry [db data]
-  (let [res (jdbc/insert! db :entries {:data (pr-str data)
-                                       :updated_at (.getTime (java.util.Date.))})]
-    (-> res first :1)))
-
-(defn update-entry [e new]
-  [(merge {} (when-not (seq (:data new))
-               {:data "Data cannot be empty"}))
-   (merge e
-          (select-keys new (keys e)))])
-
-(defn put-entry [db entry]
-  (do (jdbc/update! db :entries (assoc (select-keys entry [:data])
-                                  :updated_at (.getTime (java.util.Date.)))
-                    ["id = ?" (:id entry)])
-      nil))
-
 (def slug-characters
   (let [ab "abcdefghijklmnopqrstuvwxyz"
         nums "0123456789"
@@ -51,8 +34,6 @@
       nil))
 
 (defn create-user [db user]
-  (debug "hello world!")
-
   (let [exists-by-slug (get-user db (:slug user))]
     (if exists-by-slug
       ;; user needs to select different name for a unique slug
@@ -65,6 +46,9 @@
         (when-not (contains? (first res) :1)
           (throw (Exception.  "DB Create has not succeeded")))
         (get-user db (:slug user))))))
+
+(defn delete-user [db slug]
+  (spy (jdbc/delete! db :users ["slug = ?" slug])))
 
 (defn users-list [db]
   (jdbc/query db ["SELECT * FROM users"]))
