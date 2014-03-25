@@ -123,7 +123,49 @@
       (within [:#flash]
               (has (text? "User updated")))
       (within [:p#name]
-              (has (text? "User 1")))
+              (has (text? "User 1")))))
+
+(deftest html-admin-user-new-and-delete-test
+  (-> (session (tc/reuse-handler))
+      (visit "/admin/users")
+      (has (attr? [:a.rel-new-user] :href "http://localhost/admin/users/new"))
+      (within [:table#users [:tr (html/nth-of-type 1)]]
+              (within [:td.name]
+                      (has (text? "User 1"))
+                      (has (attr? [:a] :href "http://localhost/admin/users/user1"))))
+      ;; edit to fail
+      (follow "New user")
+      (has (attr? [:form#user-form] :action "http://localhost/admin/users/new"))
+      (has (attr? [:form#user-form] :method "POST"))
+      (fill-in "Name" "")
+      (press "Create User")
+      (has (attr? [:form#user-form] :action "http://localhost/admin/users/new"))
+      (has (attr? [:div#name] :class "has-error form-group"))
+      (within [:div#name :span.help-block]
+              (has (text? "Name can not be empty")))
+      ;;edit to db fail
+      (fill-in "Name" "User 1")
+      (press "Create User")
+      (has (attr? [:form#user-form] :action "http://localhost/admin/users/new"))
+      (has (attr? [:div#name] :class "has-error form-group"))
+      (within [:div#name :span.help-block]
+              (has (text? "Name already taken")))
+      ;; edit to success
+      (fill-in "Name" "Name 3")
+      (press "Create User")
+      (follow-redirect)
+      (has (status? 200))
+      (within [:#flash]
+              (has (text? "User created")))
+      ;; check change is persisted, and change back for clean slate
+      (follow "users")
+      (within [:table#users [:tr (html/nth-of-type 3)]]
+              (within [:td.slug]
+                      (has (text? "name3")))
+              (within [:td.name]
+                      (has (text? "Name 3"))))
+      ;; ;; delete to revert state
+
 ))
 
 

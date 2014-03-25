@@ -93,37 +93,57 @@
 
 (defn admin-users-new-layout [ctx]
   (l/emit c/application-html
-          [:#flash] (when-let [identity (friend/identity (:request ctx))]
-                      (html/content (str "Identity: " identity)))
+          [:#flash] nil
           [:#content] (html/content admin-users-new-html)
           [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
           [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
                            (html/do->
                             (html/content rel)
                             (html/set-attr :href uri)))
-          [:table#users :tbody [:tr html/first-of-type]]
-          (html/clone-for [user (get-in ctx [:data :users])]
-                          [:tr] (let [{:keys [id slug name created_at updated_at]} user
-                                      edit-link (get-in user [:links :edit :uri])
-                                      self-link (get-in user [:links :self :uri])]
-                                  (html/transform-content
-                                   [:td.id] (html/content (str id))
-                                   [:td.slug :a] (html/do->
-                                                  (html/content slug)
-                                                  (html/set-attr :href self-link))
-                                   [:td.name :a] (html/do->
-                                                  (html/content name)
-                                                  (html/set-attr :href self-link))
-                                   [:td.created_at] (html/content (str created_at))
-                                   [:td.updated_at] (html/content (str updated_at))
-                                   [:td.edit :a] (html/set-attr :href edit-link)
-)))))
+          [:a.rel-user] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :self])]
+                          (html/do->
+                           (html/content "user")
+                           (html/set-attr :href uri)))
+          [:div.user-panel]
+          (let [{:keys [name] :as user} (get-in ctx [:data :user])
+                new-link (get-in ctx [:data :links :new :uri])]
+            (html/transform-content
+             [:form] (html/do->
+                      (html/set-attr :method "POST")
+                      (html/set-attr :action new-link))
+             [:div#name] (l/maybe-error (get-in user [:errors :name]))
+             [:div#name :input] (html/set-attr :value name)
+             ))))
 
 (defresource admin-users-new
+  :allowed-methods [:get :post]
   :available-media-types ["text/html"]
+  :post! (fn [ctx]
+           (let [params (get-in ctx [:request :params])
+                 name (get params :name)
+                 errors (reduce merge {}
+                                [(when (zero? (count name))
+                                   [:name "Name can not be empty"])])
+                 slug (users/slugify name)
+                 create-user {:slug slug
+                              :name name}]
+             (if (seq errors)
+               {:user {:errors errors}}
+               (let [res (users/create-user (h/db ctx) create-user)]
+                 (if-let [errors (:errors res)]
+                   {:user (merge create-user
+                                 res)}
+                   {:user (with-user-links res)})))))
+  :post-redirect? (fn [ctx]
+                    (not (get-in ctx [:user :errors])))
+  :new? false ;; 201 created is useless here, want to redirect html flow
+  :respond-with-entity? true
+  :handle-see-other (fn [ctx]
+                      (h/location-flash (get-in ctx [:user :links :self :uri])
+                                        "User created"))
   :handle-ok (fn [ctx]
                (with-users-links
-                 {}))
+                 {:user (:user ctx)}))
   :as-response (l/as-template-response admin-users-new-layout)
   )
 
@@ -208,7 +228,7 @@
                                    [:name "Must have name attr"])
                                  (when (zero? (count (get params :name)))
                                    [:name "Name can not be empty"])])
-                 user-update {:slug (:slug params) 
+                 user-update {:slug (:slug params)
                               :name (:name params)}]
              (when-not (seq errors)
                (users/update-user (h/db ctx) user-update))
