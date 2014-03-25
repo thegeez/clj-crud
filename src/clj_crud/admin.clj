@@ -45,6 +45,7 @@
                            (html/do->
                             (html/content rel)
                             (html/set-attr :href uri)))
+          [:a.rel-new-user] (html/set-attr :href (get-in ctx [:data :links :new :uri]))
           [:table#users :tbody [:tr html/first-of-type]]
           (html/clone-for [user (get-in ctx [:data :users])]
                           [:tr] (let [{:keys [id slug name created_at updated_at]} user
@@ -69,19 +70,64 @@
                       :edit {:rel "edit"
                              :uri (str "/admin/users/" slug "/edit")}}))
 
+(defn with-users-links [users]
+  (assoc users :links {:home {:uri "/admin"
+                               :rel "home"}
+                       :users {:uri "/admin/users"
+                               :rel "users"}
+                       :new {:uri "/admin/users/new"
+                             :rel "new"}}))
+
 (defresource admin-users-list
   :available-media-types ["text/html" "application/edn"]
   :exists? (fn [ctx]
              {:users (map with-user-links (users/users-list (h/db ctx)))})
   :handle-ok (fn [ctx]
-               {:main "Hello admin world!"
-                :users (:users ctx)
-                :links {:home {:uri "/admin"
-                               :rel "home"}
-                        :users {:uri "/admin/users"
-                                :rel "users"}}})
+               (with-users-links
+                 {:main "Hello admin world!"
+                  :users (:users ctx)}))
   :as-response (l/as-template-response admin-users-list-layout)
   )
+
+(def admin-users-new-html (html/html-resource "templates/admin/users_new.html"))
+
+(defn admin-users-new-layout [ctx]
+  (l/emit c/application-html
+          [:#flash] (when-let [identity (friend/identity (:request ctx))]
+                      (html/content (str "Identity: " identity)))
+          [:#content] (html/content admin-users-new-html)
+          [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
+          [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
+                           (html/do->
+                            (html/content rel)
+                            (html/set-attr :href uri)))
+          [:table#users :tbody [:tr html/first-of-type]]
+          (html/clone-for [user (get-in ctx [:data :users])]
+                          [:tr] (let [{:keys [id slug name created_at updated_at]} user
+                                      edit-link (get-in user [:links :edit :uri])
+                                      self-link (get-in user [:links :self :uri])]
+                                  (html/transform-content
+                                   [:td.id] (html/content (str id))
+                                   [:td.slug :a] (html/do->
+                                                  (html/content slug)
+                                                  (html/set-attr :href self-link))
+                                   [:td.name :a] (html/do->
+                                                  (html/content name)
+                                                  (html/set-attr :href self-link))
+                                   [:td.created_at] (html/content (str created_at))
+                                   [:td.updated_at] (html/content (str updated_at))
+                                   [:td.edit :a] (html/set-attr :href edit-link)
+)))))
+
+(defresource admin-users-new
+  :available-media-types ["text/html"]
+  :handle-ok (fn [ctx]
+               (with-users-links
+                 {}))
+  :as-response (l/as-template-response admin-users-new-layout)
+  )
+
+
 
 (def admin-user-html (html/html-resource "templates/admin/user.html"))
 
@@ -152,8 +198,6 @@
 (defresource admin-user
   :allowed-methods [:get :post]
   :available-media-types ["text/html" "application/edn"]
-  ;;:processable? (fn [ctx] [false {:response {:body "hello world
-  ;;FAIL"}}])
   :exists? (fn [ctx]
              (let [slug (get-in ctx [:request :route-params :slug])]
                (spy {:user (with-user-links (users/get-user (h/db ctx) slug))})))
@@ -195,5 +239,6 @@
            (ANY "/" _ (fn [req]
                          (admin-index req)))
            (ANY "/users" _ admin-users-list)
+           (ANY "/users/new" _ admin-users-new)
            (ANY "/users/:slug" _ admin-user)
            (ANY "/users/:slug/edit" _ admin-user)))

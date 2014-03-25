@@ -1,12 +1,11 @@
-<div>Admin User</div>
+<div>Admin User new</div>
 <ol class="breadcrumb" id="trail">
   <li><a id="home" href="#" class="rel-home">Admin Home</a></li>
   <li><a id="users" href="#" class="rel-users">Users</a></li>
-  <li>user</li>
+  <li><a id="user" href="" class="rel-user">user</a></li>
 </ol>
-<p><a id="user-edit" href="" class="btn btn-primary rel-edit">edit</a></p>
 <div class="user-panel">
-  <form class="form-horizontal" role="form">
+  <form class="form-horizontal" role="form" name="user-form" id="user-form">
     <div class="form-group">
       <label class="col-sm-2 control-label">Id</label>
       <div class="col-sm-10">
@@ -19,10 +18,12 @@
         <p class="form-control-static" id="slug"><a href=""></a></p>
       </div>
     </div>
-    <div class="form-group">
-      <label class="col-sm-2 control-label">Name</label>
+    <div class="form-group" id="name">
+      <label class="col-sm-2 control-label" for="name">Name</label>
       <div class="col-sm-10">
-        <p class="form-control-static" id="name"><a href=""></a></p>
+        <input type="text" class="form-control" placeholder="Name"
+               name="name" id="name"/>
+        <span class="help-block hidden"></span>
       </div>
     </div>
     <div class="form-group">
@@ -37,7 +38,10 @@
         <p class="form-control-static" id="updated_at"></p>
       </div>
     </div>
+    <div class="form-group">
+      <div class="col-sm-offset-2">
+        <input type="submit" class="btn btn-primary" value="Save Changes"/>
+      </div>
+    </div>
   </form>
-
-
 </div>
