@@ -71,11 +71,12 @@
     (let [status (get ctx :status)]
       (if-not (<= 200 status 299)
         (if (<= 300 status 399)
-          (update-in d [:headers "Location"]
-                     (fn [loc]
-                       (if (.startsWith loc "http")
-                         loc
-                         (str (h/home-uri ctx) loc))))
+          (if-let [loc (get-in d [:headers "Location"])] 
+            (assoc-in d [:headers "Location"]
+                      (if (.startsWith loc "http")
+                        loc
+                        (str (h/home-uri ctx) loc)))
+            d)
           d)
         (let [d (h/with-home-uri d ctx)]
           (if (= (get-in ctx [:representation :media-type]) "text/html")

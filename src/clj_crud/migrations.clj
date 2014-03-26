@@ -23,8 +23,24 @@
                    (jdbc/db-do-commands
                     db (jdbc/drop-table-ddl
                         table)))}])
-      (let [table :users]
+      (let [table :accounts]
         [2 {:up (fn [db]
+                  (jdbc/db-do-commands
+                   db (jdbc/create-table-ddl
+                       table
+                       (serial-id db)
+                       [:slug "VARCHAR(256)"]
+                       [:name "VARCHAR(256)"]
+                       [:email "VARCHAR(256)"]
+                       [:password "VARCHAR(256)"]
+                       [:created_at "BIGINT"]
+                       [:updated_at "BIGINT"])))
+            :down (fn [db]
+                    (jdbc/db-do-commands
+                     db (jdbc/drop-table-ddl
+                         table)))}])
+      (let [table :users]
+        [3 {:up (fn [db]
                   (jdbc/db-do-commands
                    db (jdbc/create-table-ddl
                        table

@@ -14,15 +14,14 @@
 (def admin-index-html (html/html-resource "templates/admin/index.html"))
 
 (defn admin-index-layout [ctx]
-  (l/emit c/application-html
-          [:#flash] (when-let [identity (friend/identity (:request ctx))]
-                      (html/content (str "Identity: " identity)))
-          [:#content] (html/content admin-index-html)
-          [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
-          [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
-                           (html/do->
-                            (html/content rel)
-                            (html/set-attr :href uri)))))
+  (c/emit-application
+   ctx
+   [:#content] (html/content admin-index-html)
+   [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
+   [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
+                    (html/do->
+                     (html/content rel)
+                     (html/set-attr :href uri)))))
 
 (defresource admin-index
   :available-media-types ["text/html" "application/edn"]
@@ -36,33 +35,32 @@
 (def admin-users-list-html (html/html-resource "templates/admin/users.html"))
 
 (defn admin-users-list-layout [ctx]
-  (l/emit c/application-html
-          [:#flash] (when-let [identity (friend/identity (:request ctx))]
-                      (html/content (str "Identity: " identity)))
-          [:#content] (html/content admin-users-list-html)
-          [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
-          [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
-                           (html/do->
-                            (html/content rel)
-                            (html/set-attr :href uri)))
-          [:a.rel-new-user] (html/set-attr :href (get-in ctx [:data :links :new :uri]))
-          [:table#users :tbody [:tr html/first-of-type]]
-          (html/clone-for [user (get-in ctx [:data :users])]
-                          [:tr] (let [{:keys [id slug name created_at updated_at]} user
-                                      edit-link (get-in user [:links :edit :uri])
-                                      self-link (get-in user [:links :self :uri])]
-                                  (html/transform-content
-                                   [:td.id] (html/content (str id))
-                                   [:td.slug :a] (html/do->
-                                                  (html/content slug)
-                                                  (html/set-attr :href self-link))
-                                   [:td.name :a] (html/do->
-                                                  (html/content name)
-                                                  (html/set-attr :href self-link))
-                                   [:td.created_at] (html/content (str created_at))
-                                   [:td.updated_at] (html/content (str updated_at))
-                                   [:td.edit :a] (html/set-attr :href edit-link)
-)))))
+  (c/emit-application
+   ctx
+   [:#content] (html/content admin-users-list-html)
+   [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
+   [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
+                    (html/do->
+                     (html/content rel)
+                     (html/set-attr :href uri)))
+   [:a.rel-new-user] (html/set-attr :href (get-in ctx [:data :links :new :uri]))
+   [:table#users :tbody [:tr html/first-of-type]]
+   (html/clone-for [user (get-in ctx [:data :users])]
+                   [:tr] (let [{:keys [id slug name created_at updated_at]} user
+                               edit-link (get-in user [:links :edit :uri])
+                               self-link (get-in user [:links :self :uri])]
+                           (html/transform-content
+                            [:td.id] (html/content (str id))
+                            [:td.slug :a] (html/do->
+                                           (html/content slug)
+                                           (html/set-attr :href self-link))
+                            [:td.name :a] (html/do->
+                                           (html/content name)
+                                           (html/set-attr :href self-link))
+                            [:td.created_at] (html/content (str created_at))
+                            [:td.updated_at] (html/content (str updated_at))
+                            [:td.edit :a] (html/set-attr :href edit-link)
+                            )))))
 
 (defn with-user-links [{:keys [slug] :as user}]
   (assoc user :links {:self {:rel "self"
@@ -76,7 +74,7 @@
 
 (defn with-users-links [users]
   (assoc users :links {:home {:uri "/admin"
-                               :rel "home"}
+                              :rel "home"}
                        :users {:uri "/admin/users"
                                :rel "users"}
                        :new {:uri "/admin/users/new"
@@ -96,28 +94,28 @@
 (def admin-users-new-html (html/html-resource "templates/admin/users_new.html"))
 
 (defn admin-users-new-layout [ctx]
-  (l/emit c/application-html
-          [:#flash] nil
-          [:#content] (html/content admin-users-new-html)
-          [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
-          [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
-                           (html/do->
-                            (html/content rel)
-                            (html/set-attr :href uri)))
-          [:a.rel-user] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :self])]
-                          (html/do->
-                           (html/content "user")
-                           (html/set-attr :href uri)))
-          [:div.user-panel]
-          (let [{:keys [name] :as user} (get-in ctx [:data :user])
-                new-link (get-in ctx [:data :links :new :uri])]
-            (html/transform-content
-             [:form] (html/do->
-                      (html/set-attr :method "POST")
-                      (html/set-attr :action new-link))
-             [:div#name] (l/maybe-error (get-in user [:errors :name]))
-             [:div#name :input] (html/set-attr :value name)
-             ))))
+  (c/emit-application
+   ctx
+   [:#content] (html/content admin-users-new-html)
+   [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
+   [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
+                    (html/do->
+                     (html/content rel)
+                     (html/set-attr :href uri)))
+   [:a.rel-user] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :self])]
+                   (html/do->
+                    (html/content "user")
+                    (html/set-attr :href uri)))
+   [:div.user-panel]
+   (let [{:keys [name] :as user} (get-in ctx [:data :user])
+         new-link (get-in ctx [:data :links :new :uri])]
+     (html/transform-content
+      [:form] (html/do->
+               (html/set-attr :method "POST")
+               (html/set-attr :action new-link))
+      [:div#name] (l/maybe-error (get-in user [:errors :name]))
+      [:div#name :input] (html/set-attr :value name)
+      ))))
 
 (defresource admin-users-new
   :allowed-methods [:get :post]
@@ -156,68 +154,67 @@
 (def admin-user-html (html/html-resource "templates/admin/user.html"))
 
 (defn admin-user-layout [ctx]
-  (l/emit c/application-html
-          [:#flash] (when-let [flash (get-in ctx [:request :flash])]
-                      (html/content flash))
-          [:#content] (html/content admin-user-html)
-          [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
-          [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
-                           (html/do->
-                            (html/content rel)
-                            (html/set-attr :href uri)))
-          [:a.rel-edit] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :edit])]
-                          (html/set-attr :href uri))
-          [:form#delete-form] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :delete])]
-                                (html/do->
-                                 (html/set-attr :method "POST")
-                                 (html/set-attr :action uri)))
-          [:div.user-panel]
-          (let [user (get-in ctx [:data :user])
-                {:keys [id slug name created_at updated_at]} user
-                self-link (get-in user [:links :self :uri])]
-            (html/transform-content
-             [:p#id] (html/content (str id))
-             [:p#slug :a] (html/do->
-                            (html/content slug)
-                            (html/set-attr :href self-link))
-             [:p#name :a] (html/do->
-                                (html/content name)
-                                (html/set-attr :href self-link))
-             [:p#created_at] (html/content (str created_at))
-             [:p#updated_at] (html/content (str updated_at))
-             ))))
+  (c/emit-application
+   ctx
+   [:#content] (html/content admin-user-html)
+   [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
+   [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
+                    (html/do->
+                     (html/content rel)
+                     (html/set-attr :href uri)))
+   [:a.rel-edit] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :edit])]
+                   (html/set-attr :href uri))
+   [:form#delete-form] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :delete])]
+                         (html/do->
+                          (html/set-attr :method "POST")
+                          (html/set-attr :action uri)))
+   [:div.user-panel]
+   (let [user (get-in ctx [:data :user])
+         {:keys [id slug name created_at updated_at]} user
+         self-link (get-in user [:links :self :uri])]
+     (html/transform-content
+      [:p#id] (html/content (str id))
+      [:p#slug :a] (html/do->
+                    (html/content slug)
+                    (html/set-attr :href self-link))
+      [:p#name :a] (html/do->
+                    (html/content name)
+                    (html/set-attr :href self-link))
+      [:p#created_at] (html/content (str created_at))
+      [:p#updated_at] (html/content (str updated_at))
+      ))))
 
 (def admin-user-edit-html (html/html-resource "templates/admin/user_edit.html"))
 
 (defn admin-user-edit-layout [ctx]
-  (l/emit c/application-html
-          [:#flash] nil
-          [:#content] (html/content admin-user-edit-html)
-          [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
-          [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
-                           (html/do->
-                            (html/content rel)
-                            (html/set-attr :href uri)))
-          [:a.rel-user] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :self])]
-                          (html/set-attr :href uri))
-          [:div.user-panel]
-          (let [user (get-in ctx [:data :user])
-                {:keys [id slug name created_at updated_at]} user
-                edit-link (get-in user [:links :edit :uri])
-                self-link (get-in user [:links :self :uri])]
-            (html/transform-content
-             [:form] (html/do->
-                      (html/set-attr :method "POST")
-                      (html/set-attr :action edit-link))
-             [:p#id] (html/content (str id))
-             [:p#slug :a] (html/do->
-                            (html/content slug)
-                            (html/set-attr :href self-link))
-             [:div#name] (l/maybe-error (get-in user [:errors :name]))
-             [:div#name :input] (html/set-attr :value name)
-             [:p#created_at] (html/content (str created_at))
-             [:p#updated_at] (html/content (str updated_at))
-             ))))
+  (c/emit-application
+   ctx
+   [:#content] (html/content admin-user-edit-html)
+   [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
+   [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
+                    (html/do->
+                     (html/content rel)
+                     (html/set-attr :href uri)))
+   [:a.rel-user] (let [{:keys [rel uri]} (get-in ctx [:data :user :links :self])]
+                   (html/set-attr :href uri))
+   [:div.user-panel]
+   (let [user (get-in ctx [:data :user])
+         {:keys [id slug name created_at updated_at]} user
+         edit-link (get-in user [:links :edit :uri])
+         self-link (get-in user [:links :self :uri])]
+     (html/transform-content
+      [:form] (html/do->
+               (html/set-attr :method "POST")
+               (html/set-attr :action edit-link))
+      [:p#id] (html/content (str id))
+      [:p#slug :a] (html/do->
+                    (html/content slug)
+                    (html/set-attr :href self-link))
+      [:div#name] (l/maybe-error (get-in user [:errors :name]))
+      [:div#name :input] (html/set-attr :value name)
+      [:p#created_at] (html/content (str created_at))
+      [:p#updated_at] (html/content (str updated_at))
+      ))))
 
 (defresource admin-user
   :allowed-methods [:get :post]

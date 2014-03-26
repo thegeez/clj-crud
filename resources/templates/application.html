@@ -36,17 +36,19 @@
             <li class="active"><a href="/list">List</a></li>
           </ul>
           <div class="navbar-right">
-            
-            <div class="navbar-form">
+            <div class="navbar-form" id="logged-in">
               <div class="form-group">
                 <div class="col-sm-10">
                   <p id="id" class="form-control-static">
-                    <a href="profile">Profile</a>
+                    <a href="profile" id="profile">Profile</a>
                   </p>
                 </div>
               </div>
+              <a class="btn btn-default" href="/logout">Logout</a>
+            </div><!-- /.navbar-form -->
+            <div class="navbar-form" id="unlogged-in">
               <a class="btn btn-default" href="/login">Login</a>
-              <a class="btn btn-primary" href="/signup">Sign up</a>
+              <a class="btn btn-primary" href="/signup">Sign Up</a>
             </div><!-- /.navbar-form -->
           </div><!-- /navbar-right -->
         </div><!--/.navbar-collapse -->

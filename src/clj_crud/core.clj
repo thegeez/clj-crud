@@ -4,6 +4,7 @@
             [clj-crud.system.database :as database]
             [clj-crud.system.ring :as ring]
             [clj-crud.system.server :as server]
+            [clj-crud.accounts :as accounts]
             [clj-crud.admin :as admin]
             [clj-crud.chains :as chains]
             [clj-crud.data.users :as users]
@@ -15,6 +16,7 @@
 
 (compojure/defroutes main-routes
   #_(compojure/ANY "/" _ "hello world")
+  accounts/accounts-routes
   admin/admin-routes
   chains/chains-routes
   tea/tea-routes
