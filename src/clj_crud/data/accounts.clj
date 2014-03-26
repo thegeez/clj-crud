@@ -53,3 +53,15 @@
 
 (defn delete-account [db account]
   (jdbc/delete! db :accounts ["slug = ?" (:slug account)]))
+
+(defn lookup-friend-identity [db]
+  (fn lookup-friend-identity-username [username]
+    "return {:username :password :roles} for username"
+    (debug "looking up identity for" username)
+    (when-let [account (first (jdbc/query db ["SELECT * FROM accounts WHERE name = ?" username]))]
+      (debug "found account: " account)
+      (assoc account
+        :username username
+        :roles #{(keyword (:slug account))})))
+
+)

@@ -5,6 +5,7 @@
             [clj-crud.system.ring :as ring]
             [clj-crud.system.server :as server]
             [clj-crud.accounts :as accounts]
+            [clj-crud.data.accounts :as accounts-data]
             [clj-crud.admin :as admin]
             [clj-crud.chains :as chains]
             [clj-crud.data.users :as users]
@@ -24,15 +25,16 @@
 
 (defn main-handler []
   (-> #'main-routes
-      (friend/authenticate {:credential-fn (partial credentials/bcrypt-credential-fn
-                                                     {"root" {:username "root"
-                                                              :password (credentials/hash-bcrypt "admin_password")
-                                                              :roles #{::admin}}
-                                                      "a" {:username "a"
-                                                           :password (credentials/hash-bcrypt "a")
-                                                           :roles #{:role1}}})
-                            :login-uri "/login"
-                            :workflows [(workflows/interactive-form)]})
+      (friend/authenticate {:login-uri "/login"
+                            :workflows [
+                                        #_(workflows/interactive-form)
+                                        (fn [req]
+                                          ((workflows/interactive-form)
+                                           (assoc-in req [::friend/auth-config :credential-fn]
+                                                     (fn form-credential-fn [creds]
+                                                       (debug "creds are:" creds)
+                                                       (credentials/bcrypt-credential-fn
+                                                        (accounts-data/lookup-friend-identity (:database req)) creds)))))]})
       ring/wrap-common))
 
 (defn dev-handler []
@@ -77,8 +79,8 @@
                      (dev-db-fixtures)
                      {:database :db})
        :ring-handler (component/using
-                 (ring/ring-handler (dev-handler))
-                 {:database :db})
+                      (ring/ring-handler (dev-handler))
+                      {:database :db})
        :server (component/using
                 (server/jetty port)
                 {:handler :ring-handler})})))

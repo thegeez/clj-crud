@@ -75,6 +75,9 @@
   :respond-with-entity? true
   :handle-see-other (fn [ctx]
                       ;; maybe back to where we came from?
+                      
+                      ;; auto login here!!!!!!!
+
                       (h/location-flash (get-in ctx [:account :links :self :uri])
                                         "Account created"))
   :handle-ok (fn [ctx]
