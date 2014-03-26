@@ -174,7 +174,8 @@
               (follow "Name 3"))
       (has (attr? [:form#delete-form] :action "http://localhost/admin/users/name3/delete"))
       (has (attr? [:form#delete-form] :method "POST"))
-      (press "Delete")
+      (within [:form#delete-form]
+              (press "Delete"))
       (follow-redirect)
       (within [:table#users [:tr (html/nth-of-type 2)]]
               (within [:td.slug]
