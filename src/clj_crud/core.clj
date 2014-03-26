@@ -26,15 +26,12 @@
 (defn main-handler []
   (-> #'main-routes
       (friend/authenticate {:login-uri "/login"
-                            :workflows [
-                                        #_(workflows/interactive-form)
-                                        (fn [req]
-                                          ((workflows/interactive-form)
-                                           (assoc-in req [::friend/auth-config :credential-fn]
-                                                     (fn form-credential-fn [creds]
-                                                       (debug "creds are:" creds)
-                                                       (credentials/bcrypt-credential-fn
-                                                        (accounts-data/lookup-friend-identity (:database req)) creds)))))]})
+                            :workflows [(fn [req]
+                                          ((workflows/interactive-form
+                                            :credential-fn (fn form-credential-fn [creds]
+                                                             (credentials/bcrypt-credential-fn
+                                                              (accounts-data/lookup-friend-identity (:database req)) creds)))
+                                           req))]})
       ring/wrap-common))
 
 (defn dev-handler []
