@@ -53,4 +53,18 @@
                     (jdbc/db-do-commands
                      db (jdbc/drop-table-ddl
                          table)))}])
+      [4 {:up (fn [db]
+                (jdbc/db-do-commands
+                 db
+                 "ALTER TABLE accounts
+                   ADD reset_token VARCHAR(32)"
+                 "ALTER TABLE accounts
+                   ADD expire BIGINT"))
+          :down (fn [db]
+                  (jdbc/db-do-commands
+                   db
+                   "ALTER TABLE accounts
+                     DROP COLUMN reset_token"
+                   "ALTER TABLE accounts
+                     DROP COLUMN expire"))}]
      ])

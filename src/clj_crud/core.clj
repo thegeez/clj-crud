@@ -4,6 +4,7 @@
             [clj-crud.system.database :as database]
             [clj-crud.system.ring :as ring]
             [clj-crud.system.server :as server]
+            [clj-crud.system.email :as email]
             [clj-crud.accounts :as accounts]
             [clj-crud.data.accounts :as accounts-data]
             [clj-crud.admin :as admin]
@@ -78,7 +79,9 @@
                      {:database :db})
        :ring-handler (component/using
                       (ring/ring-handler (dev-handler))
-                      {:database :db})
+                      {:database :db
+                       :emailer :emailer})
+       :emailer (email/log-emailer)
        :server (component/using
                 (server/jetty port)
                 {:handler :ring-handler})})))

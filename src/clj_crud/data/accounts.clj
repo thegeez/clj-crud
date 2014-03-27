@@ -3,6 +3,11 @@
             [clojure.string :as string]
             [clojure.java.jdbc :as jdbc]
             [cemerick.friend.credentials :as credentials]))
+(defn now []
+  (.getTime (java.util.Date.)))
+
+(defn random-string []
+  (apply str (remove #{\-} (str (java.util.UUID/randomUUID)))))
 
 (def slug-characters
   (let [ab "abcdefghijklmnopqrstuvwxyz"
@@ -23,12 +28,26 @@
          (filter slug-characters)
          (apply str)))))
 
+(defn valid-email? [email]
+  (and (not (zero? (count email)))
+       (some #{\@} email)))
+
 (defn get-account [db slug]
   (first (jdbc/query db ["SELECT * FROM accounts WHERE slug = ?" slug])))
 
+(defn get-account-by-email [db email]
+  (first (jdbc/query db ["SELECT * FROM accounts WHERE email = ?" email])))
+
+(defn get-account-by-reset-token [db reset_token]
+  (when-let [account (first (jdbc/query db ["SELECT * FROM accounts WHERE reset_token = ?" reset_token]))]
+    (debug "Expire: " (:expire account) (now))
+    (when (< (now) (:expire account))
+      account)))
+
+
 #_(defn update-account [db account]
   (do (let [res (jdbc/update! db :accounts (assoc account
-                                          :updated_at (.getTime (java.util.Date.)))
+                                             :updated_at (now))
                               ["slug = ?" (:slug account)])]
         (when-not (= res [1])
           (throw (Exception.  "DB Update has not succeeded"))))
@@ -39,17 +58,19 @@
     (if exists-by-slug
       ;; user needs to select different name for a unique slug
       {:errors {:name "Name already taken"}}
-      (let [now (.getTime (java.util.Date.))
-            {:keys [email slug name password]} account
-            res (jdbc/insert! db :accounts {:slug slug
-                                            :name name
-                                            :email email
-                                            :password (credentials/hash-bcrypt password)
-                                            :created_at now
-                                            :updated_at now})]
-        (when-not (contains? (first res) :1)
-          (throw (Exception.  "DB Create has not succeeded")))
-        (get-account db (:slug account))))))
+      (if-let [exists-by-email (get-account-by-email db (:email account))] 
+        {:errors {:email "Email already taken"}}
+        (let [now (now)
+              {:keys [email slug name password]} account
+              res (jdbc/insert! db :accounts {:slug slug
+                                              :name name
+                                              :email email
+                                              :password (credentials/hash-bcrypt password)
+                                              :created_at now
+                                              :updated_at now})]
+          (when-not (contains? (first res) :1)
+            (throw (Exception.  "DB Create has not succeeded")))
+          (get-account db (:slug account)))))))
 
 (defn delete-account [db account]
   (jdbc/delete! db :accounts ["slug = ?" (:slug account)]))
@@ -62,6 +83,34 @@
       (debug "found account: " account)
       (assoc account
         :username username
-        :roles #{(keyword (:slug account))})))
+        :roles #{(keyword (:slug account))}))))
 
-)
+(defn forgot-password [db email]
+  (let [account (get-account-by-email db email)] 
+    (if-not account
+      {:errors {:email "Email is not known"}}
+      (let [now (now)
+            three-days-msecs (* 3 24 60 60 1000)
+            expire (+ now three-days-msecs)
+            reset_token (random-string)
+            res (jdbc/update! db :accounts {:reset_token reset_token
+                                            :expire expire
+                                            :updated_at now}
+                              ["slug = ?" (:slug account)])]
+        (when-not (= res [1])
+          (throw (Exception.  "DB Update has not succeeded")))
+        {:reset_token reset_token}))))
+
+(defn reset-password [db reset_token password]
+  (let [account (get-account-by-reset-token db reset_token)]
+    (if-not account
+      {:errors {:password "Can not reset password by current token"}}
+      (let [now (now)
+            res (jdbc/update! db :accounts {:password (credentials/hash-bcrypt password)
+                                            :reset_token nil
+                                            :expire -1
+                                            :updated_at now}
+                              ["slug = ?" (:slug account)])]
+        (when-not (= res [1])
+          (throw (Exception.  "DB Update has not succeeded")))
+        account))))

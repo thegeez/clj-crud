@@ -1,5 +1,6 @@
 (ns clj-crud.accounts
   (:require [clojure.tools.logging :refer [debug spy]]
+            [clj-crud.system.email :as email]
             [clj-crud.util.layout :as l]
             [clj-crud.util.helpers :as h]
             [clj-crud.common :as c]
@@ -38,8 +39,7 @@
                  errors (reduce merge {}
                                 [(when (zero? (count name))
                                    [:name "Name can not be empty"])
-                                 (when (or (zero? (count email))
-                                           (not (some #{\@} email)))
+                                 (when-not (accounts/valid-email? email)
                                    [:email "Invalid email"])
                                  (when (zero? (count password))
                                    [:password "Password can not be empty"])
@@ -110,7 +110,105 @@
                    :flash "You are logged out"
                    :status 303}))
 
+(def forgot-password-html (html/html-resource "templates/accounts/forgot_password.html"))
+
+(defn forgot-password-layout [ctx]
+  (c/emit-application
+   ctx
+   [:#content] (html/content forgot-password-html)
+   [:form#forgot-password-form] (html/do->
+                                 (html/set-attr :method "POST")
+                                 (html/set-attr :action "/forgot-password"))
+   [:div.forgot-password-panel]
+   (let [{:keys [email] :as account} (get-in ctx [:data :account])]
+          (html/transform-content
+           [:div#email] (l/maybe-error (get-in account [:errors :email]))
+           [:div#email :input] (html/set-attr :value email)))))
+
+(defresource forgot-password
+  :allowed-methods [:get :post]
+  :available-media-types ["text/html"]
+  :post! (fn [ctx]
+           (let [email (get-in ctx [:request :params :email])
+                 errors (reduce merge {}
+                                [(when-not (accounts/valid-email? email)
+                                   [:email "Invalid email"])])
+                 account {:email email}]
+             (if (seq errors)
+               {:account (merge account {:errors errors})}
+               (let [res (accounts/forgot-password (h/db ctx) email)]
+                 (if-let [errors (:errors res)]
+                   {:account (merge account
+                                    res)}
+                   (do
+                     (debug "reset url is: " (str "http://localhost:3000/reset-password/" (:reset_token res)))
+                     (let [emailer (get-in ctx [:request :emailer])]
+                       (debug "FInd emailer:" ctx)
+                       (email/send-email emailer email (str "http://localhost:3000/reset-password/" (:reset_token res))))
+                     {:account res}))))))
+  :post-redirect? (fn [ctx]
+                    (not (get-in ctx [:account :errors])))
+  :new? false ;; 201 created is useless here, want to redirect html flow
+  :respond-with-entity? true
+  :handle-see-other (fn [ctx]
+                      (h/location-flash "/forgot-password"
+                                        "Check your email for password reset instructions"))
+  :handle-ok (fn [ctx]
+               {:account (:account ctx)})
+  :as-response (l/as-template-response forgot-password-layout))
+
+(def reset-password-html (html/html-resource "templates/accounts/reset_password.html"))
+
+(defn reset-password-layout [ctx]
+  (c/emit-application
+   ctx
+   [:#content] (html/content reset-password-html)
+   [:form#reset-password-form] (html/do->
+                                 (html/set-attr :method "POST")
+                                 (html/set-attr :action
+                                                (str "/reset-password/" (get-in ctx [:request :params :reset_token]))))
+   [:div.reset-password-panel]
+   (let [{:keys [password password-repeat] :as account} (get-in ctx [:data :account])]
+          (html/transform-content
+           [:div#password] (l/maybe-error (get-in account [:errors :password]))
+           [:div#password-repeat] (l/maybe-error (get-in account [:errors :password-repeat]))))))
+
+(defresource reset-password
+  :allowed-methods [:get :post]
+  :available-media-types ["text/html"]
+  :post! (fn [ctx]
+           (let [{:keys [reset_token password password-repeat]} (get-in ctx [:request :params])
+                 errors (reduce merge {}
+                                [(when (zero? (count password))
+                                   [:password "Password can not be empty"])
+                                 (when (not= password password-repeat)
+                                   (let [msg "Passwords do not match"]
+                                     {:password msg
+                                      :password-repeat msg}))])
+                 account {:password password
+                          :password-repeat password-repeat}]
+             (if (seq errors)
+               {:account (merge account {:errors errors})}
+               (let [res (accounts/reset-password (h/db ctx) reset_token password)]
+                 (if-let [errors (:errors res)]
+                   {:account (merge account
+                                    res)}
+                   {:account res})))))
+  :post-redirect? (fn [ctx]
+                    (not (get-in ctx [:account :errors])))
+  :new? false ;; 201 created is useless here, want to redirect html flow
+  :respond-with-entity? true
+  :handle-see-other (fn [ctx]
+                      (h/location-flash "/login"
+                                        "Login with your new password"))
+  :handle-ok (fn [ctx]
+               {:account (:account ctx)})
+  :as-response (l/as-template-response reset-password-layout))
+
+
 (defroutes accounts-routes
   (ANY "/signup" _ signup)
   (ANY "/login" _ login)
-  (ANY "/logout" _ logout))
+  (ANY "/logout" _ logout)
+  (ANY "/forgot-password" _ forgot-password)
+  (ANY "/reset-password/:reset_token" _ reset-password))

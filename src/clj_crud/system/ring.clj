@@ -18,12 +18,19 @@
         (assoc :database database)
         handler)))
 
-(defrecord RingHandler [handler database]
+(defn wrap-emailer [handler emailer]
+  (fn [req]
+    (-> req
+        (assoc :emailer emailer)
+        handler)))
+
+(defrecord RingHandler [handler database emailer]
   component/Lifecycle
   (start [component]
          (info "Starting handler")
          (assoc component :app (-> handler
-                                   (wrap-database (:connection database)))))
+                                   (wrap-database (:connection database))
+                                   (wrap-emailer emailer))))
   (stop [component]
         (info "Stopping handler")
         component))
