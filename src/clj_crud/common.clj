@@ -14,7 +14,10 @@
                  (html/content flash))
      [:#logged-in] (when friend-identity
                      (html/transform-content
-                      [:#profile] (html/content (str "Identity: " friend-identity))))
+                      [:a.rel-profile] (html/do->
+                                        (html/content (str "Welcome, " (:current friend-identity)))
+                                        (html/set-attr :href (str "/profile/" (:current friend-identity))))
+                      [:a.rel-edit-profile] (html/set-attr :href (str "/profile/" (:current friend-identity) "/edit"))))
      [:#unlogged-in] (when-not friend-identity
                        identity)
      clauses)))

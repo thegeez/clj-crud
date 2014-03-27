@@ -8,16 +8,8 @@
             [liberator.representation :as lib-rep]
             [compojure.core :refer [defroutes ANY GET context]]
             [net.cgrand.enlive-html :as html]
-            [cemerick.friend :as friend]))
-
-(defn with-account-links [{:keys [slug] :as account}]
-  (assoc account :links {:self {:rel "self"
-                                :uri (str "/chains/" slug)}
-                         ;; :edit {:rel "edit"
-                         ;;        :uri (str "/accounts/" slug "/edit")}
-                         ;; :delete {:rel "delete"
-                         ;;          :uri (str "/accounts/" slug "/delete")}
-                         }))
+            [cemerick.friend :as friend]
+            [cemerick.friend.workflows :as workflows]))
 
 (def signup-html (html/html-resource "templates/accounts/signup.html"))
 
@@ -68,18 +60,17 @@
                  (if-let [errors (:errors res)]
                    {:account (merge create-account
                                     res)}
-                   {:account (with-account-links res)})))))
+                   {:account res})))))
   :post-redirect? (fn [ctx]
                     (not (get-in ctx [:account :errors])))
   :new? false ;; 201 created is useless here, want to redirect html flow
   :respond-with-entity? true
   :handle-see-other (fn [ctx]
-                      ;; maybe back to where we came from?
-                      
-                      ;; auto login here!!!!!!!
-
-                      (h/location-flash (get-in ctx [:account :links :self :uri])
-                                        "Account created"))
+                      (-> (h/location-flash (str "/profile/" (get-in ctx [:account :slug]))
+                                            "Account created")
+                          (friend/merge-authentication
+                           (workflows/make-auth ((accounts/lookup-friend-identity (h/db ctx))
+                                                 (get-in ctx [:account :name]))))))
   :handle-ok (fn [ctx]
                {:account (:account ctx)})
   :as-response (l/as-template-response signup-layout))
@@ -108,7 +99,9 @@
   :available-media-types ["text/html"]
   :as-response (fn [d ctx]
                  (if-let [identity (friend/identity (:request ctx))]
-                   {:headers {"Location" "/"}
+                   ;; succesful logins get redirected to /login, bring
+                   ;; user to his own page from here
+                   {:headers {"Location" (str "/profile/" (:current identity))}
                     :status 303}
                    ((l/as-template-response login-layout) d ctx))))
 
