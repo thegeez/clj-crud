@@ -9,6 +9,7 @@
 
 (defn location-flash [uri flash]
   {:headers {"Location" uri}
+   :status 303
    :flash flash})
 
 (defn get? [ctx]

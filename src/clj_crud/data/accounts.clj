@@ -40,7 +40,6 @@
 
 (defn get-account-by-reset-token [db reset_token]
   (when-let [account (first (jdbc/query db ["SELECT * FROM accounts WHERE reset_token = ?" reset_token]))]
-    (debug "Expire: " (:expire account) (now))
     (when (< (now) (:expire account))
       account)))
 
@@ -78,9 +77,7 @@
 (defn lookup-friend-identity [db]
   (fn lookup-friend-identity-username [username]
     "return {:username :password :roles} for username"
-    (debug "looking up identity for" username)
     (when-let [account (first (jdbc/query db ["SELECT * FROM accounts WHERE name = ?" username]))]
-      (debug "found account: " account)
       (assoc account
         :username username
         :roles #{(keyword (:slug account))}))))

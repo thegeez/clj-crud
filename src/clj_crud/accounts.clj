@@ -47,7 +47,6 @@
                                    (let [msg "Passwords do not match"]
                                      {:password msg
                                       :password-repeat msg}))])
-                 _ (debug "Params:" params "errors: " errors)
                  slug (accounts/slugify name)
                  create-account {:slug slug
                                  :name name
@@ -98,10 +97,10 @@
   :allowed-methods [:get]
   :available-media-types ["text/html"]
   :as-response (fn [d ctx]
-                 (if-let [identity (friend/identity (:request ctx))]
+                 (if-let [auth (friend/current-authentication (:request ctx))]
                    ;; succesful logins get redirected to /login, bring
                    ;; user to his own page from here
-                   {:headers {"Location" (str "/profile/" (:current identity))}
+                   {:headers {"Location" (str "/profile/" (:slug auth))}
                     :status 303}
                    ((l/as-template-response login-layout) d ctx))))
 
@@ -140,11 +139,8 @@
                  (if-let [errors (:errors res)]
                    {:account (merge account
                                     res)}
-                   (do
-                     (debug "reset url is: " (str "http://localhost:3000/reset-password/" (:reset_token res)))
-                     (let [emailer (get-in ctx [:request :emailer])]
-                       (debug "FInd emailer:" ctx)
-                       (email/send-email emailer email (str "http://localhost:3000/reset-password/" (:reset_token res))))
+                   (let [emailer (get-in ctx [:request :emailer])]
+                     (email/send-email emailer email (str (h/home-uri ctx) "/reset-password/" (:reset_token res)))
                      {:account res}))))))
   :post-redirect? (fn [ctx]
                     (not (get-in ctx [:account :errors])))
@@ -205,10 +201,35 @@
                {:account (:account ctx)})
   :as-response (l/as-template-response reset-password-layout))
 
+(defn profile-layout [ctx]
+  (c/emit-application
+   ctx
+   [:#content] (html/content "Welcome to a profile page for: " (:current (friend/identity (get ctx :request))))))
+
+(defresource profile
+  :allowed-methods [:get]
+  :available-media-types ["text/html"]
+  :authorized? (fn [ctx]
+                 (friend/identity (get ctx :request)))
+  :handle-unauthorized (fn [ctx]
+                         (h/location-flash "/login"
+                                           "Please login"))
+  :allowed? (fn [ctx]
+                 (let [slug (get-in ctx [:request :params :slug])]
+                   (friend/authorized? [(keyword slug)] (friend/identity (get ctx :request)))))
+  :handle-forbidden (fn [ctx]
+                      (h/location-flash "/login"
+                                        "Not allowed"))
+  :exists? (fn [ctx]
+             (let [slug (get-in ctx [:request :params :slug])]
+               (when-let [account (accounts/get-account (h/db ctx) slug)]
+                 {:account account})))
+  :as-response (l/as-template-response profile-layout))
 
 (defroutes accounts-routes
   (ANY "/signup" _ signup)
   (ANY "/login" _ login)
   (ANY "/logout" _ logout)
   (ANY "/forgot-password" _ forgot-password)
-  (ANY "/reset-password/:reset_token" _ reset-password))
+  (ANY "/reset-password/:reset_token" _ reset-password)
+  (ANY "/profile/:slug" _ profile))
