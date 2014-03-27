@@ -46,23 +46,6 @@
       (response/redirect (subs uri 0 (dec (count uri))))
       (handler req))))
 
-(defn wrap-form-request-method [handler]
-  ;; browser only do get and post, fake through post when a form/query
-  ;; has _method=put hidden input
-  (fn [req]
-    (let [rm (get-in req [:params :_method])]
-      (if-let [action (get {"put" :put
-                            "delete" :delete} rm)]
-        (let [res (handler (-> req
-                               (assoc :request-method action)
-                               (assoc :original-request-method rm)))]
-          (if (and (= 204 (:status res))
-                   (get-in res [:headers "Location"]))
-            ;; to enact redirects for put and delete fake them back to post 303's
-            (assoc res :status 303)
-            res))
-        (handler req)))))
-
 (defn wrap-accept-uri [handler]
   ;; when uri ends with .json / .edn then use that for accept header
   (fn [{:keys [uri] :as req}]
@@ -101,7 +84,6 @@
 
 (defn wrap-common [handler]
   (let [handler (-> handler
-                    wrap-form-request-method
                     ;; anti-forgery-token is set on response, for
                     ;; auto-templating we want it available through
                     ;; the request
