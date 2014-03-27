@@ -26,6 +26,7 @@
 (defn main-handler []
   (-> #'main-routes
       (friend/authenticate {:login-uri "/login"
+                            :default-landing-uri "/login"
                             :workflows [(fn [req]
                                           ((workflows/interactive-form
                                             :credential-fn (fn form-credential-fn [creds]
