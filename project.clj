@@ -7,14 +7,15 @@
                  ;; logging
                  [org.clojure/tools.logging "0.2.6"]
                  [org.slf4j/slf4j-log4j12 "1.6.6"]
-                 
+
                  ;; ring and webserver
                  [ring/ring-core "1.2.1"]
                  [ring/ring-jetty-adapter "1.2.1"]
-                 
+                 [ring-anti-forgery "0.3.0"]
+
                  ;; application structure
                  [com.stuartsierra/component "0.2.1"]
-                 
+
                  ;; request flow
                  [liberator "0.11.0"]
 
@@ -24,7 +25,7 @@
                  [enlive "1.1.5"]
                  ;; auth
                  [com.cemerick/friend "0.2.0"]
-                 
+
                  [org.clojure/data.json "0.2.3"]
 
                  ;; db

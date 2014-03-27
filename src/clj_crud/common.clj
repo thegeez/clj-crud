@@ -20,4 +20,10 @@
                       [:a.rel-edit-profile] (html/set-attr :href (str "/profile/" (:current friend-identity) "/edit"))))
      [:#unlogged-in] (when-not friend-identity
                        identity)
-     clauses)))
+     (concat clauses
+             [[[:form (html/nth-child 1)]]
+              (html/append [{:tag :input
+                             :attrs {:type "hidden"
+                                     :name "__anti-forgery-token"
+                                     :value (get-in ctx [:request :anti-forgery-token])}
+                             :content []}])]))))
