@@ -99,18 +99,10 @@
   :as-response (fn [d ctx]
                  (if-let [auth (friend/current-authentication (:request ctx))]
                    ;; succesful logins get redirected to /login
-                   (let [back-to (or (get-in ctx [:request :session :back-to])
-                                     (str "/profile/" (:slug auth)))]
-                     {:headers {"Location" back-to}
-                      :status 303
-                      :flash (get-in ctx [:request :flash])
-                      })
-                   (let [back-to (or (get-in ctx [:request :session :back-to])
-                                     (let [ref (get-in ctx [:request :headers "referrer"])]
-                                       (when (.startsWith (str ref "") (h/home-uri ctx))
-                                         ref)))]
-                     (-> ((l/as-template-response login-layout) d ctx)
-                         (cond-> back-to (assoc-in [:session :back-to] back-to)))))))
+                   {:headers {"Location" (str "/profile/" (:slug auth))}
+                    :status 303
+                    :flash (get-in ctx [:request :flash])}
+                   ((l/as-template-response login-layout) d ctx))))
 
 (defn logout [req]
   {:headers {"Location" "/login"}

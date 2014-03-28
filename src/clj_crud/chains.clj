@@ -22,4 +22,5 @@
       :handle-ok (str "Hello to chains page")))
 
 (defroutes chains-routes
+  (ANY "/" _ "Hello world!")
   (ANY "/chains/*" [] main-page))

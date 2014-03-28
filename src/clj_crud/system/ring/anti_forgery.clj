@@ -15,7 +15,6 @@
     (if (and (not (#{:head :get} (get req :request-method)))
              (let [session-token (get-in req [:session anti-forgery-key])
                    submitted-token (get-in req [:params (keyword anti-forgery-key)])]
-               (debug "AFT" session-token submitted-token req)
                (not (= session-token submitted-token))))
       {:status 403
        :headers {"Content-Type" "text/html"}

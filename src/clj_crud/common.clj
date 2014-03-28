@@ -7,18 +7,18 @@
 
 (defn emit-application [ctx & clauses]
   (assert (even? (count clauses)) "Need even number of clauses for enlive (forgot to pass ctx?)")
-  (let [friend-identity (friend/identity (:request ctx))]
+  (let [friend-auth (friend/current-authentication (:request ctx))]
     (apply
      l/emit application-html
      [:#flash] (when-let [flash (get-in ctx [:request :flash])]
                  (html/content flash))
-     [:#logged-in] (when friend-identity
+     [:#logged-in] (when friend-auth
                      (html/transform-content
                       [:a.rel-profile] (html/do->
-                                        (html/content (str "Welcome, " (:current friend-identity)))
-                                        (html/set-attr :href (str "/profile/" (:current friend-identity))))
-                      [:a.rel-edit-profile] (html/set-attr :href (str "/profile/" (:current friend-identity) "/edit"))))
-     [:#unlogged-in] (when-not friend-identity
+                                        (html/content (str "Welcome, " (:name friend-auth)))
+                                        (html/set-attr :href (str "/profile/" (:slug friend-auth))))
+                      [:a.rel-edit-profile] (html/set-attr :href (str "/profile/" (:slug friend-auth) "/edit"))))
+     [:#unlogged-in] (when-not friend-auth
                        identity)
      (concat clauses
              [[[:form (html/nth-child 1)]]

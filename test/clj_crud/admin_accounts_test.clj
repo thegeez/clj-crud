@@ -26,12 +26,10 @@
          res))
       (follow-redirect)
       ((fn [res]
-         (is (= "/admin" (get-in res [:request :uri])))
+         (is (= "/profile/user1" (get-in res [:request :uri])))
          res))
+      (visit "/admin")
       (follow-redirect)
-      ((fn [res]
-         (is (= "/login" (get-in res [:request :uri])))
-         res))
       (follow-redirect)
       (within [:div#flash]
               (has (text? "Not allowed")))

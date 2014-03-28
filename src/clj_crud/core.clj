@@ -32,8 +32,8 @@
            (let [res (handler req)]
              (if (contains? (get res :session) ::friend/identity)
                res
-               (if-let [identity (get-in req [:session ::friend/identity])]
-                 (assoc-in res [:session ::friend/identity] identity)
+               (if-let [auth (get-in req [:session ::friend/identity])]
+                 (assoc-in res [:session ::friend/identity] auth)
                  res)
                )))))
       (friend/authenticate {:login-uri "/login"

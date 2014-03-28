@@ -87,7 +87,7 @@
                     anti-forgery/wrap-anti-forgery
                     flash/wrap-flash
                     ;; todo put this in db / split flash / account-session store?
-                    (session/wrap-session {:cookie-name "site"
+                    (session/wrap-session {:cookie-name "clj-crud-site"
                                            :store (session-cookie/cookie-store)})
                     keyword-params/wrap-keyword-params
                     params/wrap-params
