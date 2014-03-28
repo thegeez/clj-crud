@@ -2,7 +2,8 @@
   (:require [clojure.tools.logging :refer [info debug spy]]
             [clj-crud.core :as core]
             [clj-crud.data.users :as users]
-            [com.stuartsierra.component :as component]))
+            [com.stuartsierra.component :as component]
+            [clojure.test :as test]))
 
 (def test-config {:db-connect-string "jdbc:derby:memory:test_chains;create=true"})
 
@@ -17,6 +18,10 @@
 
 (defn reuse-handler []
   (get-in (reuse-system) [:ring-handler :app]))
+
+(defn at? [res url]
+  (test/is (= url (get-in res [:request :uri])))
+  res)
 
 ;; hot patch kerodon for (press ...) to work on input as well as
 ;; button

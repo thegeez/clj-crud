@@ -53,5 +53,42 @@
          res))
       (within [:div#flash]
               (has (text? "Please login")))
+      (visit "/admin")
+      (follow-redirect)
+      ((fn [res]
+         (is (= "/login" (get-in res [:request :uri])))
+         res))
+      (within [:div#flash]
+              (has (text? "Please login")))
+      (fill-in "Name" "Dev Admin")
+      (fill-in "Password" "dev-admin")
+      (press "Login")
+      (follow-redirect)
+      (tc/at? "/login")
+      (follow-redirect)
+      ((fn [res]
+         (is (= "/admin" (get-in res [:request :uri])))
+         res))
+      (within [:ul.nav [:li html/last-of-type]]
+              (has (attr? [:a] :href "/admin"))
+              (has (text? "Admin")))
+      (visit "/profile/user1")
+      (follow-redirect)
+      (tc/at? "/login")
+      (follow-redirect)
+      (tc/at? "/admin")
+      (within [:#flash]
+              (has (text? "Not allowed")))
+      (visit "/logout")
+      (follow-redirect)
+      (tc/at? "/login")
+      (within [:#flash]
+              (has (text? "You are logged out")))
+      (visit "/admin")
+      (follow-redirect)
+      (tc/at? "/login")
+      (within [:#flash]
+              (has (text? "Please login")))
+
 )
 )
