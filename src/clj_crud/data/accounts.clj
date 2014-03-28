@@ -86,7 +86,7 @@
         (-> account
             (dissoc :admin)
             (assoc :username username
-                   :roles #{(keyword (:slug account))}))))))
+                   :roles roles))))))
 
 (defn forgot-password [db email]
   (let [account (get-account-by-email db email)]

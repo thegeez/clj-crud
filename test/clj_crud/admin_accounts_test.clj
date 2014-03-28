@@ -30,7 +30,28 @@
          res))
       (visit "/admin")
       (follow-redirect)
+      ((fn [res]
+         (is (= "/login" (get-in res [:request :uri])))
+         res))
       (follow-redirect)
+      ((fn [res]
+         (is (= "/profile/user1" (get-in res [:request :uri])))
+         res))
       (within [:div#flash]
               (has (text? "Not allowed")))
-))
+      (visit "/logout")
+      (follow-redirect)
+      ((fn [res]
+         (is (= "/login" (get-in res [:request :uri])))
+         res))
+      (within [:div#flash]
+              (has (text? "You are logged out")))
+      (visit "/profile/user1")
+      (follow-redirect)
+      ((fn [res]
+         (is (= "/login" (get-in res [:request :uri])))
+         res))
+      (within [:div#flash]
+              (has (text? "Please login")))
+)
+)

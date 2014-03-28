@@ -99,9 +99,12 @@
   :as-response (fn [d ctx]
                  (if-let [auth (friend/current-authentication (:request ctx))]
                    ;; succesful logins get redirected to /login
-                   {:headers {"Location" (str "/profile/" (:slug auth))}
-                    :status 303
-                    :flash (get-in ctx [:request :flash])}
+                   (let [go-to (if (contains? (:roles auth) :admin)
+                                 "/admin"
+                                 (str "/profile/" (:slug auth)))]
+                     {:headers {"Location" go-to}
+                      :status 303
+                      :flash (get-in ctx [:request :flash])})
                    ((l/as-template-response login-layout) d ctx))))
 
 (defn logout [req]
