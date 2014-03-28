@@ -6,10 +6,10 @@
             [clj-crud.system.server :as server]
             [clj-crud.system.email :as email]
             [clj-crud.accounts :as accounts]
+            [clj-crud.admin-accounts :as admin-accounts]
             [clj-crud.data.accounts :as accounts-data]
             [clj-crud.admin :as admin]
             [clj-crud.chains :as chains]
-            [clj-crud.data.users :as users]
             [clj-crud.tea :as tea]
             [compojure.core :as compojure]
             [cemerick.friend :as friend]
@@ -18,14 +18,24 @@
 
 (compojure/defroutes main-routes
   #_(compojure/ANY "/" _ "hello world")
+  admin-accounts/admin-accounts-routes
   accounts/accounts-routes
-  admin/admin-routes
+  #_admin/admin-routes
   chains/chains-routes
   tea/tea-routes
   )
 
 (defn main-handler []
   (-> #'main-routes
+      ((fn save-friend-session [handler]
+         (fn friend-session [req]
+           (let [res (handler req)]
+             (if (contains? (get res :session) ::friend/identity)
+               res
+               (if-let [identity (get-in req [:session ::friend/identity])]
+                 (assoc-in res [:session ::friend/identity] identity)
+                 res)
+               )))))
       (friend/authenticate {:login-uri "/login"
                             :default-landing-uri "/login"
                             :workflows [(fn [req]
@@ -34,6 +44,7 @@
                                                              (credentials/bcrypt-credential-fn
                                                               (accounts-data/lookup-friend-identity (:database req)) creds)))
                                            req))]})
+
       ring/wrap-common))
 
 (defn dev-handler []
@@ -52,10 +63,16 @@
   (start [component]
          (info "Insert test fixtures")
          (let [db (:connection database)]
-           (doseq [[slug name] [["user1" "User 1"]
-                                ["user2" "Second User"]]]
-             (users/create-user db {:slug slug
-                                    :name name})))
+           (accounts-data/create-account db {:name "Dev Admin"
+                                             :slug "dev-admin"
+                                             :password "dev-admin"
+                                             :email "dev@admin.example.com"
+                                             :admin? true})
+           (accounts-data/create-account db {:name "User 1"
+                                             :slug "user1"
+                                             :password "user1"
+                                             :email "user.one@example.com"
+                                             :admin? false}))
          component)
   (stop [component]
         (info "Not bothering to remove test fixtures")

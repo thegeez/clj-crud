@@ -67,4 +67,14 @@
                      DROP COLUMN reset_token"
                    "ALTER TABLE accounts
                      DROP COLUMN expire"))}]
+      [5 {:up (fn [db]
+                (jdbc/db-do-commands
+                 db
+                 "ALTER TABLE accounts
+                   ADD admin INT default 0"))
+          :down (fn [db]
+                  (jdbc/db-do-commands
+                   db
+                   "ALTER TABLE accounts
+                     DROP COLUMN admin"))}]
      ])

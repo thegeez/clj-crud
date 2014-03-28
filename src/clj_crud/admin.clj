@@ -275,8 +275,7 @@
 
 (defroutes admin-routes
   (context "/admin" _
-           (ANY "/" _ (fn [req]
-                         (admin-index req)))
+           (ANY "/" _ admin-index)
            (context "/users" _
                     (ANY "/" _ admin-users-list)
                     (ANY "/new" _ admin-users-new)

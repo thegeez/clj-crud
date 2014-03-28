@@ -60,11 +60,13 @@
       (if-let [exists-by-email (get-account-by-email db (:email account))] 
         {:errors {:email "Email already taken"}}
         (let [now (now)
+              admin? (if (get account :admin?) 1 0)
               {:keys [email slug name password]} account
               res (jdbc/insert! db :accounts {:slug slug
                                               :name name
                                               :email email
                                               :password (credentials/hash-bcrypt password)
+                                              :admin admin?
                                               :created_at now
                                               :updated_at now})]
           (when-not (contains? (first res) :1)
@@ -78,12 +80,16 @@
   (fn lookup-friend-identity-username [username]
     "return {:username :password :roles} for username"
     (when-let [account (first (jdbc/query db ["SELECT * FROM accounts WHERE name = ?" username]))]
-      (assoc account
-        :username username
-        :roles #{(keyword (:slug account))}))))
+      (let [admin? (= 1 (:admin account))
+            roles (-> #{(keyword (:slug account))}
+                      (cond-> admin? (conj :admin)))]
+        (-> account
+            (dissoc :admin)
+            (assoc :username username
+                   :roles #{(keyword (:slug account))}))))))
 
 (defn forgot-password [db email]
-  (let [account (get-account-by-email db email)] 
+  (let [account (get-account-by-email db email)]
     (if-not account
       {:errors {:email "Email is not known"}}
       (let [now (now)
