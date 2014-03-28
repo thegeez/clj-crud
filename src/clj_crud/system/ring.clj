@@ -3,7 +3,7 @@
             [com.stuartsierra.component :as component]
             [ring.middleware.params :as params]
             [ring.middleware.keyword-params :as keyword-params]
-            [ring.middleware.anti-forgery :as anti-forgery]
+            [clj-crud.system.ring.anti-forgery :as anti-forgery]
             [ring.middleware.session :as session]
             [ring.middleware.session.cookie :as session-cookie]
             [ring.middleware.flash :as flash]
@@ -84,16 +84,10 @@
 
 (defn wrap-common [handler]
   (let [handler (-> handler
-                    ;; anti-forgery-token is set on response, for
-                    ;; auto-templating we want it available through
-                    ;; the request
-                    ((fn set-anti-forgery-token-on-request [handler]
-                       (fn [req]
-                         (handler (assoc req :anti-forgery-token anti-forgery/*anti-forgery-token*)))))
                     anti-forgery/wrap-anti-forgery
                     flash/wrap-flash
                     ;; todo put this in db / split flash / account-session store?
-                    (session/wrap-session {:cookie-name "flash"
+                    (session/wrap-session {:cookie-name "site"
                                            :store (session-cookie/cookie-store)})
                     keyword-params/wrap-keyword-params
                     params/wrap-params

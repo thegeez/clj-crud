@@ -25,5 +25,5 @@
               (html/append [{:tag :input
                              :attrs {:type "hidden"
                                      :name "__anti-forgery-token"
-                                     :value (get-in ctx [:request :anti-forgery-token])}
+                                     :value (get-in ctx [:request :session "__anti-forgery-token"])}
                              :content []}])]))))

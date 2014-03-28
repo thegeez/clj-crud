@@ -98,16 +98,25 @@
   :available-media-types ["text/html"]
   :as-response (fn [d ctx]
                  (if-let [auth (friend/current-authentication (:request ctx))]
-                   ;; succesful logins get redirected to /login, bring
-                   ;; user to his own page from here
-                   {:headers {"Location" (str "/profile/" (:slug auth))}
-                    :status 303}
-                   ((l/as-template-response login-layout) d ctx))))
+                   ;; succesful logins get redirected to /login
+                   (let [back-to (or (get-in ctx [:request :session :back-to])
+                                     (str "/profile/" (:slug auth)))]
+                     {:headers {"Location" back-to}
+                      :status 303
+                      :flash (get-in ctx [:request :flash])
+                      })
+                   (let [back-to (or (get-in ctx [:request :session :back-to])
+                                     (let [ref (get-in ctx [:request :headers "referrer"])]
+                                       (when (.startsWith (str ref "") (h/home-uri ctx))
+                                         ref)))]
+                     (-> ((l/as-template-response login-layout) d ctx)
+                         (cond-> back-to (assoc-in [:session :back-to] back-to)))))))
 
 (defn logout [req]
-  (friend/logout* {:headers {"Location" "/login"}
-                   :flash "You are logged out"
-                   :status 303}))
+  {:headers {"Location" "/login"}
+   :flash "You are logged out"
+   :status 303
+   :session {::friend/identity nil}})
 
 (def forgot-password-html (html/html-resource "templates/accounts/forgot_password.html"))
 
