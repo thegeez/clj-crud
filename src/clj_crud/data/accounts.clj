@@ -117,3 +117,6 @@
         (when-not (= res [1])
           (throw (Exception.  "DB Update has not succeeded")))
         account))))
+
+(defn list-accounts [db]
+  (jdbc/query db ["SELECT * FROM accounts"]))

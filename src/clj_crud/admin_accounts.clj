@@ -12,23 +12,20 @@
             [cemerick.friend :as friend]
             [cemerick.friend.workflows :as workflows]))
 
-(def admin-users-list-html (html/html-resource "templates/admin/users.html"))
+(def admin-accounts-list-html (html/html-resource "templates/accounts/admin/accounts.html"))
 
-(defn admin-users-list-layout [ctx]
+(defn admin-accounts-list-layout [ctx]
   (c/emit-application
    ctx
-   [:#content] (html/content admin-users-list-html)
+   [:#content] (html/content admin-accounts-list-html)
    [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
-   [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
-                    (html/do->
-                     (html/content rel)
-                     (html/set-attr :href uri)))
-   [:a.rel-new-user] (html/set-attr :href (get-in ctx [:data :links :new :uri]))
-   [:table#users :tbody [:tr html/first-of-type]]
-   (html/clone-for [user (get-in ctx [:data :users])]
-                   [:tr] (let [{:keys [id slug name created_at updated_at]} user
-                               edit-link (get-in user [:links :edit :uri])
-                               self-link (get-in user [:links :self :uri])]
+   [:a.rel-accounts] (html/set-attr :href (get-in ctx [:data :links :accounts :uri]))
+   [:table#accounts :tbody [:tr html/first-of-type]]
+   (html/clone-for [account (get-in ctx [:data :accounts])]
+                   [:tr] (let [{:keys [id slug name created_at updated_at]} account
+                               _ (debug "account" account)
+                               edit-link (get-in account [:links :edit :uri])
+                               self-link (get-in account [:links :self :uri])]
                            (html/transform-content
                             [:td.id] (html/content (str id))
                             [:td.slug :a] (html/do->
@@ -42,7 +39,7 @@
                             [:td.edit :a] (html/set-attr :href edit-link)
                             )))))
 
-(defn with-user-links [{:keys [slug] :as user}]
+(defn with-account-links [{:keys [slug] :as user}]
   (assoc user :links {:self {:rel "self"
                              :uri (str "/profile/" slug)}
                       :edit {:rel "edit"
@@ -50,18 +47,8 @@
                       :delete {:rel "delete"
                                :uri (str "/profile/" slug "/delete")}}))
 
-(def admin-index-html (html/html-resource "templates/admin/index.html"))
-
-(defn admin-index-layout [ctx]
-  (c/emit-application
-   ctx
-   [:#content] (html/content admin-index-html)
-   [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
-   [:a.rel-accounts] (let [uri (get-in ctx [:data :links :accounts :uri])]
-                       (html/set-attr :href uri))))
-
-(defresource admin-index
-  :available-media-types ["text/html" "application/edn"]
+(defresource admin-accounts-list
+  :available-media-types ["text/html"]
   :authorized? (fn [ctx]
                  (spy (friend/identity (get ctx :request))))
   :handle-unauthorized (fn [ctx]
@@ -73,15 +60,45 @@
   :handle-forbidden (fn [ctx]
                       (h/location-flash "/login"
                                         "Not allowed"))
-  :handle-ok {:main "Hello admin world!"
-              :links {:home {:uri "/admin"
+  :handle-ok (fn [ctx]
+               {:accounts (map with-account-links (accounts/list-accounts (h/db ctx)))
+                :links {:home {:uri "/admin"
+                               :rel "home"}
+                        :accounts {:uri "/admin/accounts"
+                                   :rel "accounts"}}})
+  :as-response (l/as-template-response admin-accounts-list-layout))
+
+(def admin-index-html (html/html-resource "templates/accounts/admin/index.html"))
+
+(defn admin-index-layout [ctx]
+  (c/emit-application
+   ctx
+   [:#content] (html/content admin-index-html)
+   [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
+   [:a.rel-accounts] (let [uri (get-in ctx [:data :links :accounts :uri])]
+                       (html/set-attr :href uri))))
+
+(defresource admin-index
+  :available-media-types ["text/html"]
+  :authorized? (fn [ctx]
+                 (spy (friend/identity (get ctx :request))))
+  :handle-unauthorized (fn [ctx]
+                         (h/location-flash "/login"
+                                           "Please login"))
+  :allowed? (fn [ctx]
+                 (let [slug (get-in ctx [:request :params :slug])]
+                   (friend/authorized? [:admin] (friend/identity (get ctx :request)))))
+  :handle-forbidden (fn [ctx]
+                      (h/location-flash "/login"
+                                        "Not allowed"))
+  :handle-ok {:links {:home {:uri "/admin"
                              :rel "home"}
-                      :users {:uri "/admin/accounts"
-                              :rel "accounts"}}}
+                      :accounts {:uri "/admin/accounts"
+                                 :rel "accounts"}}}
   :as-response (l/as-template-response admin-index-layout))
 
 
 (defroutes admin-accounts-routes
   (context "/admin" _
            (ANY "/" _ admin-index)
-           #_(ANY "/accounts" _ admin-accounts-list)))
+           (ANY "/accounts" _ admin-accounts-list)))
