@@ -11,27 +11,6 @@
             [net.cgrand.enlive-html :as html]
             [cemerick.friend :as friend]))
 
-(def admin-index-html (html/html-resource "templates/admin/index.html"))
-
-(defn admin-index-layout [ctx]
-  (c/emit-application
-   ctx
-   [:#content] (html/content admin-index-html)
-   [:a.rel-home] (html/set-attr :href (get-in ctx [:data :links :home :uri]))
-   [:a.rel-users] (let [{:keys [rel uri] :as users} (get-in ctx [:data :links :users])]
-                    (html/do->
-                     (html/content rel)
-                     (html/set-attr :href uri)))))
-
-(defresource admin-index
-  :available-media-types ["text/html" "application/edn"]
-  :handle-ok {:main "Hello admin world!"
-              :links {:home {:uri "/admin"
-                             :rel "home"}
-                      :users {:uri "/admin/users"
-                              :rel "users"}}}
-  :as-response (l/as-template-response admin-index-layout))
-
 (def admin-users-list-html (html/html-resource "templates/admin/users.html"))
 
 (defn admin-users-list-layout [ctx]
@@ -275,7 +254,6 @@
 
 (defroutes admin-routes
   (context "/admin" _
-           (ANY "/" _ admin-index)
            (context "/users" _
                     (ANY "/" _ admin-users-list)
                     (ANY "/new" _ admin-users-new)
