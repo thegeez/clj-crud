@@ -22,10 +22,10 @@
    [:a.rel-accounts] (html/set-attr :href (get-in ctx [:data :links :accounts :uri]))
    [:table#accounts :tbody [:tr html/first-of-type]]
    (html/clone-for [account (get-in ctx [:data :accounts])]
-                   [:tr] (let [{:keys [id slug name created_at updated_at]} account
-                               _ (debug "account" account)
+                   [:tr] (let [{:keys [id slug name created_at updated_at admin]} account
                                edit-link (get-in account [:links :edit :uri])
-                               self-link (get-in account [:links :self :uri])]
+                               self-link (get-in account [:links :self :uri])
+                               ghost-link (get-in account [:links :ghost :uri])]
                            (html/transform-content
                             [:td.id] (html/content (str id))
                             [:td.slug :a] (html/do->
@@ -34,9 +34,9 @@
                             [:td.name :a] (html/do->
                                            (html/content name)
                                            (html/set-attr :href self-link))
-                            [:td.created_at] (html/content (str created_at))
-                            [:td.updated_at] (html/content (str updated_at))
-                            [:td.edit :a] (html/set-attr :href edit-link)
+                            [:td.created_at] (html/content (str (java.util.Date. created_at)))
+                            [:td.updated_at] (html/content (str (java.util.Date. updated_at)))
+                            [:td.admin] (html/content (if admin "Admin" "User"))
                             )))))
 
 (defn with-account-links [{:keys [slug] :as user}]
@@ -61,7 +61,12 @@
                       (h/location-flash "/login"
                                         "Not allowed"))
   :handle-ok (fn [ctx]
-               {:accounts (map with-account-links (accounts/list-accounts (h/db ctx)))
+               {:accounts (for [a (accounts/list-accounts (h/db ctx))]
+                            (-> a
+                                with-account-links
+                                (assoc-in [:links :ghost]
+                                          {:uri "profile/" (:slug a) "/ghost"
+                                           :rel "ghost"})))
                 :links {:home {:uri "/admin"
                                :rel "home"}
                         :accounts {:uri "/admin/accounts"

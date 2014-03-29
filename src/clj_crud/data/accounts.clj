@@ -119,4 +119,5 @@
         account))))
 
 (defn list-accounts [db]
-  (jdbc/query db ["SELECT * FROM accounts"]))
+  (for [a (jdbc/query db ["SELECT * FROM accounts"])]
+    (update-in a [:admin] #(if (= % 1) true nil))))
