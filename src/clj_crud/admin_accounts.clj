@@ -4,6 +4,7 @@
             [clj-crud.util.layout :as l]
             [clj-crud.util.helpers :as h]
             [clj-crud.common :as c]
+            [clj-crud.accounts :as accounts-resources]
             [clj-crud.data.accounts :as accounts]
             [liberator.core :refer [resource defresource]]
             [liberator.representation :as lib-rep]
@@ -25,7 +26,8 @@
                    [:tr] (let [{:keys [id slug name created_at updated_at admin]} account
                                edit-link (get-in account [:links :edit :uri])
                                self-link (get-in account [:links :self :uri])
-                               ghost-link (get-in account [:links :ghost :uri])]
+                               ghost-link (get-in account [:links :ghost :uri])
+                               ghost-form-name (str "ghost-form-" (:slug account))]
                            (html/transform-content
                             [:td.id] (html/content (str id))
                             [:td.slug :a] (html/do->
@@ -37,20 +39,17 @@
                             [:td.created_at] (html/content (str (java.util.Date. created_at)))
                             [:td.updated_at] (html/content (str (java.util.Date. updated_at)))
                             [:td.admin] (html/content (if admin "Admin" "User"))
+                            [:td.ghost :form] (html/do->
+                                               (html/set-attr :name ghost-form-name)
+                                               (html/set-attr :id ghost-form-name)
+                                               (html/set-attr :method "POST")
+                                               (html/set-attr :action ghost-link))
                             )))))
-
-(defn with-account-links [{:keys [slug] :as user}]
-  (assoc user :links {:self {:rel "self"
-                             :uri (str "/profile/" slug)}
-                      :edit {:rel "edit"
-                             :uri (str "/profile/" slug "/edit")}
-                      :delete {:rel "delete"
-                               :uri (str "/profile/" slug "/delete")}}))
 
 (defresource admin-accounts-list
   :available-media-types ["text/html"]
   :authorized? (fn [ctx]
-                 (spy (friend/identity (get ctx :request))))
+                 (friend/identity (get ctx :request)))
   :handle-unauthorized (fn [ctx]
                          (h/location-flash "/login"
                                            "Please login"))
@@ -61,12 +60,12 @@
                       (h/location-flash "/login"
                                         "Not allowed"))
   :handle-ok (fn [ctx]
-               {:accounts (for [a (accounts/list-accounts (h/db ctx))]
-                            (-> a
-                                with-account-links
+               {:accounts (for [account (accounts/list-accounts (h/db ctx))]
+                            (-> account
+                                accounts-resources/with-account-links
                                 (assoc-in [:links :ghost]
-                                          {:uri "profile/" (:slug a) "/ghost"
-                                           :rel "ghost"})))
+                                          {:rel "ghost"
+                                           :uri (str "/admin/accounts/ghost/" (:slug account) "/ghost")})))
                 :links {:home {:uri "/admin"
                                :rel "home"}
                         :accounts {:uri "/admin/accounts"
@@ -86,7 +85,7 @@
 (defresource admin-index
   :available-media-types ["text/html"]
   :authorized? (fn [ctx]
-                 (spy (friend/identity (get ctx :request))))
+                 (friend/identity (get ctx :request)))
   :handle-unauthorized (fn [ctx]
                          (h/location-flash "/login"
                                            "Please login"))

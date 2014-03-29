@@ -16,6 +16,7 @@
         <th>Created At</th>
         <th>Updated At</th>
         <th>Admin</th>
+        <th>Ghost</th>
       </tr>
     </thead>
     <tbody>
@@ -26,6 +27,12 @@
         <td class="created_at">Time</td>
         <td class="updated_at">Time</td>
         <td class="admin">Admin</td>
+        <td class="ghost">
+          <form name="ghost-form" id="ghost-form" class="form-inline"
+                role="form">
+            <button type="submit" class="btn btn-warning rel-ghost" onclick="javascript:return confirm('Are you sure?');">Ghost</button>
+          </form>
+        </td>
       </tr>
     </tbody>
   </table>
