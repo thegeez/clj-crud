@@ -12,6 +12,14 @@
             [cemerick.friend :as friend]
             [cemerick.friend.workflows :as workflows]))
 
+(defn with-account-links [{:keys [slug] :as account}]
+  (assoc account :links {:self {:rel "self"
+                                :uri (str "/profile/" slug)}
+                         :edit {:rel "edit"
+                                :uri (str "/profile/" slug "/edit")}
+                         :delete {:rel "delete"
+                                  :uri (str "/profile/" slug "/delete")}}))
+
 (def signup-html (html/html-resource "templates/accounts/signup.html"))
 
 (defn signup-layout [ctx]
@@ -205,10 +213,28 @@
                {:account (:account ctx)})
   :as-response (l/as-template-response reset-password-layout))
 
+(def profile-html (html/html-resource "templates/accounts/profile.html"))
+
 (defn profile-layout [ctx]
-  (c/emit-application
-   ctx
-   [:#content] (html/content "Welcome to a profile page for: " (:current (friend/identity (get ctx :request))))))
+  (let [account (spy (get-in ctx [:data :account]))]
+    (c/emit-application
+           ctx
+           [:#content] (html/content profile-html)
+           [:h3] (html/append (:name account))
+           [:a.rel-edit] (html/set-attr :href (get-in account [:links :edit :uri]))
+           [:form#delete-form] (html/do->
+                                (html/set-attr :method "POST")
+                                (html/set-attr :action (get-in account [:links :delete :uri])))
+           [:div.account-panel]
+           (let [{:keys [id slug name email created_at updated_at] :as account} (get-in ctx [:data :account])]
+             (html/transform-content
+              [:p#id] (html/content (str id))
+              [:p#slug] (html/content slug)
+              [:p#name] (html/content name)
+              [:p#email] (html/content email)
+              [:p#created_at] (html/content (str (java.util.Date. created_at)))
+              [:p#updated_at] (html/content (str (java.util.Date. updated_at)))
+              )))))
 
 (defresource profile
   :allowed-methods [:get]
@@ -227,7 +253,9 @@
   :exists? (fn [ctx]
              (let [slug (get-in ctx [:request :params :slug])]
                (when-let [account (accounts/get-account (h/db ctx) slug)]
-                 {:account account})))
+                 {:account (with-account-links account)})))
+  :handle-ok (fn [ctx]
+               {:account (:account ctx)})
   :as-response (l/as-template-response profile-layout))
 
 (defroutes accounts-routes
