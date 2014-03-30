@@ -27,6 +27,7 @@
                                edit-link (get-in account [:links :edit :uri])
                                self-link (get-in account [:links :self :uri])
                                ghost-link (get-in account [:links :ghost :uri])
+                               unghost-link (get-in account [:links :unghost :uri])
                                ghost-form-name (str "ghost-form-" (:slug account))]
                            (html/transform-content
                             [:td.id] (html/content (str id))
@@ -43,7 +44,12 @@
                                                (html/set-attr :name ghost-form-name)
                                                (html/set-attr :id ghost-form-name)
                                                (html/set-attr :method "POST")
-                                               (html/set-attr :action ghost-link))
+                                               (html/set-attr :action (if ghost-link
+                                                                        ghost-link
+                                                                        unghost-link)))
+                            [:td.ghost :form :button] (html/content (if ghost-link
+                                                                      "Ghost"
+                                                                      "Unghost"))
                             )))))
 
 (defresource admin-accounts-list
@@ -60,16 +66,23 @@
                       (h/location-flash "/login"
                                         "Not allowed"))
   :handle-ok (fn [ctx]
-               {:accounts (for [account (accounts/list-accounts (h/db ctx))]
-                            (-> account
-                                accounts-resources/with-account-links
-                                (assoc-in [:links :ghost]
-                                          {:rel "ghost"
-                                           :uri (str "/admin/accounts/ghost/" (:slug account) "/ghost")})))
-                :links {:home {:uri "/admin"
-                               :rel "home"}
-                        :accounts {:uri "/admin/accounts"
-                                   :rel "accounts"}}})
+               (let [auth (spy (friend/current-authentication (get ctx :request)))
+                     roles (:roles auth)]
+                 {:accounts (for [account (accounts/list-accounts (h/db ctx))]
+                              (let [ghosted (contains? roles (keyword (:slug account)))]
+                                (-> account
+                                    accounts-resources/with-account-links
+                                    (cond->
+                                     (not ghosted) (assoc-in [:links :ghost]
+                                                         {:rel "ghost"
+                                                          :uri (str "/admin/accounts/ghost/" (:slug account))})
+                                     ghosted (assoc-in [:links :unghost]
+                                                       {:rel "unghost"
+                                                        :uri (str "/admin/accounts/unghost/" (:slug account))})))))
+                        :links {:home {:uri "/admin"
+                                       :rel "home"}
+                                :accounts {:uri "/admin/accounts"
+                                           :rel "accounts"}}}))
   :as-response (l/as-template-response admin-accounts-list-layout))
 
 (def admin-index-html (html/html-resource "templates/accounts/admin/index.html"))
@@ -102,7 +115,70 @@
   :as-response (l/as-template-response admin-index-layout))
 
 
+(defresource admin-account-ghost
+  :available-media-types ["text/html"]
+  :allowed-methods [:post]
+  :authorized? (fn [ctx]
+                 (friend/identity (get ctx :request)))
+  :handle-unauthorized (fn [ctx]
+                         (h/location-flash "/login"
+                                           "Please login"))
+  :allowed? (fn [ctx]
+                 (let [slug (get-in ctx [:request :params :slug])]
+                   (friend/authorized? [:admin] (friend/identity (get ctx :request)))))
+  :exists? (fn [ctx]
+             (let [slug (get-in ctx [:request :params :slug])]
+               (when-let [account (accounts/get-account (h/db ctx) slug)]
+                 {:ghost account})))
+  :post! (fn [ctx]
+           (let [auth (friend/identity (get ctx :request))]
+             {:identity (update-in auth [:authentications (:current auth) :roles] conj (spy (keyword (:slug (:ghost ctx)))))}))
+  :post-redirect? true
+  :handle-see-other (fn [ctx]
+                      (merge
+                       {:session {::friend/identity (:identity ctx)}}
+                       (h/location-flash (str "/admin/accounts")
+                                         (str "Now ghosting " (get-in ctx [:ghost :name])))))
+  :as-response (l/as-template-response nil))
+
+(defresource admin-account-ghost
+  :available-media-types ["text/html"]
+  :allowed-methods [:post]
+  :authorized? (fn [ctx]
+                 (friend/identity (get ctx :request)))
+  :handle-unauthorized (fn [ctx]
+                         (h/location-flash "/login"
+                                           "Please login"))
+  :allowed? (fn [ctx]
+                 (let [slug (get-in ctx [:request :params :slug])]
+                   (friend/authorized? [:admin] (friend/identity (get ctx :request)))))
+  :exists? (fn [ctx]
+             (let [slug (get-in ctx [:request :params :slug])]
+               (when-let [account (accounts/get-account (h/db ctx) slug)]
+                 {:ghost account})))
+  :post! (fn [ctx]
+           (let [to-ghost (.startsWith (get-in ctx [:request :uri]) "/admin/accounts/ghost")
+                 auth (friend/identity (get ctx :request))
+                 ghost-role (keyword (:slug (:ghost ctx)))]
+             {:to-ghost to-ghost
+              :identity (update-in auth [:authentications (:current auth) :roles]
+                                   (if to-ghost
+                                     conj
+                                     disj) ghost-role)}))
+  :post-redirect? true
+  :handle-see-other (fn [ctx]
+                      (merge
+                       {:session {::friend/identity (:identity ctx)}}
+                       (h/location-flash (str "/admin/accounts")
+                                         (str (if (:to-ghost ctx)
+                                                "Now ghosting "
+                                                "Unghosted ")
+                                              (get-in ctx [:ghost :name])))))
+  :as-response (l/as-template-response nil))
+
 (defroutes admin-accounts-routes
   (context "/admin" _
            (ANY "/" _ admin-index)
-           (ANY "/accounts" _ admin-accounts-list)))
+           (ANY "/accounts" _ admin-accounts-list)
+           (ANY "/accounts/ghost/:slug" _ admin-account-ghost)
+           (ANY "/accounts/unghost/:slug" _ admin-account-ghost)))
