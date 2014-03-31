@@ -32,7 +32,7 @@
                  [postgresql/postgresql "8.4-702.jdbc4"]
                  ]
 
-  :aliases {"migrate" ["run" "-m" "clj-crud.main/migrate"]}
+  :aliases {"migrate" ["with-profile" "-dev" "run" "-m" "clj-crud.main/migrate"]}
 
   ;; doesn't get used when in :uberjar profile?
   :uberjar-name "clj-crud-prod-standalone.jar"
