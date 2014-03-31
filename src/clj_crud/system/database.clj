@@ -53,20 +53,23 @@
   ([conn] (migrate! conn (first (last migrations/migrations))))
   ([conn to-version]
      (let [current-version (current-db-version conn)
-           todo (if (< current-version to-version)
-                  (->> migrations/migrations
-                       (drop-while (fn [[migration-version migration]]
-                                     (<= migration-version current-version)))
-                       (take-while (fn [[migration-version migration]]
-                                     (<= migration-version to-version)))
-                       (map (juxt first (comp :up second))))
-                  (->> migrations/migrations
-                       reverse
-                       (drop-while (fn [[migration-version migration]]
-                                     (< current-version migration-version)))
-                       (take-while (fn [[migration-version migration]]
-                                     (<= to-version migration-version)))
-                       (map (juxt first (comp :down second)))))]
+           todo (cond
+                 (< current-version to-version)
+                 (->> migrations/migrations
+                      (drop-while (fn [[migration-version migration]]
+                                    (<= migration-version current-version)))
+                      (take-while (fn [[migration-version migration]]
+                                    (<= migration-version to-version)))
+                      (map (juxt first (comp :up second))))
+                 (> current-version to-version)
+                 (->> migrations/migrations
+                      reverse
+                      (drop-while (fn [[migration-version migration]]
+                                    (< current-version migration-version)))
+                      (take-while (fn [[migration-version migration]]
+                                    (<= to-version migration-version)))
+                      (map (juxt first (comp :down second))))
+                 :else nil)]
        (info "todo" current-version to-version todo)
        (doseq [[migration-version migration] todo]
          (debug "Run migration" migration-version)
