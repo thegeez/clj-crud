@@ -44,13 +44,12 @@
       account)))
 
 
-#_(defn update-account [db account]
-  (do (let [res (jdbc/update! db :accounts (assoc account
-                                             :updated_at (now))
-                              ["slug = ?" (:slug account)])]
-        (when-not (= res [1])
-          (throw (Exception.  "DB Update has not succeeded"))))
-      nil))
+(defn update-account [db account]
+  (let [res (jdbc/update! db :accounts (assoc account
+                                         :updated_at (now))
+                          ["slug = ?" (:slug account)])]
+    (when-not (= res [1])
+      (throw (Exception.  "DB Update has not succeeded")))))
 
 (defn create-account [db account]
   (let [exists-by-slug (get-account db (:slug account))]
@@ -121,3 +120,7 @@
 (defn list-accounts [db]
   (for [a (jdbc/query db ["SELECT * FROM accounts"])]
     (update-in a [:admin] #(if (= % 1) true nil))))
+
+(defn delete-account [db slug]
+  ;; never delete admin accounts
+  (jdbc/delete! db :accounts ["slug = ? AND admin = 0" slug]))

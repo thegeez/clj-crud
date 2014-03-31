@@ -12,9 +12,7 @@
   (-> (session (tc/reuse-handler))
       (visit "/profile/accountone")
       (follow-redirect)
-      ((fn [res]
-         (is (= "/login" (get-in res [:request :uri])))
-         res))
+      (tc/at? "/login")
       (within [:div#flash]
               (has (text? "Please login")))
       (fill-in "Name" "Account One")
@@ -37,30 +35,22 @@
       (fill-in "Password (repeat)" "a")
       (press "Sign Up")
       (follow-redirect)
-      ((fn [res]
-         (is (= "/profile/accountone" (get-in res [:request :uri])))
-         res))
+      (tc/at? "/profile/accountone")
       (within [:div#flash]
               (has (text? "Account created")))
       ;; login
       (follow "Logout")
       (follow-redirect)
-      ((fn [res]
-         (is (= "/login" (get-in res [:request :uri])))
-         res))
+      (tc/at? "/login")
       (within [:div#flash]
               (has (text? "You are logged out")))
       (visit "/profile/accountone")
       (follow-redirect)
-      ((fn [res]
-         (is (= "/login" (get-in res [:request :uri])))
-         res))
+      (tc/at? "/login")
       (within [:div#flash]
               (has (text? "Please login")))
       (follow "Forgot your password?")
-      ((fn [res]
-         (is (= "/forgot-password" (get-in res [:request :uri])))
-         res))
+      (tc/at? "/forgot-password")
       (fill-in "Email" "the@wrong.email.com")
       (press "Reset password")
       (within [:div#email :span.help-block]
@@ -70,7 +60,7 @@
       (follow-redirect)
       (within [:#flash]
               (has (text? "Check your email for password reset instructions")))
-      ((fn [res] 
+      ((fn [res]
          (let [{:keys [email content]} @email/testing-last-sent-email]
            (is (= email "one@account.example.com"))
            (visit res content))))
@@ -92,7 +82,77 @@
       (press "Login")
       (follow-redirect)
       (follow-redirect)
-      ((fn [res]
-         (is (= "/profile/accountone" (get-in res [:request :uri])))
-         res))
+      (tc/at? "/profile/accountone")
       ))
+
+
+(deftest edit-profile-flow
+  (-> (session (tc/reuse-handler))
+      (visit "/profile/user1/edit")
+      (follow-redirect)
+      (tc/at? "/login")
+      (fill-in "Name" "User 1")
+      (fill-in "Password" "user1")
+      (press "Login")
+      (follow-redirect)
+      (tc/at? "/login")
+      (follow-redirect)
+      (tc/at? "/profile/user1")
+      (has (attr? [:a.rel-edit] :href "http://localhost/profile/user1/edit"))
+      (follow [:a.rel-edit])
+      (tc/at? "/profile/user1/edit")
+      (fill-in "Name" "User One")
+      (press "Save Changes")
+      (follow-redirect)
+      (tc/at? "/profile/user1")
+      (within [:#flash]
+              (has (text? "Profile updated")))
+      (within [:p#name]
+              (has (text? "User One")))
+      (follow [:a.rel-edit])
+      (tc/at? "/profile/user1/edit")
+      (fill-in "Name" "User 1")
+      (press "Save Changes")
+      (follow-redirect)
+      (tc/at? "/profile/user1")
+      (within [:#flash]
+              (has (text? "Profile updated")))
+      (within [:p#name]
+              (has (text? "User 1")))
+      (follow "Logout")
+      ))
+
+
+(deftest delete-profile-flow
+  ;; todo peridot check on raw post to delete
+
+  (-> (session (tc/reuse-handler))
+      (visit "/profile/user1/edit")
+      (follow-redirect)
+      (tc/at? "/login")
+      (fill-in "Name" "User 1")
+      (fill-in "Password" "user1")
+      (press "Login")
+      (follow-redirect)
+      (tc/at? "/login")
+      (follow-redirect)
+      (tc/at? "/profile/user1")
+      (has (attr? [:form#delete-form] :action "http://localhost/profile/user1/delete"))
+      (press "Delete")
+      (follow-redirect)
+      (tc/at? "/")
+      (visit "/profile/user1")
+      (has (status? 404))
+      (visit "/signup")
+      (fill-in "Name" "User 1")
+      (fill-in "Email" "user.one@example.com")
+      (fill-in "Password" "user1")
+      (fill-in "Password (repeat)" "user1")
+      (press "Sign Up")
+      (follow-redirect)
+      (tc/at? "/profile/user1")
+      (within [:#flash]
+              (has (text? "Account created")))
+      ))
+
+

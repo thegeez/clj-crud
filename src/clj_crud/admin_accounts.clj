@@ -66,7 +66,7 @@
                       (h/location-flash "/login"
                                         "Not allowed"))
   :handle-ok (fn [ctx]
-               (let [auth (spy (friend/current-authentication (get ctx :request)))
+               (let [auth (friend/current-authentication (get ctx :request))
                      roles (:roles auth)]
                  {:accounts (for [account (accounts/list-accounts (h/db ctx))]
                               (let [ghosted (contains? roles (keyword (:slug account)))]
@@ -132,7 +132,7 @@
                  {:ghost account})))
   :post! (fn [ctx]
            (let [auth (friend/identity (get ctx :request))]
-             {:identity (update-in auth [:authentications (:current auth) :roles] conj (spy (keyword (:slug (:ghost ctx)))))}))
+             {:identity (update-in auth [:authentications (:current auth) :roles] conj (keyword (:slug (:ghost ctx))))}))
   :post-redirect? true
   :handle-see-other (fn [ctx]
                       (merge

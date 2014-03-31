@@ -102,9 +102,6 @@
       (visit "/admin/accounts")
       (within [:table#accounts :tbody [:tr (html/nth-of-type 2)] :td.ghost]
               (has (attr? [:form] :action "http://localhost/admin/accounts/ghost/user1"))
-              ((fn [res]
-                 (debug res)
-                 res))
               (press "Ghost"))
       (follow-redirect)
       (tc/at? "/admin/accounts")
@@ -136,3 +133,4 @@
               (within [:button]
                       (has (text? "Ghost"))))
 ))
+

@@ -216,7 +216,7 @@
 (def profile-html (html/html-resource "templates/accounts/profile.html"))
 
 (defn profile-layout [ctx]
-  (let [account (spy (get-in ctx [:data :account]))]
+  (let [account (get-in ctx [:data :account])]
     (c/emit-application
            ctx
            [:#content] (html/content profile-html)
@@ -236,8 +236,34 @@
               [:p#updated_at] (html/content (str (java.util.Date. updated_at)))
               )))))
 
+(def profile-edit-html (html/html-resource "templates/accounts/profile_edit.html"))
+
+(defn profile-edit-layout [ctx]
+  (let [{:keys [id slug name email created_at updated_at] :as account} (get-in ctx [:data :account])]
+    (c/emit-application
+     ctx
+     [:#content] (html/content profile-edit-html)
+     [:h3] (html/append name)
+     [:div.account-panel]
+     (let [edit-link (get-in account [:links :edit :uri])
+           self-link (get-in account [:links :self :uri])]
+       (html/transform-content
+        [:form] (html/do->
+                 (html/set-attr :method "POST")
+                 (html/set-attr :action edit-link))
+        [:p#id] (html/content (str id))
+        [:p#slug :a] (html/do->
+                      (html/content slug)
+                      (html/set-attr :href self-link))
+        [:div#name] (l/maybe-error (get-in account [:errors :name]))
+        [:div#name :input] (html/set-attr :value name)
+        [:p#email] (html/content email)
+        [:a.rel-button-cancel] (html/set-attr :href self-link)
+        )))))
+
+
 (defresource profile
-  :allowed-methods [:get]
+  :allowed-methods [:get :post]
   :available-media-types ["text/html"]
   :authorized? (fn [ctx]
                  (friend/identity (get ctx :request)))
@@ -254,9 +280,62 @@
              (let [slug (get-in ctx [:request :params :slug])]
                (when-let [account (accounts/get-account (h/db ctx) slug)]
                  {:account (with-account-links account)})))
+  :post! (fn [ctx]
+           (let [params (get-in ctx [:request :params])
+                 errors (reduce merge {}
+                                [(when-not (contains? params :name)
+                                   [:name "Must have name attr"])
+                                 (when (zero? (count (get params :name)))
+                                   [:name "Name can not be empty"])])
+                 account-update {:slug (:slug params)
+                                 :name (:name params)}]
+             (when-not (seq errors)
+               (accounts/update-account (h/db ctx) account-update))
+             {:user (merge account-update
+                           (when (seq errors)
+                             {:errors errors}))}))
+  :post-redirect? (fn [ctx]
+                    (not (get-in ctx [:account :errors])))
+  :handle-see-other (fn [ctx]
+                      (h/location-flash (get-in ctx [:account :links :self :uri])
+                                        "Profile updated"))
+  :new? false
+  :respond-with-entity? true
+
   :handle-ok (fn [ctx]
                {:account (:account ctx)})
-  :as-response (l/as-template-response profile-layout))
+  :as-response (l/as-template-response
+                (fn [ctx]
+                  (if (h/edit? ctx)
+                    (profile-edit-layout ctx)
+                    (profile-layout ctx)))))
+
+(defresource profile-delete
+  :allowed-methods [:post]
+  :available-media-types ["text/html"]
+  :authorized? (fn [ctx]
+                 (friend/identity (get ctx :request)))
+  :handle-unauthorized (fn [ctx]
+                         (h/location-flash "/login"
+                                           "Please login"))
+  :allowed? (fn [ctx]
+                 (let [slug (get-in ctx [:request :params :slug])]
+                   (friend/authorized? [(keyword slug)] (friend/identity (get ctx :request)))))
+  :handle-forbidden (fn [ctx]
+                      (h/location-flash "/login"
+                                        "Not allowed"))
+  :exists? (fn [ctx]
+             (let [slug (get-in ctx [:request :route-params :slug])]
+               (when-let [account (accounts/get-account (h/db ctx) slug)]
+                 {:account account})))
+  :post! (fn [ctx]
+           (let [slug (get-in ctx [:request :route-params :slug])]
+             (accounts/delete-account (h/db ctx) slug)))
+  :post-redirect? true
+  :handle-see-other (fn [ctx]
+                      (h/location-flash "/"
+                                        "User deleted"))
+  :as-response (l/as-template-response nil))
 
 (defroutes accounts-routes
   (ANY "/signup" _ signup)
@@ -264,4 +343,7 @@
   (ANY "/logout" _ logout)
   (ANY "/forgot-password" _ forgot-password)
   (ANY "/reset-password/:reset_token" _ reset-password)
-  (ANY "/profile/:slug" _ profile))
+  (context "/profile/:slug" _
+           (ANY "/" _ profile)
+           (ANY "/edit" _ profile)
+           (ANY "/delete" _ profile-delete)))

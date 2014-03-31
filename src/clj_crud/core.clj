@@ -23,6 +23,7 @@
   #_admin/admin-routes
   chains/chains-routes
   tea/tea-routes
+  (compojure/ANY "*" _ "Not found")
   )
 
 (defn main-handler []
