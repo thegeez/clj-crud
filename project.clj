@@ -11,7 +11,6 @@
                  ;; ring and webserver
                  [ring/ring-core "1.2.1"]
                  [ring/ring-jetty-adapter "1.2.1"]
-                 [ring-anti-forgery "0.3.0"]
 
                  ;; application structure
                  [com.stuartsierra/component "0.2.1"]
@@ -40,6 +39,6 @@
                                   [org.clojure/java.classpath "0.2.0"]
                                   [org.apache.derby/derby "10.8.1.2"]
                                   [kerodon "0.3.0"]]
-                   :main clj-crud.main}
+                   :main user}
              :uberjar {:main clj-crud.main
                        :aot [clj-crud.main]}})

@@ -1,7 +1,6 @@
 (ns clj-crud.test-core
   (:require [clojure.tools.logging :refer [info debug spy]]
             [clj-crud.core :as core]
-            [clj-crud.data.users :as users]
             [com.stuartsierra.component :as component]
             [clojure.test :as test]))
 

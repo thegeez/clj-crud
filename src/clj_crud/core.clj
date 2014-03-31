@@ -5,24 +5,19 @@
             [clj-crud.system.ring :as ring]
             [clj-crud.system.server :as server]
             [clj-crud.system.email :as email]
-            [clj-crud.accounts :as accounts]
             [clj-crud.admin-accounts :as admin-accounts]
+            [clj-crud.accounts :as accounts]
             [clj-crud.data.accounts :as accounts-data]
-            [clj-crud.admin :as admin]
             [clj-crud.chains :as chains]
-            [clj-crud.tea :as tea]
             [compojure.core :as compojure]
             [cemerick.friend :as friend]
             [cemerick.friend.workflows :as workflows]
             [cemerick.friend.credentials :as credentials]))
 
 (compojure/defroutes main-routes
-  #_(compojure/ANY "/" _ "hello world")
   admin-accounts/admin-accounts-routes
   accounts/accounts-routes
-  #_admin/admin-routes
   chains/chains-routes
-  tea/tea-routes
   (compojure/ANY "*" _ "Not found")
   )
 

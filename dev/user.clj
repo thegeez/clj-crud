@@ -17,7 +17,7 @@
     (doto (. logger (getAppender "stdout"))
       (.setWriter *out*))
     (alter-var-root #'clojure.test/*test-out* (constantly *out*))
-    (info "Logging to slime-repl clojure")))
+    (info "Logging to repl")))
 
 (def be bootstrap-emacs)
 
