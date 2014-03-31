@@ -3,7 +3,7 @@
             [com.stuartsierra.component :as component]
             [clj-crud.core :as core]
             [clojure.string :as string])
-  (:import [java.net.URI])
+  (:import [java.net URI])
   (:gen-class))
 
 (defn -main [& args]
