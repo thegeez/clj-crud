@@ -34,6 +34,7 @@
 
   ;; doesn't get used when in :uberjar profile?
   :uberjar-name "clj-crud-prod-standalone.jar"
+  :min-lein-version "2.0.0"
 
   :profiles {:dev {:source-paths ["dev"]
                    :resource-paths ["dev/resources"]

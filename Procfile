@@ -1,1 +1,1 @@
-web: java $JVM_OPTS -cp target/clj-crud-prod-standalone.jar clojure.main -m clj-crud.main $PORT $DATABASE_URL
+web: java $JVM_OPTS -cp target/clj-crud-prod-standalone.jar clj_crud.main $PORT $DATABASE_URL
