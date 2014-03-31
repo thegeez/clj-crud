@@ -25,7 +25,7 @@
 
 (defn init []
   (alter-var-root #'system
-    (constantly (app/crud-system app/dev-config))))
+    (constantly (app/dev-crud-system app/dev-config))))
 
 (defn start []
   (alter-var-root #'system component/start)

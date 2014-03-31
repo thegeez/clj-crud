@@ -78,7 +78,7 @@
   (map->DevDBFixtures {}))
 
 
-(defn crud-system [config-options]
+(defn dev-crud-system [config-options]
   (info "Hello world!")
   (let [{:keys [db-connect-string port]} config-options]
     (map->CrudSystem
@@ -100,18 +100,22 @@
                 {:handler :ring-handler})})))
 
 (def dev-config {:db-connect-string "jdbc:derby:memory:chains;create=true" :port 3000})
-(comment
-  ;; example repl session:
-  (def system (crud-system dev-config))
-  ;;=> #'examples/system
-  
-  (alter-var-root #'system component/start)
-  ;; Starting database
-  ;; Opening database connection
-  ;; Starting scheduler
-  ;; Starting ExampleComponent
-  ;; execute-query
-  ;;=> #examples.ExampleSystem{ ... }
-  
-  (alter-var-root #'system component/stop)
-  )
+
+(defn crud-system [config-options]
+  (info "Hello world, this is the production system!")
+  (let [{:keys [db-connect-string port]} config-options]
+    (map->CrudSystem
+      {:config-options config-options
+       :db (database/database db-connect-string)
+       :ring-handler (component/using
+                      (ring/ring-handler (dev-handler))
+                      {:database :db
+                       :emailer :emailer})
+       :emailer (email/log-emailer)
+       :server (component/using
+                (server/jetty port)
+                {:handler :ring-handler})})))
+
+(defn prod-config [port]
+  {:db-connect-string "jdbc:derby:memory:chains;create=true"
+   :port port})

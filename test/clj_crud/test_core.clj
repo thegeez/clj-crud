@@ -11,7 +11,7 @@
     (swap! s (fn [system]
                (if system
                  system
-                 (-> (core/crud-system test-config)
+                 (-> (core/dev-crud-system test-config)
                      (dissoc :server)
                      component/start))))))
 
