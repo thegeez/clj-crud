@@ -3,7 +3,9 @@
             [com.stuartsierra.component :as component]
             [clojure.java.jdbc :as jdbc]
             [clojure.string :as string]
-            [clj-crud.migrations :as migrations]))
+            [clj-crud.migrations :as migrations])
+  (:import [java.net URI]))
+
 ;; sanity check
 (let [ms migrations/migrations]
   (assert (every? (fn [m]
@@ -19,9 +21,17 @@
         (apply < (map first ms)))
    "Migrations should start at id 1 and be increasing"))
 
+(defn db-url-for-heroku [db-url]
+  (let [db-uri (URI. db-url)
+        host (.getHost db-uri)
+                             port (.getPort db-uri)
+        path (.getPath db-uri)
+        [user password] (string/split (.getUserInfo db-uri) #":")]
+    (str "jdbc:postgresql://" host ":" port path "?user=" user "&password=" password "&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory")))
+
 (defn current-db-version [conn]
   (or (try (-> (spy (jdbc/query conn ["SELECT * FROM migration_version"]))
-               first 
+               first
                :version)
            (catch Exception e
              (debug "Current-db-version fail: " e)
@@ -80,6 +90,21 @@
 
 (defn dev-migrator []
   (map->DevMigrator {}))
+
+(defrecord Migrator [database]
+  component/Lifecycle
+  (start [component]
+         (info "Migrate database up")
+         (let [conn (:connection database)]
+           (migrate! conn)
+           component))
+  (stop [component]
+        (info "Not migrating down" component)
+        component))
+
+(defn migrator []
+  (map->Migrator {}))
+
 
 (defrecord Database [db-connect-string]
   ;; Implement the Lifecycle protocol

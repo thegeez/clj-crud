@@ -119,3 +119,14 @@
 (defn production-config [port database-url]
   {:db-connect-string database-url
    :port port})
+
+
+(defn migration-system [config-options]
+  (info "Hello world, this is the migration system!")
+  (let [{:keys [db-connect-string]} config-options]
+    (map->CrudSystem
+      {:config-options config-options
+       :db (database/database db-connect-string)
+       :db-migrator (component/using
+                     (database/migrator)
+                     {:database :db})})))
