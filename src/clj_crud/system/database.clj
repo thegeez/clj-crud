@@ -95,9 +95,11 @@
                      :connection-uri db-connect-string}]
            ;; Return an updated version of the component with the
            ;; run-time state assoc'd in.
-           (try (jdbc/query conn ["SELECT *"])
+           (try (jdbc/query conn ["VALUES 1"]) ;; derbydb
                 (catch Exception e
-                  (debug "DB connection failed:" e (with-out-str (.printStackTrace e)))))
+                  (try (jdbc/query conn ["SELECT NOW()"]) ;; postgres
+                       (catch Exception e
+                         (debug "DB connection failed:" e (with-out-str (.printStackTrace e)))))))
            (assoc component :connection conn)))
 
   (stop [component]
