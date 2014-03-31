@@ -124,7 +124,13 @@
 
 
 (deftest delete-profile-flow
-  ;; todo peridot check on raw post to delete
+  (let [response (-> (p/session (tc/reuse-handler))
+                     (p/header "Accept" "text/html")
+                     (p/request "/profile/user1/delete"
+                                :request-method :post)
+                     :response)]
+    (is (= 303 (:status response)))
+    (is (= "/login" (get-in response [:headers "Location"]))))
 
   (-> (session (tc/reuse-handler))
       (visit "/profile/user1/edit")
