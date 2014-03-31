@@ -11,7 +11,7 @@
         database-url (let [db-url (second args)]
                        (assert (.startsWith db-url "postgres:")
                                (str "Something is wrong with the database argument: " (second args)))
-                       (.replace db-url "postgres:" "jdbc:postgresql:"))
+                       db-url)
         system (core/crud-system (core/production-config port database-url))]
     (component/start system)
     (.addShutdownHook (Runtime/getRuntime)
