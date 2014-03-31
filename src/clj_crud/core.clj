@@ -116,6 +116,6 @@
                 (server/jetty port)
                 {:handler :ring-handler})})))
 
-(defn prod-config [port]
-  {:db-connect-string "jdbc:derby:memory:chains;create=true"
+(defn production-config [port database-url]
+  {:db-connect-string database-url
    :port port})

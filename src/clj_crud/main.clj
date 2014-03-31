@@ -5,8 +5,14 @@
   (:gen-class))
 
 (defn -main [& args]
-  (info "Running main")
-  (let [system (core/crud-system core/dev-config)]
+  (info "Running main with args: " args)
+  (let [port (Long/parseLong (first args))
+        _ (assert (pos? port) (str "Something is wrong with the port argument: " (first args)))
+        database-url (let [db-url (second args)]
+                       (assert (.startsWith db-url "postgres:")
+                               (str "Something is wrong with the database argument: " (second args)))
+                       (.replace db-url "postgres:" "jdbc:postgresql:"))
+        system (core/crud-system (core/production-config port database-url))]
     (component/start system)
     (.addShutdownHook (Runtime/getRuntime)
                       (Thread. (fn []

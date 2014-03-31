@@ -32,6 +32,9 @@
                  [postgresql/postgresql "8.4-702.jdbc4"]
                  ]
 
+  ;; doesn't get used when in :uberjar profile?
+  :uberjar-name "clj-crud-prod-standalone.jar"
+
   :profiles {:dev {:source-paths ["dev"]
                    :resource-paths ["dev/resources"]
                    :dependencies [[ring/ring-devel "1.2.1"]
