@@ -12,12 +12,13 @@
      l/emit application-html
      [:#flash] (when-let [flash (get-in ctx [:request :flash])]
                  (html/content flash))
-     [:ul :li] (when (contains? (:roles friend-auth) :admin)
+     [:ul :li] (if (contains? (:roles friend-auth) :admin)
                  (html/after [{:tag :li
                                :attrs nil
                                :content [{:tag :a
                                           :attrs {:href "/admin"}
-                                          :content ["Admin"]}]}]))
+                                          :content ["Admin"]}]}])
+                 identity)
      [:#logged-in] (when friend-auth
                      (html/transform-content
                       [:a.rel-profile] (html/do->
