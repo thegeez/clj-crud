@@ -64,7 +64,7 @@
                  (->> migrations/migrations
                       reverse
                       (drop-while (fn [[migration-version migration]]
-                                    (<= current-version migration-version)))
+                                    (< current-version migration-version)))
                       (take-while (fn [[migration-version migration]]
                                     (< to-version migration-version)))
                       (map (juxt first (comp :down second))))
