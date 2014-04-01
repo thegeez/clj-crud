@@ -108,7 +108,7 @@
       {:config-options config-options
        :db (database/database db-connect-string)
        :ring-handler (component/using
-                      (ring/ring-handler (dev-handler))
+                      (ring/ring-handler (main-handler))
                       {:database :db
                        :emailer :emailer})
        :emailer (email/log-emailer)
