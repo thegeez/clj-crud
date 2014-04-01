@@ -72,8 +72,7 @@
                  db
                  "ALTER TABLE accounts
                    ADD admin INT default 0"))
-          :down (fn [db] nil)
-          #_(fn [db]
+          :down (fn [db]
                   (jdbc/db-do-commands
                    db
                    "ALTER TABLE accounts
