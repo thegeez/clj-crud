@@ -45,8 +45,7 @@
        ;; might fail with the latest down migration that drops :migration_version
        (catch Exception e
          (let [msg (string/lower-case (.getMessage e))]
-           (when-not (and (.contains msg "migration_version")
-                          (.contains msg "does not exist"))
+           (when-not (.contains msg "migration_version")
              (throw e))))))
 
 (defn migrate!
