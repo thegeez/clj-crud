@@ -3,8 +3,6 @@
 Simple crud app in Clojure
 
 # Todo
-- Remove all scratch stuff
-- Run on Heroku
 - Show password reset link in html when using debug emailer for demo
 - Show demo credentials on login page
 - Default to ssl on Heroku
