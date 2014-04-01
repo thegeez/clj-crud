@@ -64,9 +64,9 @@
                  (->> migrations/migrations
                       reverse
                       (drop-while (fn [[migration-version migration]]
-                                    (< current-version migration-version)))
+                                    (<= current-version migration-version)))
                       (take-while (fn [[migration-version migration]]
-                                    (<= to-version migration-version)))
+                                    (< to-version migration-version)))
                       (map (juxt first (comp :down second))))
                  :else nil)]
        (info "todo" current-version to-version todo)
@@ -76,7 +76,8 @@
               (update-current-version conn migration-version)
               (catch Exception e
                 (error "Migration " migration-version " failed: " e (with-out-str (.printStackTrace e)))
-                (throw e)))))))
+                (throw e))))
+       (update-current-version conn to-version))))
 
 (defrecord DevMigrator [database]
   component/Lifecycle
