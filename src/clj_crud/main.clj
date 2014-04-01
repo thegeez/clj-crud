@@ -23,7 +23,8 @@
 
 (defn migrate [& args]
   (let [database-url (System/getenv "DATABASE_URL")
-        to-version (first args)]
+        to-version (try (Long/parseLong (first args))
+                        (catch Exception _ nil))]
     (assert (and database-url
                  (.startsWith database-url "postgres:")) "DATABASE_URL is required")
     (let [db-url (database/db-url-for-heroku database-url)]
