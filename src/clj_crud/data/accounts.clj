@@ -68,6 +68,7 @@
                                               :admin admin?
                                               :created_at now
                                               :updated_at now})]
+          (debug "Database res: " res)
           (when-not (contains? (first res) :1)
             (throw (Exception.  "DB Create has not succeeded")))
           (get-account db (:slug account)))))))
