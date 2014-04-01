@@ -63,12 +63,7 @@
                                              :slug "dev-admin"
                                              :password "dev-admin"
                                              :email "dev@admin.example.com"
-                                             :admin? true})
-           (accounts-data/create-account db {:name "User 1"
-                                             :slug "user1"
-                                             :password "user1"
-                                             :email "user.one@example.com"
-                                             :admin? false}))
+                                             :admin? true}))
          component)
   (stop [component]
         (info "Not bothering to remove test fixtures")

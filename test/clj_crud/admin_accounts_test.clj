@@ -90,7 +90,7 @@
       (follow-redirect)
       (tc/at? "/admin")
       (visit "/admin/accounts")
-      (within [:table#accounts :tbody [:tr (html/nth-of-type 2)] :td.name]
+      (within [:table#accounts :tbody :tr [:td.name (html/has [:a (html/text-pred #(= "User 1" %))])]]
               (has (attr? [:a] :href "http://localhost/profile/user1")))
       (visit "/profile/user1")
       (follow-redirect)
@@ -100,22 +100,25 @@
       (within [:#flash]
               (has (text? "Not allowed")))
       (visit "/admin/accounts")
-      (within [:table#accounts :tbody [:tr (html/nth-of-type 2)] :td.ghost]
-              (has (attr? [:form] :action "http://localhost/admin/accounts/ghost/user1"))
-              (press "Ghost"))
+      (within [:table#accounts :tbody [:tr (html/has [:td.name :a (html/text-pred #(= "User 1" %))])]]
+              (within [:td.ghost]
+                      (has (attr? [:form] :action "http://localhost/admin/accounts/ghost/user1"))
+                      (press "Ghost")))
       (follow-redirect)
       (tc/at? "/admin/accounts")
       (within [:#flash]
               (has (text? "Now ghosting User 1")))
-      (within [:table#accounts :tbody [:tr (html/nth-of-type 2)] :td.ghost]
-              (has (attr? [:form] :action "http://localhost/admin/accounts/unghost/user1"))
-              (within [:button]
-                      (has (text? "Unghost"))))
+      (within [:table#accounts :tbody [:tr (html/has [:td.name :a (html/text-pred #(= "User 1" %))])]]
+              (within [:td.ghost]
+                      (has (attr? [:form] :action "http://localhost/admin/accounts/unghost/user1"))
+                      (within [:button]
+                              (has (text? "Unghost")))))
       (visit "/profile/user1")
       (tc/at? "/profile/user1")
       (visit "/admin/accounts")
-      (within [:table#accounts :tbody [:tr (html/nth-of-type 2)] :td.ghost]
-              (press "Unghost"))
+      (within [:table#accounts :tbody [:tr (html/has [:td.name :a (html/text-pred #(= "User 1" %))])]]
+              (within [:td.ghost]
+                      (press "Unghost")))
       (follow-redirect)
       (tc/at? "/admin/accounts")
       (within [:#flash]
@@ -128,9 +131,10 @@
       (within [:#flash]
               (has (text? "Not allowed")))
       (visit "/admin/accounts")
-      (within [:table#accounts :tbody [:tr (html/nth-of-type 2)] :td.ghost]
-              (has (attr? [:form] :action "http://localhost/admin/accounts/ghost/user1"))
-              (within [:button]
-                      (has (text? "Ghost"))))
+      (within [:table#accounts :tbody [:tr (html/has [:td.name :a (html/text-pred #(= "User 1" %))])]]
+              (within [:td.ghost]
+                      (has (attr? [:form] :action "http://localhost/admin/accounts/ghost/user1"))
+                      (within [:button]
+                              (has (text? "Ghost")))))
 ))
 
