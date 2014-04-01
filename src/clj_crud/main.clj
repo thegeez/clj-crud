@@ -22,10 +22,12 @@
                                  (component/stop system))))))
 
 (defn migrate [& args]
-  (let [database-url (System/getenv "DATABASE_URL")]
+  (let [database-url (System/getenv "DATABASE_URL")
+        to-version (first args)]
     (assert (and database-url
                  (.startsWith database-url "postgres:")) "DATABASE_URL is required")
     (let [db-url (database/db-url-for-heroku database-url)]
-      (-> (core/migration-system {:db-connect-string db-url})
+      (-> (core/migration-system {:db-connect-string db-url
+                                  :migrate-to-version to-version})
           component/start
           component/stop))))

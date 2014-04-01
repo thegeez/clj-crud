@@ -123,10 +123,10 @@
 
 (defn migration-system [config-options]
   (info "Hello world, this is the migration system!")
-  (let [{:keys [db-connect-string]} config-options]
+  (let [{:keys [db-connect-string migrate-to-version]} config-options]
     (map->CrudSystem
       {:config-options config-options
        :db (database/database db-connect-string)
        :db-migrator (component/using
-                     (database/migrator)
+                     (database/migrator migrate-to-version)
                      {:database :db})})))

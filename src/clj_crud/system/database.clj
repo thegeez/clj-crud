@@ -57,7 +57,7 @@
                  (< current-version to-version)
                  (->> migrations/migrations
                       (drop-while (fn [[migration-version migration]]
-                                    (<= migration-version current-version)))
+                                    (< migration-version current-version)))
                       (take-while (fn [[migration-version migration]]
                                     (<= migration-version to-version)))
                       (map (juxt first (comp :up second))))
@@ -94,19 +94,21 @@
 (defn dev-migrator []
   (map->DevMigrator {}))
 
-(defrecord Migrator [database]
+(defrecord Migrator [database to-version]
   component/Lifecycle
   (start [component]
-         (info "Migrate database up")
+         (info "Migrate database up to version" to-version)
          (let [conn (:connection database)]
-           (migrate! conn)
+           (if to-version
+             (migrate! conn to-version)
+             (migrate! conn))
            component))
   (stop [component]
         (info "Not migrating down" component)
         component))
 
-(defn migrator []
-  (map->Migrator {}))
+(defn migrator [migrate-to-version]
+  (map->Migrator {:to-version migrate-to-version}))
 
 
 (defrecord Database [db-connect-string]
