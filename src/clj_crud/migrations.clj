@@ -77,4 +77,26 @@
                    db
                    "ALTER TABLE accounts
                      DROP COLUMN admin"))}]
+      [6 {:up (fn [db]
+                (let [now (.getTime (java.util.Date.))]
+                  (jdbc/insert! db :accounts {:slug "admin"
+                                              :name "Admin"
+                                              :email "admin@example.com"
+                                              :password "$2a$10$ym/vgVf41AThHInFYij1d.f0DPkM9FMS.TautrjEL/jPabb/kvLg."
+                                              :admin 1
+                                              :created_at now
+                                              :updated_at now})))
+          :down (fn [db]
+                    (jdbc/delete! db :accounts ["slug = ?" "admin"]))}]
+      [7 {:up (fn [db]
+                (let [now (.getTime (java.util.Date.))]
+                  (jdbc/insert! db :accounts {:slug "user1"
+                                              :name "User 1"
+                                              :email "user.1@example.com"
+                                              :password "$2a$10$phn36rpqB4P8.OrJjKhDOeEuqDf6fnSGn0UpYeZb.8sHnkM9YSJFS"
+                                              :admin 0
+                                              :created_at now
+                                              :updated_at now})))
+          :down (fn [db]
+                    (jdbc/delete! db :accounts ["slug = ?" "user1"]))}]
      ])
