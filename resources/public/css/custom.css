@@ -4,3 +4,15 @@ body {
 .starter-template {
   padding: 40px 15px;
 }
+
+.navbar-inverse {
+  background-color: rgba(51, 21, 21, 0.2);
+}
+
+.navbar-inverse .navbar-brand {
+    color: #000;
+}
+
+.navbar-inverse a.rel-profile {
+    color: #000;
+}

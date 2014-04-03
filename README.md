@@ -8,6 +8,9 @@ Simple crud app in Clojure
 - Default to ssl on Heroku
 - Add react/cljs frontend
 - Replace compojure with bidi
+- look into jdbc entities
+- use :base with liberator
+- secure headers etc from clojure.web/with-security
 
 ## About
 

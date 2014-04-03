@@ -3,7 +3,6 @@
             [clj-crud.util.layout :as l]
             [clj-crud.common :as c]
             [liberator.core :refer [resource defresource]]
-            [liberator.representation :refer [as-response] :as lib-rep]
             [compojure.core :refer [defroutes ANY GET]]
             [net.cgrand.enlive-html :as html]
             [cemerick.friend :as friend]))

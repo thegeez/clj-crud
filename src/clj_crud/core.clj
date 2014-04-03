@@ -9,6 +9,7 @@
             [clj-crud.accounts :as accounts]
             [clj-crud.data.accounts :as accounts-data]
             [clj-crud.chains :as chains]
+            [clj-crud.todos :as todos]
             [compojure.core :as compojure]
             [cemerick.friend :as friend]
             [cemerick.friend.workflows :as workflows]
@@ -18,6 +19,7 @@
   admin-accounts/admin-accounts-routes
   accounts/accounts-routes
   chains/chains-routes
+  todos/todos-routes
   (compojure/ANY "*" _ "Not found")
   )
 
