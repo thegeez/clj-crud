@@ -86,7 +86,8 @@
                      {:database :db})
        :db-fixtures (component/using
                      (dev-db-fixtures)
-                     {:database :db})
+                     {:database :db
+                      :db-migrator :db-migrator})
        :ring-handler (component/using
                       (ring/ring-handler (dev-handler))
                       {:database :db
