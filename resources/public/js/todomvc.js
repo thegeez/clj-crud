@@ -1,0 +1,18 @@
+goog.addDependency("base.js", ['goog'], []);
+goog.addDependency("../cljs/core.js", ['cljs.core'], ['goog.string', 'goog.array', 'goog.object', 'goog.string.StringBuffer']);
+goog.addDependency("../todomvc/transact.js", ['todomvc.transact'], ['cljs.core']);
+goog.addDependency("../cljs/core/async/impl/protocols.js", ['cljs.core.async.impl.protocols'], ['cljs.core']);
+goog.addDependency("../cljs/core/async/impl/buffers.js", ['cljs.core.async.impl.buffers'], ['cljs.core', 'cljs.core.async.impl.protocols']);
+goog.addDependency("../cljs/core/async/impl/dispatch.js", ['cljs.core.async.impl.dispatch'], ['cljs.core.async.impl.buffers', 'cljs.core']);
+goog.addDependency("../cljs/core/async/impl/ioc_helpers.js", ['cljs.core.async.impl.ioc_helpers'], ['cljs.core', 'cljs.core.async.impl.protocols']);
+goog.addDependency("../cljs/core/async/impl/channels.js", ['cljs.core.async.impl.channels'], ['cljs.core.async.impl.buffers', 'cljs.core', 'cljs.core.async.impl.dispatch', 'cljs.core.async.impl.protocols']);
+goog.addDependency("../cljs/core/async/impl/timers.js", ['cljs.core.async.impl.timers'], ['cljs.core', 'cljs.core.async.impl.channels', 'cljs.core.async.impl.dispatch', 'cljs.core.async.impl.protocols']);
+goog.addDependency("../cljs/core/async.js", ['cljs.core.async'], ['cljs.core.async.impl.ioc_helpers', 'cljs.core.async.impl.buffers', 'cljs.core', 'cljs.core.async.impl.channels', 'cljs.core.async.impl.dispatch', 'cljs.core.async.impl.protocols', 'cljs.core.async.impl.timers']);
+goog.addDependency("../clojure/string.js", ['clojure.string'], ['cljs.core', 'goog.string', 'goog.string.StringBuffer']);
+goog.addDependency("../cljs/reader.js", ['cljs.reader'], ['cljs.core', 'goog.string']);
+goog.addDependency("../ajax/core.js", ['ajax.core'], ['goog.json.Serializer', 'goog.net.XhrManager', 'goog.Uri.QueryData', 'cljs.core', 'goog.net.EventType', 'goog.structs', 'clojure.string', 'cljs.reader', 'goog.net.XhrIo', 'goog.events', 'goog.Uri']);
+goog.addDependency("../quiescent.js", ['quiescent'], ['cljs.core']);
+goog.addDependency("../quiescent/dom.js", ['quiescent.dom'], ['cljs.core', 'quiescent']);
+goog.addDependency("../todomvc/render.js", ['todomvc.render'], ['cljs.core', 'quiescent.dom', 'quiescent', 'cljs.core.async']);
+goog.addDependency("../todomvc/services.js", ['todomvc.services'], ['cljs.core', 'ajax.core', 'cljs.core.async']);
+goog.addDependency("../todomvc/application.js", ['todomvc.application'], ['cljs.core', 'todomvc.render', 'todomvc.transact', 'cljs.core.async', 'goog.events', 'todomvc.services']);
