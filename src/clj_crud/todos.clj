@@ -36,7 +36,6 @@
                (when-let [account (accounts/get-account (h/db ctx) slug)]
                  {:account account})))
   :handle-ok (fn [ctx]
-               (debug "hello here" (:account ctx))
                {:account (:account ctx)})
   :as-response (l/as-template-response todos-page-layout))
 

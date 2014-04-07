@@ -107,18 +107,24 @@
 
 (q/defcomponent App
   "The root of the application"
-  [{:keys [all-done? current-filter items]} channel]
+  [{:keys [all-done? current-filter items error]} channel]
   (d/div {}
-         (Header nil channel)
-         (d/section {:id "main"}
-                    (d/input {:id "toggle-all"
-                              :type "checkbox"
-                              :checked all-done?
-                              :onChange #(put! channel [:toggle-all])})
-                    (d/label {:htmlFor "toggle-all"}
-                             "Mark all as complete")
-                    (TodoList [current-filter items] channel))
-         (Footer [current-filter items] channel)))
+         (when error
+           (d/div {:id "todo-error"
+                   :className "alert alert-info"}
+                  "Error occured, reloading page recommended."))
+         (d/section {:id "todoapp"}
+                    (d/div {}
+                           (Header nil channel)
+                           (d/section {:id "main"}
+                                      (d/input {:id "toggle-all"
+                                                :type "checkbox"
+                                                :checked all-done?
+                                                :onChange #(put! channel [:toggle-all])})
+                                      (d/label {:htmlFor "toggle-all"}
+                                               "Mark all as complete")
+                                      (TodoList [current-filter items] channel))
+                           (Footer [current-filter items] channel)))))
 
 
 ;; API
@@ -132,5 +138,5 @@
     (.requestAnimationFrame js/window
                             (fn []
                               (q/render (App @state channel)
-                                        (.getElementById js/document "todoapp"))
+                                        (.getElementById js/document "todopane"))
                               (reset! render-pending? false)))))

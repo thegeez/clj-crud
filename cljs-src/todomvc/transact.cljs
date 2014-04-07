@@ -69,6 +69,11 @@
     (assoc state
       :items (map #(assoc % :completed target) items))))
 
+(defmethod handle :error
+  [state _]
+  (.log js/console (str "hahahah" state))
+  (assoc state :error true))
+
 (defn all-done?
   [{:keys [items] :as state}]
   (assoc state

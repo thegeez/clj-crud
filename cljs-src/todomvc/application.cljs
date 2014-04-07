@@ -2,18 +2,22 @@
   (:require [goog.events :as e]
             [cljs.core.async :refer [<! put! chan]]
             [todomvc.render :as render]
-            [todomvc.transact :as transact])
+            [todomvc.transact :as transact]
+            [todomvc.services :as services])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn state-to-string
   "Turn state into a pretty string"
-  [{:keys [all-done? current-filter next-id items]}]
+  [{:keys [all-done? current-filter next-id items error]}]
   (str "{:all-done? " all-done? "\n"
        " :current-filter " current-filter "\n"
        " :next-id " next-id "\n"
        " :items ["
        (apply str (interpose "\n         " items))
-       "]}"))
+       "]\n"
+       (when error
+         (str " :error " error "\n"))
+       "}"))
 
 (defn pp-state
   "Print state in browser console"
@@ -51,6 +55,7 @@
   []
   (let [{:keys [state render] :as app} (load-app)]
     (init-updates app)
+    (services/start-services app)
     (pp-state @state)                 ; print initial state
     (render app)                      ; initial render
     (def app-hook app)))              ; hook for development/debugging

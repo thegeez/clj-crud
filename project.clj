@@ -49,7 +49,8 @@
                                   ;; conflicts with cljs on tools.reader
                                   [ring/ring-core "1.2.1" :exclusions [org.clojure/tools.reader]]
                                   [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
-                                  [quiescent "0.1.1"]]
+                                  [quiescent "0.1.1"]
+                                  [cljs-ajax "0.2.3"]]
                    :plugins [[lein-cljsbuild "1.0.2"]]
                    :main user}
              :uberjar {:main clj-crud.main

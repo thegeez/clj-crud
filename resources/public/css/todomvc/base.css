@@ -33,7 +33,7 @@ input[type="checkbox"] {
 #todoapp {
 	background: #fff;
 	background: rgba(255, 255, 255, 0.9);
-	margin: 130px 0 40px 0;
+	margin: 170px 0 40px 0;
 	border: 1px solid #ccc;
 	position: relative;
 	border-top-left-radius: 2px;
@@ -545,4 +545,8 @@ hr {
 		width: 550px;
 		margin: 130px auto 40px auto;
 	}
+}
+
+#todo-error {
+    margin-top: 100px;
 }
