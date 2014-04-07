@@ -11,6 +11,7 @@ Simple crud app in Clojure
 - look into jdbc entities
 - use :base with liberator
 - secure headers etc from clojure.web/with-security
+- Walk through http://www.lispcast.com/clojure-web-security
 
 ## About
 
