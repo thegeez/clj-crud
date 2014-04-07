@@ -1,5 +1,6 @@
 (ns clj-crud.common
-  (:require [clj-crud.util.layout :as l]
+  (:require [clojure.tools.logging :refer [info debug spy]]
+            [clj-crud.util.layout :as l]
             [net.cgrand.enlive-html :as html]
             [cemerick.friend :as friend]))
 
@@ -12,7 +13,10 @@
      l/emit application-html
      [:#flash] (when-let [flash (get-in ctx [:request :flash])]
                  (html/content flash))
-     [:ul :li] (if (contains? (:roles friend-auth) :admin)
+     [:ul [:li html/first-of-type]] (when friend-auth
+                                      (html/transform-content
+                                       [:a] (html/set-attr :href (str "/todos/" (:slug friend-auth)))))
+     [:ul.navbar-nav :li] (if (contains? (:roles friend-auth) :admin)
                  (html/after [{:tag :li
                                :attrs nil
                                :content [{:tag :a
