@@ -14,7 +14,7 @@
 (defn todos-page-layout [ctx]
   (c/emit-application
    ctx
-   [:head] (html/after (html/select todos-page-html [:head]))
+   [:head html/last-child] (html/after (html/select todos-page-html [:head html/first-child]))
    [:#content] (html/substitute (html/select todos-page-html [:#content]))))
 
 (defresource todos-page
