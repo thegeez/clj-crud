@@ -19,7 +19,7 @@
                       (fn [evt]
                         (when (enter-key? evt)
                           (let [text (.-value (.-target evt))]
-                            (put! channel [:add-item text])
+                            (put! channel [:create-item text])
                             (set! (.-value (.-target evt)) ""))))
                       :autoFocus true})))
 

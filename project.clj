@@ -50,7 +50,8 @@
                                   [ring/ring-core "1.2.1" :exclusions [org.clojure/tools.reader]]
                                   [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
                                   [quiescent "0.1.1"]
-                                  [cljs-ajax "0.2.3"]]
+                                  [cljs-ajax "0.2.3"]
+                                  #_[org.clojars.franks42/cljs-uuid-utils "0.1.3"]]
                    :plugins [[lein-cljsbuild "1.0.2"]]
                    :main user}
              :uberjar {:main clj-crud.main
@@ -61,4 +62,5 @@
                         :compiler {
                                    :output-to "resources/public/js/todomvc.js"
                                    :output-dir "resources/public/js/out"
-                                   :optimizations :none}}]})
+                                   :optimizations :whitespace}
+                         :notify-command ["notify-send" "cljsbuild"]}]})

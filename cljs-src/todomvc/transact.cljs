@@ -19,10 +19,9 @@
 
 (defmethod handle :add-item
   ;; Given an application state, add a new item with the given text
-  [{:keys [next-id] :as state} [_ text]]
+  [{:keys [next-id] :as state} [_ id text]]
   (-> state
-      (update-in [:items] conj {:id next-id :text text})
-      (update-in [:next-id] inc)))
+      (update-in [:items] conj {:id id :text text :commited false})))
 
 (defmethod handle :remove-item
   ;; Given an application state, destroy the item with the specified ID
@@ -74,6 +73,10 @@
   (.log js/console (str "hahahah" state))
   (assoc state :error true))
 
+(defmethod handle :default
+  [state _]
+  state)
+
 (defn all-done?
   [{:keys [items] :as state}]
   (assoc state
@@ -87,7 +90,6 @@
   []
   {:all-done? true
    :current-filter :all
-   :next-id 10
    :items []})
 
 (defn main

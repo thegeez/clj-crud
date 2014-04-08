@@ -34,6 +34,7 @@
   []
   {:state (atom (transact/initial-state))
    :channel (chan)
+   :emit (chan)
    :transact transact/main
    :render-pending? (atom false)
    :render render/main})
@@ -42,9 +43,10 @@
   "For every value coming from channel;
    - call transact to update the application state
    - trigger a render"
-  [{:keys [state channel transact render] :as app}]
+  [{:keys [state channel emit transact render] :as app}]
   (go (while true
         (let [transaction (<! channel)] ; wait for next transaction
+          (>! emit transaction)
           (swap! state transact transaction) ; process transaction
           (pp-transaction transaction)       ; print transaction
           (pp-state @state)           ; print state after transaction
