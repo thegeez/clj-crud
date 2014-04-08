@@ -17,11 +17,23 @@
   (assoc state
     :current-filter this-filter))
 
+(defmethod handle :seed-item
+  ;; Given an application state, add a new item with the given text
+  [{:keys [next-id] :as state} [_ id text]]
+  (-> state
+      (update-in [:items] conj {:id id :text text :commited true})))
+
 (defmethod handle :add-item
   ;; Given an application state, add a new item with the given text
   [{:keys [next-id] :as state} [_ id text]]
   (-> state
       (update-in [:items] conj {:id id :text text :commited false})))
+
+(defmethod handle :commit-item
+  ;; Given an application state, add a new item with the given text
+  [state [_ temp-id id]]
+  (update-item state temp-id (fn [item]
+                               (assoc item :id id :commited true))))
 
 (defmethod handle :remove-item
   ;; Given an application state, destroy the item with the specified ID
@@ -50,8 +62,11 @@
   [state [_ id]]
   (update-item state
                id
-               #(assoc %
-                  :editing true)))
+               (fn [item]
+                 ;; can't edit items with temp-ids
+                 (cond-> item
+                         (:commited item)
+                         (assoc :editing true)))))
 
 (defmethod handle :complete-edit
   ;; Given an application state, start editing the specified item.

@@ -8,10 +8,9 @@
 
 (defn state-to-string
   "Turn state into a pretty string"
-  [{:keys [all-done? current-filter next-id items error]}]
+  [{:keys [all-done? current-filter items error]}]
   (str "{:all-done? " all-done? "\n"
        " :current-filter " current-filter "\n"
-       " :next-id " next-id "\n"
        " :items ["
        (apply str (interpose "\n         " items))
        "]\n"

@@ -14,7 +14,8 @@
   (fn anti-forgery [req]
     (if (and (not (#{:head :get} (get req :request-method)))
              (let [session-token (get-in req [:session anti-forgery-key])
-                   submitted-token (get-in req [:params (keyword anti-forgery-key)])]
+                   submitted-token (or (get-in req [:params (keyword anti-forgery-key)])
+                                       (get-in req [:headers "x-csrf-token"]))]
                (not (= session-token submitted-token))))
       {:status 403
        :headers {"Content-Type" "text/html"}

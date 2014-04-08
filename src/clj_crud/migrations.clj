@@ -99,4 +99,19 @@
                                               :updated_at now})))
           :down (fn [db]
                     (jdbc/delete! db :accounts ["slug = ?" "user1"]))}]
-     ])
+      (let [table "todos"]
+        [8 {:up (fn [db]
+                  (jdbc/db-do-commands
+                   db (jdbc/create-table-ddl
+                       table
+                       (serial-id db)
+                       [:text "VARCHAR(1024)"]
+                       [:account_id "VARCHAR(256)"]
+                       [:finished "INT"]
+                       [:created_at "BIGINT"]
+                       [:updated_at "BIGINT"])))
+            :down (fn [db]
+                    (jdbc/db-do-commands
+                     db (jdbc/drop-table-ddl
+                         table)))}])
+      ])
