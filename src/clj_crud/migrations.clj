@@ -107,7 +107,7 @@
                        (serial-id db)
                        [:text "VARCHAR(1024)"]
                        [:account_id "VARCHAR(256)"]
-                       [:finished "INT"]
+                       [:completed "INT"]
                        [:created_at "BIGINT"]
                        [:updated_at "BIGINT"])))
             :down (fn [db]

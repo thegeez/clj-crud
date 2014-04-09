@@ -11,9 +11,6 @@
 (deftest todos-test
   (-> (session (tc/reuse-handler))
       (request "/todos/user1/todos")
-      ((fn [res]
-         (debug "RES" res)
-         res))
       (has (status? 401))
       (k/visit "/login")
       (k/fill-in "Name" "User 1")
@@ -42,7 +39,6 @@
                (request "/todos/user1/todos")
                (has (status? 200))
                ((fn [res]
-                  (debug "RES parse body" res)
                   (is (= (-> (get-in res [:response :body])
                              edn/read-string
                              :todos
@@ -63,7 +59,37 @@
                (request "/todos/user1/todos")
                (has (status? 200))
                ((fn [res]
-                  (is (= (map (juxt :text :finished) (-> (get-in res [:response :body]) edn/read-string :todos))
-                         [["hello" false] ["second todo" false] ["third todo" false]]))
-                  res))
+                  (let [todos (-> (get-in res [:response :body]) edn/read-string :todos)]
+                    (is (= (map (juxt :text :completed) todos)
+                           [["hello" false] ["second todo" false] ["third todo" false]]))
+                    (-> res
+                        (request "/todos/user1/todos"
+                                 :request-method :put
+                                 :body (pr-str {:id (:id (second todos))
+                                                :text "updated second todo"})
+                                 :headers {"X-CSRF-Token" csrf-token})
+                        (has (status? 204))
+                        (request "/todos/user1/todos"
+                                 :request-method :put
+                                 :body (pr-str {:id (:id (last todos))
+                                                :completed true})
+                                 :headers {"X-CSRF-Token" csrf-token})
+                        (has (status? 204))
+                        (request "/todos/user1/todos")
+                        (has (status? 200))
+                        ((fn [res]
+                           (let [todos (-> (get-in res [:response :body]) edn/read-string :todos)]
+                             (is (= (map (juxt :text :completed) todos)
+                                    [["hello" false] ["updated second todo" false] ["third todo" true]])))
+                           (-> res
+                               (k/visit "/logout")
+                               (follow-redirect)
+                               (request "/todos/user1/todos"
+                                 :request-method :put
+                                 :body (pr-str {:id (:id (last todos))
+                                                :completed true})
+                                 :headers {"X-CSRF-Token" csrf-token})
+                               (has (status? 401))
+                               )))))))
+
 ))))))

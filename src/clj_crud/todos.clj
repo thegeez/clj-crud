@@ -43,33 +43,42 @@
   :as-response (l/as-template-response todos-page-layout))
 
 (defresource todos
-  :allowed-methods [:get :post]
+  :allowed-methods [:get :post :put]
   :available-media-types ["application/edn"]
   :authorized? (fn [ctx]
                  (friend/identity (get ctx :request)))
   :allowed? (fn [ctx]
-                 (let [slug (get-in ctx [:request :params :slug])]
-                   (friend/authorized? [(keyword slug)] (friend/identity (get ctx :request)))))
-  ;; :exists? (fn [ctx]
-  ;;            (let [slug (get-in ctx [:request :params :slug])]
-  ;;              (when-let [account (accounts/get-account (h/db ctx) slug)]
-  ;;                {:account account})))
+              (let [slug (get-in ctx [:request :params :slug])]
+                (when (friend/authorized? [(keyword slug)] (friend/identity (get ctx :request)))
+                  {:account (accounts/get-account (h/db ctx) slug)})))
   :post! (fn [ctx]
            (let [text (-> (get-in ctx [:request :body])
                           slurp
                           edn/read-string
                           :text)
                  id (todos/create-todo (h/db ctx)
-                                       (friend/current-authentication (get ctx :request))
+                                       (:account ctx)
                                        {:text text})]
              {:id id}))
-  :new (fn [ctx]
-         (:id ctx))
+  :new? (fn [ctx]
+          (= (get-in ctx [:request :request-method]) :post))
   :handle-created (fn [ctx]
                     {:id (:id ctx)})
+  :put! (fn [ctx]
+          (let [todo (-> (get-in ctx [:request :body])
+                         slurp
+                         edn/read-string)
+                todo (into {} (for [[k v] (select-keys todo [:id :text :completed])
+                                    :when (some? v)]
+                                (if (= k :completed)
+                                  [k (if v 1 0)]
+                                  [k v])))]
+            (todos/update-todo (h/db ctx)
+                               (:account ctx)
+                               todo)))
   :handle-ok (fn [ctx]
                {:todos (todos/get-todos (h/db ctx)
-                                        (friend/current-authentication (get ctx :request)))})
+                                        (:account ctx))})
   :as-response (l/as-template-response nil))
 
 (defroutes todos-routes

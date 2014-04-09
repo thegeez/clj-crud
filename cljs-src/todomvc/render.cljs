@@ -84,7 +84,7 @@
                            :checked completed
                            :onChange
                            (fn [_]
-                             (put! channel [:toggle-item id]))})
+                             (put! channel [:toggle-item id (not completed)]))})
                  (d/label {} text)
                  (d/button {:className "destroy"
                             :onClick

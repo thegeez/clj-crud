@@ -24,6 +24,7 @@
    [:table#accounts :tbody [:tr html/first-of-type]]
    (html/clone-for [account (get-in ctx [:data :accounts])]
                    [:tr] (let [{:keys [id slug name created_at updated_at admin]} account
+                               todos-link (get-in account [:links :todos :uri])
                                edit-link (get-in account [:links :edit :uri])
                                self-link (get-in account [:links :self :uri])
                                ghost-link (get-in account [:links :ghost :uri])

@@ -19,9 +19,9 @@
 
 (defmethod handle :seed-item
   ;; Given an application state, add a new item with the given text
-  [{:keys [next-id] :as state} [_ id text]]
+  [state [_ id text completed]]
   (-> state
-      (update-in [:items] conj {:id id :text text :commited true})))
+      (update-in [:items] conj {:id id :text text :completed completed :commited true})))
 
 (defmethod handle :add-item
   ;; Given an application state, add a new item with the given text
@@ -45,10 +45,10 @@
 (defmethod handle :toggle-item
   ;; Given an application state, toggle the completion status of the
   ;; item with the specified ID
-  [state [_ id]]
+  [state [_ id completed]]
   (update-item state
                id
-               #(update-in % [:completed] not)))
+               #(assoc % :completed completed)))
 
 (defmethod handle :clear-completed
   ;; Given an application state, remove all completed items.

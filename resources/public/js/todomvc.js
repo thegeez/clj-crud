@@ -23256,114 +23256,113 @@ goog.provide("todomvc.transact");
 goog.require("cljs.core");
 todomvc.transact.update_item = function update_item(state, id, f) {
   return cljs.core.update_in.call(null, state, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "items", "items", 1114430258)], null), function(items) {
-    return cljs.core.map.call(null, function(p1__17983_SHARP_) {
-      if (cljs.core._EQ_.call(null, id, (new cljs.core.Keyword(null, "id", "id", 1013907597)).cljs$core$IFn$_invoke$arity$1(p1__17983_SHARP_))) {
-        return f.call(null, p1__17983_SHARP_);
+    return cljs.core.map.call(null, function(p1__18406_SHARP_) {
+      if (cljs.core._EQ_.call(null, id, (new cljs.core.Keyword(null, "id", "id", 1013907597)).cljs$core$IFn$_invoke$arity$1(p1__18406_SHARP_))) {
+        return f.call(null, p1__18406_SHARP_);
       } else {
-        return p1__17983_SHARP_;
+        return p1__18406_SHARP_;
       }
     }, items);
   });
 };
 todomvc.transact.handle = function() {
-  var method_table__11120__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
-  var prefer_table__11121__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
-  var method_cache__11122__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
-  var cached_hierarchy__11123__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
-  var hierarchy__11124__auto__ = cljs.core.get.call(null, cljs.core.PersistentArrayMap.EMPTY, new cljs.core.Keyword(null, "hierarchy", "hierarchy", 3129050535), cljs.core.get_global_hierarchy.call(null));
+  var method_table__11166__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
+  var prefer_table__11167__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
+  var method_cache__11168__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
+  var cached_hierarchy__11169__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
+  var hierarchy__11170__auto__ = cljs.core.get.call(null, cljs.core.PersistentArrayMap.EMPTY, new cljs.core.Keyword(null, "hierarchy", "hierarchy", 3129050535), cljs.core.get_global_hierarchy.call(null));
   return new cljs.core.MultiFn("handle", function(state, trans) {
     return cljs.core.first.call(null, trans);
-  }, new cljs.core.Keyword(null, "default", "default", 2558708147), hierarchy__11124__auto__, method_table__11120__auto__, prefer_table__11121__auto__, method_cache__11122__auto__, cached_hierarchy__11123__auto__);
+  }, new cljs.core.Keyword(null, "default", "default", 2558708147), hierarchy__11170__auto__, method_table__11166__auto__, prefer_table__11167__auto__, method_cache__11168__auto__, cached_hierarchy__11169__auto__);
 }();
-cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "set-filter", "set-filter", 2331384501), function(state, p__17984) {
-  var vec__17985 = p__17984;
-  var _ = cljs.core.nth.call(null, vec__17985, 0, null);
-  var this_filter = cljs.core.nth.call(null, vec__17985, 1, null);
+cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "set-filter", "set-filter", 2331384501), function(state, p__18407) {
+  var vec__18408 = p__18407;
+  var _ = cljs.core.nth.call(null, vec__18408, 0, null);
+  var this_filter = cljs.core.nth.call(null, vec__18408, 1, null);
   return cljs.core.assoc.call(null, state, new cljs.core.Keyword(null, "current-filter", "current-filter", 2062811582), this_filter);
 });
-cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "seed-item", "seed-item", 1596530785), function(p__17986, p__17987) {
-  var map__17988 = p__17986;
-  var map__17988__$1 = cljs.core.seq_QMARK_.call(null, map__17988) ? cljs.core.apply.call(null, cljs.core.hash_map, map__17988) : map__17988;
-  var state = map__17988__$1;
-  var next_id = cljs.core.get.call(null, map__17988__$1, new cljs.core.Keyword(null, "next-id", "next-id", 2860930471));
-  var vec__17989 = p__17987;
-  var _ = cljs.core.nth.call(null, vec__17989, 0, null);
-  var id = cljs.core.nth.call(null, vec__17989, 1, null);
-  var text = cljs.core.nth.call(null, vec__17989, 2, null);
-  return cljs.core.update_in.call(null, state, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "items", "items", 1114430258)], null), cljs.core.conj, new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "id", "id", 1013907597), id, new cljs.core.Keyword(null, "text", "text", 1017460895), text, new cljs.core.Keyword(null, "commited", "commited", 4706580360), true], null));
+cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "seed-item", "seed-item", 1596530785), function(state, p__18409) {
+  var vec__18410 = p__18409;
+  var _ = cljs.core.nth.call(null, vec__18410, 0, null);
+  var id = cljs.core.nth.call(null, vec__18410, 1, null);
+  var text = cljs.core.nth.call(null, vec__18410, 2, null);
+  var completed = cljs.core.nth.call(null, vec__18410, 3, null);
+  return cljs.core.update_in.call(null, state, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "items", "items", 1114430258)], null), cljs.core.conj, new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "id", "id", 1013907597), id, new cljs.core.Keyword(null, "text", "text", 1017460895), text, new cljs.core.Keyword(null, "completed", "completed", 3905939901), completed, new cljs.core.Keyword(null, "commited", "commited", 
+  4706580360), true], null));
 });
-cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "add-item", "add-item", 4026553393), function(p__17990, p__17991) {
-  var map__17992 = p__17990;
-  var map__17992__$1 = cljs.core.seq_QMARK_.call(null, map__17992) ? cljs.core.apply.call(null, cljs.core.hash_map, map__17992) : map__17992;
-  var state = map__17992__$1;
-  var next_id = cljs.core.get.call(null, map__17992__$1, new cljs.core.Keyword(null, "next-id", "next-id", 2860930471));
-  var vec__17993 = p__17991;
-  var _ = cljs.core.nth.call(null, vec__17993, 0, null);
-  var id = cljs.core.nth.call(null, vec__17993, 1, null);
-  var text = cljs.core.nth.call(null, vec__17993, 2, null);
+cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "add-item", "add-item", 4026553393), function(p__18411, p__18412) {
+  var map__18413 = p__18411;
+  var map__18413__$1 = cljs.core.seq_QMARK_.call(null, map__18413) ? cljs.core.apply.call(null, cljs.core.hash_map, map__18413) : map__18413;
+  var state = map__18413__$1;
+  var next_id = cljs.core.get.call(null, map__18413__$1, new cljs.core.Keyword(null, "next-id", "next-id", 2860930471));
+  var vec__18414 = p__18412;
+  var _ = cljs.core.nth.call(null, vec__18414, 0, null);
+  var id = cljs.core.nth.call(null, vec__18414, 1, null);
+  var text = cljs.core.nth.call(null, vec__18414, 2, null);
   return cljs.core.update_in.call(null, state, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "items", "items", 1114430258)], null), cljs.core.conj, new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "id", "id", 1013907597), id, new cljs.core.Keyword(null, "text", "text", 1017460895), text, new cljs.core.Keyword(null, "commited", "commited", 4706580360), false], null));
 });
-cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "commit-item", "commit-item", 2479329627), function(state, p__17994) {
-  var vec__17995 = p__17994;
-  var _ = cljs.core.nth.call(null, vec__17995, 0, null);
-  var temp_id = cljs.core.nth.call(null, vec__17995, 1, null);
-  var id = cljs.core.nth.call(null, vec__17995, 2, null);
+cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "commit-item", "commit-item", 2479329627), function(state, p__18415) {
+  var vec__18416 = p__18415;
+  var _ = cljs.core.nth.call(null, vec__18416, 0, null);
+  var temp_id = cljs.core.nth.call(null, vec__18416, 1, null);
+  var id = cljs.core.nth.call(null, vec__18416, 2, null);
   return todomvc.transact.update_item.call(null, state, temp_id, function(item) {
     return cljs.core.assoc.call(null, item, new cljs.core.Keyword(null, "id", "id", 1013907597), id, new cljs.core.Keyword(null, "commited", "commited", 4706580360), true);
   });
 });
-cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "remove-item", "remove-item", 673860142), function(state, p__17997) {
-  var vec__17998 = p__17997;
-  var _ = cljs.core.nth.call(null, vec__17998, 0, null);
-  var id = cljs.core.nth.call(null, vec__17998, 1, null);
+cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "remove-item", "remove-item", 673860142), function(state, p__18418) {
+  var vec__18419 = p__18418;
+  var _ = cljs.core.nth.call(null, vec__18419, 0, null);
+  var id = cljs.core.nth.call(null, vec__18419, 1, null);
   return cljs.core.update_in.call(null, state, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "items", "items", 1114430258)], null), function(items) {
-    return cljs.core.remove.call(null, function(p1__17996_SHARP_) {
-      return cljs.core._EQ_.call(null, id, (new cljs.core.Keyword(null, "id", "id", 1013907597)).cljs$core$IFn$_invoke$arity$1(p1__17996_SHARP_));
+    return cljs.core.remove.call(null, function(p1__18417_SHARP_) {
+      return cljs.core._EQ_.call(null, id, (new cljs.core.Keyword(null, "id", "id", 1013907597)).cljs$core$IFn$_invoke$arity$1(p1__18417_SHARP_));
     }, items);
   });
 });
-cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "toggle-item", "toggle-item", 4616866142), function(state, p__18000) {
-  var vec__18001 = p__18000;
-  var _ = cljs.core.nth.call(null, vec__18001, 0, null);
-  var id = cljs.core.nth.call(null, vec__18001, 1, null);
-  return todomvc.transact.update_item.call(null, state, id, function(p1__17999_SHARP_) {
-    return cljs.core.update_in.call(null, p1__17999_SHARP_, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "completed", "completed", 3905939901)], null), cljs.core.not);
+cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "toggle-item", "toggle-item", 4616866142), function(state, p__18421) {
+  var vec__18422 = p__18421;
+  var _ = cljs.core.nth.call(null, vec__18422, 0, null);
+  var id = cljs.core.nth.call(null, vec__18422, 1, null);
+  var completed = cljs.core.nth.call(null, vec__18422, 2, null);
+  return todomvc.transact.update_item.call(null, state, id, function(p1__18420_SHARP_) {
+    return cljs.core.assoc.call(null, p1__18420_SHARP_, new cljs.core.Keyword(null, "completed", "completed", 3905939901), completed);
   });
 });
 cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "clear-completed", "clear-completed", 888981053), function(state, _) {
   return cljs.core.update_in.call(null, state, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "items", "items", 1114430258)], null), function(items) {
-    return cljs.core.remove.call(null, function(p1__18002_SHARP_) {
-      return(new cljs.core.Keyword(null, "completed", "completed", 3905939901)).cljs$core$IFn$_invoke$arity$1(p1__18002_SHARP_);
+    return cljs.core.remove.call(null, function(p1__18423_SHARP_) {
+      return(new cljs.core.Keyword(null, "completed", "completed", 3905939901)).cljs$core$IFn$_invoke$arity$1(p1__18423_SHARP_);
     }, items);
   });
 });
-cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "start-edit", "start-edit", 3689098247), function(state, p__18003) {
-  var vec__18004 = p__18003;
-  var _ = cljs.core.nth.call(null, vec__18004, 0, null);
-  var id = cljs.core.nth.call(null, vec__18004, 1, null);
+cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "start-edit", "start-edit", 3689098247), function(state, p__18424) {
+  var vec__18425 = p__18424;
+  var _ = cljs.core.nth.call(null, vec__18425, 0, null);
+  var id = cljs.core.nth.call(null, vec__18425, 1, null);
   return todomvc.transact.update_item.call(null, state, id, function(item) {
-    var G__18005 = item;
-    var G__18005__$1 = cljs.core.truth_((new cljs.core.Keyword(null, "commited", "commited", 4706580360)).cljs$core$IFn$_invoke$arity$1(item)) ? cljs.core.assoc.call(null, G__18005, new cljs.core.Keyword(null, "editing", "editing", 3420907786), true) : G__18005;
-    return G__18005__$1;
+    var G__18426 = item;
+    var G__18426__$1 = cljs.core.truth_((new cljs.core.Keyword(null, "commited", "commited", 4706580360)).cljs$core$IFn$_invoke$arity$1(item)) ? cljs.core.assoc.call(null, G__18426, new cljs.core.Keyword(null, "editing", "editing", 3420907786), true) : G__18426;
+    return G__18426__$1;
   });
 });
-cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "complete-edit", "complete-edit", 1152265616), function(state, p__18007) {
-  var vec__18008 = p__18007;
-  var _ = cljs.core.nth.call(null, vec__18008, 0, null);
-  var id = cljs.core.nth.call(null, vec__18008, 1, null);
-  var text = cljs.core.nth.call(null, vec__18008, 2, null);
-  return todomvc.transact.update_item.call(null, state, id, function(p1__18006_SHARP_) {
-    return cljs.core.assoc.call(null, p1__18006_SHARP_, new cljs.core.Keyword(null, "editing", "editing", 3420907786), false, new cljs.core.Keyword(null, "text", "text", 1017460895), text);
+cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "complete-edit", "complete-edit", 1152265616), function(state, p__18428) {
+  var vec__18429 = p__18428;
+  var _ = cljs.core.nth.call(null, vec__18429, 0, null);
+  var id = cljs.core.nth.call(null, vec__18429, 1, null);
+  var text = cljs.core.nth.call(null, vec__18429, 2, null);
+  return todomvc.transact.update_item.call(null, state, id, function(p1__18427_SHARP_) {
+    return cljs.core.assoc.call(null, p1__18427_SHARP_, new cljs.core.Keyword(null, "editing", "editing", 3420907786), false, new cljs.core.Keyword(null, "text", "text", 1017460895), text);
   });
 });
-cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "toggle-all", "toggle-all", 4455256858), function(p__18010, _) {
-  var map__18011 = p__18010;
-  var map__18011__$1 = cljs.core.seq_QMARK_.call(null, map__18011) ? cljs.core.apply.call(null, cljs.core.hash_map, map__18011) : map__18011;
-  var state = map__18011__$1;
-  var items = cljs.core.get.call(null, map__18011__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
+cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "toggle-all", "toggle-all", 4455256858), function(p__18431, _) {
+  var map__18432 = p__18431;
+  var map__18432__$1 = cljs.core.seq_QMARK_.call(null, map__18432) ? cljs.core.apply.call(null, cljs.core.hash_map, map__18432) : map__18432;
+  var state = map__18432__$1;
+  var items = cljs.core.get.call(null, map__18432__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
   var target = !cljs.core.every_QMARK_.call(null, new cljs.core.Keyword(null, "completed", "completed", 3905939901), items);
-  return cljs.core.assoc.call(null, state, new cljs.core.Keyword(null, "items", "items", 1114430258), cljs.core.map.call(null, function(p1__18009_SHARP_) {
-    return cljs.core.assoc.call(null, p1__18009_SHARP_, new cljs.core.Keyword(null, "completed", "completed", 3905939901), target);
+  return cljs.core.assoc.call(null, state, new cljs.core.Keyword(null, "items", "items", 1114430258), cljs.core.map.call(null, function(p1__18430_SHARP_) {
+    return cljs.core.assoc.call(null, p1__18430_SHARP_, new cljs.core.Keyword(null, "completed", "completed", 3905939901), target);
   }, items));
 });
 cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "error", "error", 1110689146), function(state, _) {
@@ -23373,11 +23372,11 @@ cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(
 cljs.core._add_method.call(null, todomvc.transact.handle, new cljs.core.Keyword(null, "default", "default", 2558708147), function(state, _) {
   return state;
 });
-todomvc.transact.all_done_QMARK_ = function all_done_QMARK_(p__18012) {
-  var map__18014 = p__18012;
-  var map__18014__$1 = cljs.core.seq_QMARK_.call(null, map__18014) ? cljs.core.apply.call(null, cljs.core.hash_map, map__18014) : map__18014;
-  var state = map__18014__$1;
-  var items = cljs.core.get.call(null, map__18014__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
+todomvc.transact.all_done_QMARK_ = function all_done_QMARK_(p__18433) {
+  var map__18435 = p__18433;
+  var map__18435__$1 = cljs.core.seq_QMARK_.call(null, map__18435) ? cljs.core.apply.call(null, cljs.core.hash_map, map__18435) : map__18435;
+  var state = map__18435__$1;
+  var items = cljs.core.get.call(null, map__18435__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
   return cljs.core.assoc.call(null, state, new cljs.core.Keyword(null, "all-done?", "all-done?", 3774632259), cljs.core.every_QMARK_.call(null, new cljs.core.Keyword(null, "completed", "completed", 3905939901), items));
 };
 todomvc.transact.initial_state = function initial_state() {
@@ -46503,10 +46502,10 @@ todomvc.render.Filters = quiescent.component.call(null, function(current_filter,
   return quiescent.dom.ul.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), "filters"], null), todomvc.render.ItemFilter.call(null, current_filter, new cljs.core.Keyword(null, "all", "all", 1014000915), "All", "#/", channel), todomvc.render.ItemFilter.call(null, current_filter, new cljs.core.Keyword(null, "active", "active", 3885920888), "Active", "#/active", channel), todomvc.render.ItemFilter.call(null, current_filter, new cljs.core.Keyword(null, 
   "completed", "completed", 3905939901), "Completed", "#/completed", channel));
 });
-todomvc.render.Footer = quiescent.component.call(null, function(p__16190, channel) {
-  var vec__16191 = p__16190;
-  var current_filter = cljs.core.nth.call(null, vec__16191, 0, null);
-  var items = cljs.core.nth.call(null, vec__16191, 1, null);
+todomvc.render.Footer = quiescent.component.call(null, function(p__17925, channel) {
+  var vec__17926 = p__17925;
+  var current_filter = cljs.core.nth.call(null, vec__17926, 0, null);
+  var items = cljs.core.nth.call(null, vec__17926, 1, null);
   var completed = cljs.core.count.call(null, cljs.core.filter.call(null, new cljs.core.Keyword(null, "completed", "completed", 3905939901), items));
   var left = cljs.core.count.call(null, items) - completed;
   return quiescent.dom.footer.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), "footer"], null), quiescent.dom.span.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), "todo-count"], null), quiescent.dom.strong.call(null, cljs.core.PersistentArrayMap.EMPTY, [cljs.core.str(left), cljs.core.str(" item(s) left")].join(""))), todomvc.render.Filters.call(null, current_filter, channel), 0 < 
@@ -46518,36 +46517,36 @@ todomvc.render.class_name = function class_name(classes) {
   return cljs.core.apply.call(null, cljs.core.str, cljs.core.interpose.call(null, " ", cljs.core.map.call(null, cljs.core.identity, classes)));
 };
 todomvc.render.hidden_QMARK_ = function hidden_QMARK_(completed, current_filter) {
-  var or__10262__auto__ = function() {
-    var and__10250__auto__ = completed;
-    if (cljs.core.truth_(and__10250__auto__)) {
+  var or__10308__auto__ = function() {
+    var and__10296__auto__ = completed;
+    if (cljs.core.truth_(and__10296__auto__)) {
       return cljs.core._EQ_.call(null, current_filter, new cljs.core.Keyword(null, "active", "active", 3885920888));
     } else {
-      return and__10250__auto__;
+      return and__10296__auto__;
     }
   }();
-  if (cljs.core.truth_(or__10262__auto__)) {
-    return or__10262__auto__;
+  if (cljs.core.truth_(or__10308__auto__)) {
+    return or__10308__auto__;
   } else {
     return cljs.core.not.call(null, completed) && cljs.core._EQ_.call(null, current_filter, new cljs.core.Keyword(null, "completed", "completed", 3905939901));
   }
 };
-todomvc.render.Item = quiescent.component.call(null, function(p__16192, channel) {
-  var vec__16193 = p__16192;
-  var map__16194 = cljs.core.nth.call(null, vec__16193, 0, null);
-  var map__16194__$1 = cljs.core.seq_QMARK_.call(null, map__16194) ? cljs.core.apply.call(null, cljs.core.hash_map, map__16194) : map__16194;
-  var editing = cljs.core.get.call(null, map__16194__$1, new cljs.core.Keyword(null, "editing", "editing", 3420907786));
-  var completed = cljs.core.get.call(null, map__16194__$1, new cljs.core.Keyword(null, "completed", "completed", 3905939901));
-  var text = cljs.core.get.call(null, map__16194__$1, new cljs.core.Keyword(null, "text", "text", 1017460895));
-  var id = cljs.core.get.call(null, map__16194__$1, new cljs.core.Keyword(null, "id", "id", 1013907597));
-  var current_filter = cljs.core.nth.call(null, vec__16193, 1, null);
+todomvc.render.Item = quiescent.component.call(null, function(p__17927, channel) {
+  var vec__17928 = p__17927;
+  var map__17929 = cljs.core.nth.call(null, vec__17928, 0, null);
+  var map__17929__$1 = cljs.core.seq_QMARK_.call(null, map__17929) ? cljs.core.apply.call(null, cljs.core.hash_map, map__17929) : map__17929;
+  var editing = cljs.core.get.call(null, map__17929__$1, new cljs.core.Keyword(null, "editing", "editing", 3420907786));
+  var completed = cljs.core.get.call(null, map__17929__$1, new cljs.core.Keyword(null, "completed", "completed", 3905939901));
+  var text = cljs.core.get.call(null, map__17929__$1, new cljs.core.Keyword(null, "text", "text", 1017460895));
+  var id = cljs.core.get.call(null, map__17929__$1, new cljs.core.Keyword(null, "id", "id", 1013907597));
+  var current_filter = cljs.core.nth.call(null, vec__17928, 1, null);
   var completed__$1 = cljs.core.boolean$.call(null, completed);
   return quiescent.dom.li.call(null, new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "key", "key", 1014010321), id, new cljs.core.Keyword(null, "className", "className", 1004015509), todomvc.render.class_name.call(null, cljs.core.PersistentHashSet.fromArray([completed__$1 ? "completed" : null, cljs.core.truth_(todomvc.render.hidden_QMARK_.call(null, completed__$1, current_filter)) ? "hidden" : null, cljs.core.truth_(editing) ? "editing" : null], true)), new cljs.core.Keyword(null, 
   "onDoubleClick", "onDoubleClick", 4144140362), function(_) {
     return cljs.core.async.put_BANG_.call(null, channel, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "start-edit", "start-edit", 3689098247), id], null));
   }], null), quiescent.dom.div.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "className", "className", 1004015509), "view"], null), quiescent.dom.input.call(null, new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "className", "className", 1004015509), "toggle", new cljs.core.Keyword(null, "type", "type", 1017479852), "checkbox", new cljs.core.Keyword(null, "checked", "checked", 1756218137), completed__$1, new cljs.core.Keyword(null, "onChange", 
   "onChange", 2050678241), function(_) {
-    return cljs.core.async.put_BANG_.call(null, channel, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "toggle-item", "toggle-item", 4616866142), id], null));
+    return cljs.core.async.put_BANG_.call(null, channel, new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "toggle-item", "toggle-item", 4616866142), id, !completed__$1], null));
   }], null)), quiescent.dom.label.call(null, cljs.core.PersistentArrayMap.EMPTY, text), quiescent.dom.button.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "className", "className", 1004015509), "destroy", new cljs.core.Keyword(null, "onClick", "onClick", 3956969051), function(_) {
     return cljs.core.async.put_BANG_.call(null, channel, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "remove-item", "remove-item", 673860142), id], null));
   }], null))), quiescent.dom.input.call(null, cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "className", "className", 1004015509), "edit", new cljs.core.Keyword(null, "defaultValue", "defaultValue", 4649746210), text, new cljs.core.Keyword(null, "onKeyDown", "onKeyDown", 1534256180), function(evt) {
@@ -46561,21 +46560,21 @@ todomvc.render.Item = quiescent.component.call(null, function(p__16192, channel)
     return cljs.core.async.put_BANG_.call(null, channel, new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "complete-edit", "complete-edit", 1152265616), id, text__$1], null));
   }], null), cljs.core.truth_(editing) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "autoFocus", "autoFocus", 2651959259), true], null) : cljs.core.PersistentArrayMap.EMPTY)));
 });
-todomvc.render.TodoList = quiescent.component.call(null, function(p__16196, channel) {
-  var vec__16197 = p__16196;
-  var current_filter = cljs.core.nth.call(null, vec__16197, 0, null);
-  var items = cljs.core.nth.call(null, vec__16197, 1, null);
-  return cljs.core.apply.call(null, quiescent.dom.ul, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), "todo-list"], null), cljs.core.map.call(null, function(p1__16195_SHARP_) {
-    return todomvc.render.Item.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [p1__16195_SHARP_, current_filter], null), channel);
+todomvc.render.TodoList = quiescent.component.call(null, function(p__17931, channel) {
+  var vec__17932 = p__17931;
+  var current_filter = cljs.core.nth.call(null, vec__17932, 0, null);
+  var items = cljs.core.nth.call(null, vec__17932, 1, null);
+  return cljs.core.apply.call(null, quiescent.dom.ul, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), "todo-list"], null), cljs.core.map.call(null, function(p1__17930_SHARP_) {
+    return todomvc.render.Item.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [p1__17930_SHARP_, current_filter], null), channel);
   }, items));
 });
-todomvc.render.App = quiescent.component.call(null, function(p__16198, channel) {
-  var map__16199 = p__16198;
-  var map__16199__$1 = cljs.core.seq_QMARK_.call(null, map__16199) ? cljs.core.apply.call(null, cljs.core.hash_map, map__16199) : map__16199;
-  var error = cljs.core.get.call(null, map__16199__$1, new cljs.core.Keyword(null, "error", "error", 1110689146));
-  var items = cljs.core.get.call(null, map__16199__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
-  var current_filter = cljs.core.get.call(null, map__16199__$1, new cljs.core.Keyword(null, "current-filter", "current-filter", 2062811582));
-  var all_done_QMARK_ = cljs.core.get.call(null, map__16199__$1, new cljs.core.Keyword(null, "all-done?", "all-done?", 3774632259));
+todomvc.render.App = quiescent.component.call(null, function(p__17933, channel) {
+  var map__17934 = p__17933;
+  var map__17934__$1 = cljs.core.seq_QMARK_.call(null, map__17934) ? cljs.core.apply.call(null, cljs.core.hash_map, map__17934) : map__17934;
+  var error = cljs.core.get.call(null, map__17934__$1, new cljs.core.Keyword(null, "error", "error", 1110689146));
+  var items = cljs.core.get.call(null, map__17934__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
+  var current_filter = cljs.core.get.call(null, map__17934__$1, new cljs.core.Keyword(null, "current-filter", "current-filter", 2062811582));
+  var all_done_QMARK_ = cljs.core.get.call(null, map__17934__$1, new cljs.core.Keyword(null, "all-done?", "all-done?", 3774632259));
   return quiescent.dom.div.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.truth_(error) ? quiescent.dom.div.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "id", "id", 1013907597), "todo-error", new cljs.core.Keyword(null, "className", "className", 1004015509), "alert alert-info"], null), "Error occured, reloading page recommended.") : null, quiescent.dom.section.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 
   1013907597), "todoapp"], null), quiescent.dom.div.call(null, cljs.core.PersistentArrayMap.EMPTY, todomvc.render.Header.call(null, null, channel), quiescent.dom.section.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), "main"], null), quiescent.dom.input.call(null, new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "id", "id", 1013907597), "toggle-all", new cljs.core.Keyword(null, "type", "type", 1017479852), "checkbox", 
   new cljs.core.Keyword(null, "checked", "checked", 1756218137), all_done_QMARK_, new cljs.core.Keyword(null, "onChange", "onChange", 2050678241), function() {
@@ -46583,12 +46582,12 @@ todomvc.render.App = quiescent.component.call(null, function(p__16198, channel) 
   }], null)), quiescent.dom.label.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "htmlFor", "htmlFor", 2249940112), "toggle-all"], null), "Mark all as complete"), todomvc.render.TodoList.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [current_filter, items], null), channel)), todomvc.render.Footer.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [current_filter, items], null), 
   channel))));
 });
-todomvc.render.main = function main(p__16200) {
-  var map__16202 = p__16200;
-  var map__16202__$1 = cljs.core.seq_QMARK_.call(null, map__16202) ? cljs.core.apply.call(null, cljs.core.hash_map, map__16202) : map__16202;
-  var channel = cljs.core.get.call(null, map__16202__$1, new cljs.core.Keyword(null, "channel", "channel", 1752854645));
-  var state = cljs.core.get.call(null, map__16202__$1, new cljs.core.Keyword(null, "state", "state", 1123661827));
-  var render_pending_QMARK_ = cljs.core.get.call(null, map__16202__$1, new cljs.core.Keyword(null, "render-pending?", "render-pending?", 2215462737));
+todomvc.render.main = function main(p__17935) {
+  var map__17937 = p__17935;
+  var map__17937__$1 = cljs.core.seq_QMARK_.call(null, map__17937) ? cljs.core.apply.call(null, cljs.core.hash_map, map__17937) : map__17937;
+  var channel = cljs.core.get.call(null, map__17937__$1, new cljs.core.Keyword(null, "channel", "channel", 1752854645));
+  var state = cljs.core.get.call(null, map__17937__$1, new cljs.core.Keyword(null, "state", "state", 1123661827));
+  var render_pending_QMARK_ = cljs.core.get.call(null, map__17937__$1, new cljs.core.Keyword(null, "render-pending?", "render-pending?", 2215462737));
   if (cljs.core.compare_and_set_BANG_.call(null, render_pending_QMARK_, false, true)) {
     return window.requestAnimationFrame(function() {
       quiescent.render.call(null, todomvc.render.App.call(null, cljs.core.deref.call(null, state), channel), document.getElementById("todopane"));
@@ -47839,28 +47838,32 @@ goog.require("goog.dom");
 goog.require("cljs_uuid_utils");
 goog.require("cljs_uuid_utils");
 goog.require("ajax.core");
+goog.require("ajax.core");
 goog.require("cljs.core.async");
 todomvc.services.todos_url = function todos_url() {
   [cljs.core.str(document.URL)].join("");
   return[cljs.core.str(window.location.pathname), cljs.core.str("/todos")].join("");
 };
+todomvc.services.csrf_token = function csrf_token() {
+  return goog.dom.getElement("csrf-token").getAttribute("value");
+};
 todomvc.services.error_handler = function error_handler(channel) {
   return cljs.core.async.put_BANG_.call(null, channel, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "error", "error", 1110689146)], null));
 };
 todomvc.services.handle = function() {
-  var method_table__11120__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
-  var prefer_table__11121__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
-  var method_cache__11122__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
-  var cached_hierarchy__11123__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
-  var hierarchy__11124__auto__ = cljs.core.get.call(null, cljs.core.PersistentArrayMap.EMPTY, new cljs.core.Keyword(null, "hierarchy", "hierarchy", 3129050535), cljs.core.get_global_hierarchy.call(null));
+  var method_table__11166__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
+  var prefer_table__11167__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
+  var method_cache__11168__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
+  var cached_hierarchy__11169__auto__ = cljs.core.atom.call(null, cljs.core.PersistentArrayMap.EMPTY);
+  var hierarchy__11170__auto__ = cljs.core.get.call(null, cljs.core.PersistentArrayMap.EMPTY, new cljs.core.Keyword(null, "hierarchy", "hierarchy", 3129050535), cljs.core.get_global_hierarchy.call(null));
   return new cljs.core.MultiFn("handle", function(channel, action) {
     return cljs.core.first.call(null, action);
-  }, new cljs.core.Keyword(null, "default", "default", 2558708147), hierarchy__11124__auto__, method_table__11120__auto__, prefer_table__11121__auto__, method_cache__11122__auto__, cached_hierarchy__11123__auto__);
+  }, new cljs.core.Keyword(null, "default", "default", 2558708147), hierarchy__11170__auto__, method_table__11166__auto__, prefer_table__11167__auto__, method_cache__11168__auto__, cached_hierarchy__11169__auto__);
 }();
-cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "create-item", "create-item", 4768804022), function(channel, p__18209) {
-  var vec__18210 = p__18209;
-  var _ = cljs.core.nth.call(null, vec__18210, 0, null);
-  var text = cljs.core.nth.call(null, vec__18210, 1, null);
+cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "create-item", "create-item", 4768804022), function(channel, p__18305) {
+  var vec__18306 = p__18305;
+  var _ = cljs.core.nth.call(null, vec__18306, 0, null);
+  var text = cljs.core.nth.call(null, vec__18306, 1, null);
   console.log([cljs.core.str("create-item"), cljs.core.str(text)].join(""));
   var temp_id = cljs_uuid_utils.make_random_uuid.call(null);
   cljs.core.async.put_BANG_.call(null, channel, new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "add-item", "add-item", 4026553393), temp_id, text], null));
@@ -47871,78 +47874,116 @@ cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(
   }, new cljs.core.Keyword(null, "error-handler", "error-handler", 1866823671), function(res) {
     console.log([cljs.core.str("FAil res: "), cljs.core.str(res)].join(""));
     return todomvc.services.error_handler.call(null, channel);
-  }, new cljs.core.Keyword(null, "headers", "headers", 1809212152), new cljs.core.PersistentArrayMap(null, 1, ["X-CSRF-Token", goog.dom.getElement("csrf-token").getAttribute("value")], null)], null));
+  }, new cljs.core.Keyword(null, "headers", "headers", 1809212152), new cljs.core.PersistentArrayMap(null, 1, ["X-CSRF-Token", todomvc.services.csrf_token.call(null)], null)], null));
+});
+cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "complete-edit", "complete-edit", 1152265616), function(channel, p__18307) {
+  var vec__18308 = p__18307;
+  var _ = cljs.core.nth.call(null, vec__18308, 0, null);
+  var id = cljs.core.nth.call(null, vec__18308, 1, null);
+  var text = cljs.core.nth.call(null, vec__18308, 2, null);
+  return ajax.core.PUT.call(null, todomvc.services.todos_url.call(null), new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null, "params", "params", 4313443576), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "id", "id", 1013907597), id, new cljs.core.Keyword(null, "text", "text", 1017460895), text], null), new cljs.core.Keyword(null, "handler", "handler", 1706707644), function(res) {
+    return console.log([cljs.core.str("Succesful res: "), cljs.core.str(res)].join(""));
+  }, new cljs.core.Keyword(null, "error-handler", "error-handler", 1866823671), function(res) {
+    console.log([cljs.core.str("Fail res: "), cljs.core.str(res)].join(""));
+    return todomvc.services.error_handler.call(null, channel);
+  }, new cljs.core.Keyword(null, "format", "format", 4040092521), cljs.core.merge.call(null, ajax.core.edn_request_format.call(null), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "read", "read", 1017400584), function(res) {
+    var res_text = res.getResponseText();
+    if (cljs.core.count.call(null, res_text) > 0) {
+      throw new Error([cljs.core.str("Assumed no content response has content: "), cljs.core.str(res_text)].join(""));
+    } else {
+      return null;
+    }
+  }, new cljs.core.Keyword(null, "description", "description", 3584325486), "EDN (CUSTOM)"], null)), new cljs.core.Keyword(null, "headers", "headers", 1809212152), new cljs.core.PersistentArrayMap(null, 1, ["X-CSRF-Token", todomvc.services.csrf_token.call(null)], null)], null));
+});
+cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "toggle-item", "toggle-item", 4616866142), function(channel, p__18309) {
+  var vec__18310 = p__18309;
+  var _ = cljs.core.nth.call(null, vec__18310, 0, null);
+  var id = cljs.core.nth.call(null, vec__18310, 1, null);
+  var completed = cljs.core.nth.call(null, vec__18310, 2, null);
+  return ajax.core.PUT.call(null, todomvc.services.todos_url.call(null), new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null, "params", "params", 4313443576), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "id", "id", 1013907597), id, new cljs.core.Keyword(null, "completed", "completed", 3905939901), completed], null), new cljs.core.Keyword(null, "handler", "handler", 1706707644), function(res) {
+    return console.log([cljs.core.str("Succesful res: "), cljs.core.str(res)].join(""));
+  }, new cljs.core.Keyword(null, "error-handler", "error-handler", 1866823671), function(res) {
+    console.log([cljs.core.str("Fail res: "), cljs.core.str(res)].join(""));
+    return todomvc.services.error_handler.call(null, channel);
+  }, new cljs.core.Keyword(null, "format", "format", 4040092521), cljs.core.merge.call(null, ajax.core.edn_request_format.call(null), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "read", "read", 1017400584), function(res) {
+    var res_text = res.getResponseText();
+    if (cljs.core.count.call(null, res_text) > 0) {
+      throw new Error([cljs.core.str("Assumed no content response has content: "), cljs.core.str(res_text)].join(""));
+    } else {
+      return null;
+    }
+  }, new cljs.core.Keyword(null, "description", "description", 3584325486), "EDN (CUSTOM)"], null)), new cljs.core.Keyword(null, "headers", "headers", 1809212152), new cljs.core.PersistentArrayMap(null, 1, ["X-CSRF-Token", todomvc.services.csrf_token.call(null)], null)], null));
 });
 cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "default", "default", 2558708147), function(_, ___$1) {
   return null;
 });
 todomvc.services.start_services = function start_services(app) {
   console.log([cljs.core.str("Url is: "), cljs.core.str(document.URL)].join(""));
-  var map__18248 = app;
-  var map__18248__$1 = cljs.core.seq_QMARK_.call(null, map__18248) ? cljs.core.apply.call(null, cljs.core.hash_map, map__18248) : map__18248;
-  var emit = cljs.core.get.call(null, map__18248__$1, new cljs.core.Keyword(null, "emit", "emit", 1017021253));
-  var channel = cljs.core.get.call(null, map__18248__$1, new cljs.core.Keyword(null, "channel", "channel", 1752854645));
-  var c__13886__auto___18285 = cljs.core.async.chan.call(null, 1);
+  var map__18348 = app;
+  var map__18348__$1 = cljs.core.seq_QMARK_.call(null, map__18348) ? cljs.core.apply.call(null, cljs.core.hash_map, map__18348) : map__18348;
+  var emit = cljs.core.get.call(null, map__18348__$1, new cljs.core.Keyword(null, "emit", "emit", 1017021253));
+  var channel = cljs.core.get.call(null, map__18348__$1, new cljs.core.Keyword(null, "channel", "channel", 1752854645));
+  var c__13932__auto___18385 = cljs.core.async.chan.call(null, 1);
   cljs.core.async.impl.dispatch.run.call(null, function() {
-    var f__13887__auto__ = function() {
-      var switch__13816__auto__ = function(state_18263) {
-        var state_val_18264 = state_18263[1];
-        if (state_val_18264 === 7) {
-          var inst_18252 = state_18263[2];
-          var inst_18253 = [cljs.core.str("service: "), cljs.core.str(inst_18252)].join("");
-          var inst_18254 = console.log(inst_18253);
-          var inst_18255 = todomvc.services.handle.call(null, channel, inst_18252);
-          var state_18263__$1 = function() {
-            var statearr_18265 = state_18263;
-            statearr_18265[7] = inst_18254;
-            statearr_18265[8] = inst_18255;
-            return statearr_18265;
+    var f__13933__auto__ = function() {
+      var switch__13862__auto__ = function(state_18363) {
+        var state_val_18364 = state_18363[1];
+        if (state_val_18364 === 7) {
+          var inst_18352 = state_18363[2];
+          var inst_18353 = [cljs.core.str("service: "), cljs.core.str(inst_18352)].join("");
+          var inst_18354 = console.log(inst_18353);
+          var inst_18355 = todomvc.services.handle.call(null, channel, inst_18352);
+          var state_18363__$1 = function() {
+            var statearr_18365 = state_18363;
+            statearr_18365[7] = inst_18355;
+            statearr_18365[8] = inst_18354;
+            return statearr_18365;
           }();
-          var statearr_18266_18286 = state_18263__$1;
-          statearr_18266_18286[2] = null;
-          statearr_18266_18286[1] = 2;
+          var statearr_18366_18386 = state_18363__$1;
+          statearr_18366_18386[2] = null;
+          statearr_18366_18386[1] = 2;
           return new cljs.core.Keyword(null, "recur", "recur", 1122293407);
         } else {
-          if (state_val_18264 === 6) {
-            var inst_18259 = state_18263[2];
-            var state_18263__$1 = state_18263;
-            var statearr_18267_18287 = state_18263__$1;
-            statearr_18267_18287[2] = inst_18259;
-            statearr_18267_18287[1] = 3;
+          if (state_val_18364 === 6) {
+            var inst_18359 = state_18363[2];
+            var state_18363__$1 = state_18363;
+            var statearr_18367_18387 = state_18363__$1;
+            statearr_18367_18387[2] = inst_18359;
+            statearr_18367_18387[1] = 3;
             return new cljs.core.Keyword(null, "recur", "recur", 1122293407);
           } else {
-            if (state_val_18264 === 5) {
-              var state_18263__$1 = state_18263;
-              var statearr_18268_18288 = state_18263__$1;
-              statearr_18268_18288[2] = null;
-              statearr_18268_18288[1] = 6;
+            if (state_val_18364 === 5) {
+              var state_18363__$1 = state_18363;
+              var statearr_18368_18388 = state_18363__$1;
+              statearr_18368_18388[2] = null;
+              statearr_18368_18388[1] = 6;
               return new cljs.core.Keyword(null, "recur", "recur", 1122293407);
             } else {
-              if (state_val_18264 === 4) {
-                var state_18263__$1 = state_18263;
-                return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_18263__$1, 7, emit);
+              if (state_val_18364 === 4) {
+                var state_18363__$1 = state_18363;
+                return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_18363__$1, 7, emit);
               } else {
-                if (state_val_18264 === 3) {
-                  var inst_18261 = state_18263[2];
-                  var state_18263__$1 = state_18263;
-                  return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_18263__$1, inst_18261);
+                if (state_val_18364 === 3) {
+                  var inst_18361 = state_18363[2];
+                  var state_18363__$1 = state_18363;
+                  return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_18363__$1, inst_18361);
                 } else {
-                  if (state_val_18264 === 2) {
-                    var state_18263__$1 = state_18263;
+                  if (state_val_18364 === 2) {
+                    var state_18363__$1 = state_18363;
                     if (true) {
-                      var statearr_18269_18289 = state_18263__$1;
-                      statearr_18269_18289[1] = 4;
+                      var statearr_18369_18389 = state_18363__$1;
+                      statearr_18369_18389[1] = 4;
                     } else {
-                      var statearr_18270_18290 = state_18263__$1;
-                      statearr_18270_18290[1] = 5;
+                      var statearr_18370_18390 = state_18363__$1;
+                      statearr_18370_18390[1] = 5;
                     }
                     return new cljs.core.Keyword(null, "recur", "recur", 1122293407);
                   } else {
-                    if (state_val_18264 === 1) {
-                      var state_18263__$1 = state_18263;
-                      var statearr_18271_18291 = state_18263__$1;
-                      statearr_18271_18291[2] = null;
-                      statearr_18271_18291[1] = 2;
+                    if (state_val_18364 === 1) {
+                      var state_18363__$1 = state_18363;
+                      var statearr_18371_18391 = state_18363__$1;
+                      statearr_18371_18391[2] = null;
+                      statearr_18371_18391[1] = 2;
                       return new cljs.core.Keyword(null, "recur", "recur", 1122293407);
                     } else {
                       return null;
@@ -47954,128 +47995,130 @@ todomvc.services.start_services = function start_services(app) {
           }
         }
       };
-      return function(switch__13816__auto__) {
+      return function(switch__13862__auto__) {
         return function() {
-          var state_machine__13817__auto__ = null;
-          var state_machine__13817__auto____0 = function() {
-            var statearr_18275 = [null, null, null, null, null, null, null, null, null];
-            statearr_18275[0] = state_machine__13817__auto__;
-            statearr_18275[1] = 1;
-            return statearr_18275;
+          var state_machine__13863__auto__ = null;
+          var state_machine__13863__auto____0 = function() {
+            var statearr_18375 = [null, null, null, null, null, null, null, null, null];
+            statearr_18375[0] = state_machine__13863__auto__;
+            statearr_18375[1] = 1;
+            return statearr_18375;
           };
-          var state_machine__13817__auto____1 = function(state_18263) {
+          var state_machine__13863__auto____1 = function(state_18363) {
             while (true) {
-              var ret_value__13818__auto__ = function() {
+              var ret_value__13864__auto__ = function() {
                 try {
                   while (true) {
-                    var result__13819__auto__ = switch__13816__auto__.call(null, state_18263);
-                    if (cljs.core.keyword_identical_QMARK_.call(null, result__13819__auto__, new cljs.core.Keyword(null, "recur", "recur", 1122293407))) {
+                    var result__13865__auto__ = switch__13862__auto__.call(null, state_18363);
+                    if (cljs.core.keyword_identical_QMARK_.call(null, result__13865__auto__, new cljs.core.Keyword(null, "recur", "recur", 1122293407))) {
                       continue;
                     } else {
-                      return result__13819__auto__;
+                      return result__13865__auto__;
                     }
                     break;
                   }
-                } catch (e18276) {
-                  if (e18276 instanceof Object) {
-                    var ex__13820__auto__ = e18276;
-                    var statearr_18277_18292 = state_18263;
-                    statearr_18277_18292[5] = ex__13820__auto__;
-                    cljs.core.async.impl.ioc_helpers.process_exception.call(null, state_18263);
+                } catch (e18376) {
+                  if (e18376 instanceof Object) {
+                    var ex__13866__auto__ = e18376;
+                    var statearr_18377_18392 = state_18363;
+                    statearr_18377_18392[5] = ex__13866__auto__;
+                    cljs.core.async.impl.ioc_helpers.process_exception.call(null, state_18363);
                     return new cljs.core.Keyword(null, "recur", "recur", 1122293407);
                   } else {
                     if (new cljs.core.Keyword(null, "else", "else", 1017020587)) {
-                      throw e18276;
+                      throw e18376;
                     } else {
                       return null;
                     }
                   }
                 }
               }();
-              if (cljs.core.keyword_identical_QMARK_.call(null, ret_value__13818__auto__, new cljs.core.Keyword(null, "recur", "recur", 1122293407))) {
-                var G__18293 = state_18263;
-                state_18263 = G__18293;
+              if (cljs.core.keyword_identical_QMARK_.call(null, ret_value__13864__auto__, new cljs.core.Keyword(null, "recur", "recur", 1122293407))) {
+                var G__18393 = state_18363;
+                state_18363 = G__18393;
                 continue;
               } else {
-                return ret_value__13818__auto__;
+                return ret_value__13864__auto__;
               }
               break;
             }
           };
-          state_machine__13817__auto__ = function(state_18263) {
+          state_machine__13863__auto__ = function(state_18363) {
             switch(arguments.length) {
               case 0:
-                return state_machine__13817__auto____0.call(this);
+                return state_machine__13863__auto____0.call(this);
               case 1:
-                return state_machine__13817__auto____1.call(this, state_18263);
+                return state_machine__13863__auto____1.call(this, state_18363);
             }
             throw new Error("Invalid arity: " + arguments.length);
           };
-          state_machine__13817__auto__.cljs$core$IFn$_invoke$arity$0 = state_machine__13817__auto____0;
-          state_machine__13817__auto__.cljs$core$IFn$_invoke$arity$1 = state_machine__13817__auto____1;
-          return state_machine__13817__auto__;
+          state_machine__13863__auto__.cljs$core$IFn$_invoke$arity$0 = state_machine__13863__auto____0;
+          state_machine__13863__auto__.cljs$core$IFn$_invoke$arity$1 = state_machine__13863__auto____1;
+          return state_machine__13863__auto__;
         }();
-      }(switch__13816__auto__);
+      }(switch__13862__auto__);
     }();
-    var state__13888__auto__ = function() {
-      var statearr_18278 = f__13887__auto__.call(null);
-      statearr_18278[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__13886__auto___18285;
-      return statearr_18278;
+    var state__13934__auto__ = function() {
+      var statearr_18378 = f__13933__auto__.call(null);
+      statearr_18378[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__13932__auto___18385;
+      return statearr_18378;
     }();
-    return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, state__13888__auto__);
+    return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null, state__13934__auto__);
   });
   return ajax.core.GET.call(null, todomvc.services.todos_url.call(null), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "handler", "handler", 1706707644), function(res) {
-    var seq__18279 = cljs.core.seq.call(null, (new cljs.core.Keyword(null, "todos", "todos", 1124439135)).cljs$core$IFn$_invoke$arity$1(res));
-    var chunk__18280 = null;
-    var count__18281 = 0;
-    var i__18282 = 0;
+    var seq__18379 = cljs.core.seq.call(null, (new cljs.core.Keyword(null, "todos", "todos", 1124439135)).cljs$core$IFn$_invoke$arity$1(res));
+    var chunk__18380 = null;
+    var count__18381 = 0;
+    var i__18382 = 0;
     while (true) {
-      if (i__18282 < count__18281) {
-        var map__18283 = cljs.core._nth.call(null, chunk__18280, i__18282);
-        var map__18283__$1 = cljs.core.seq_QMARK_.call(null, map__18283) ? cljs.core.apply.call(null, cljs.core.hash_map, map__18283) : map__18283;
-        var todo = map__18283__$1;
-        var text = cljs.core.get.call(null, map__18283__$1, new cljs.core.Keyword(null, "text", "text", 1017460895));
-        var id = cljs.core.get.call(null, map__18283__$1, new cljs.core.Keyword(null, "id", "id", 1013907597));
-        cljs.core.async.put_BANG_.call(null, channel, new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "seed-item", "seed-item", 1596530785), id, text], null));
-        var G__18294 = seq__18279;
-        var G__18295 = chunk__18280;
-        var G__18296 = count__18281;
-        var G__18297 = i__18282 + 1;
-        seq__18279 = G__18294;
-        chunk__18280 = G__18295;
-        count__18281 = G__18296;
-        i__18282 = G__18297;
+      if (i__18382 < count__18381) {
+        var map__18383 = cljs.core._nth.call(null, chunk__18380, i__18382);
+        var map__18383__$1 = cljs.core.seq_QMARK_.call(null, map__18383) ? cljs.core.apply.call(null, cljs.core.hash_map, map__18383) : map__18383;
+        var todo = map__18383__$1;
+        var completed = cljs.core.get.call(null, map__18383__$1, new cljs.core.Keyword(null, "completed", "completed", 3905939901));
+        var text = cljs.core.get.call(null, map__18383__$1, new cljs.core.Keyword(null, "text", "text", 1017460895));
+        var id = cljs.core.get.call(null, map__18383__$1, new cljs.core.Keyword(null, "id", "id", 1013907597));
+        cljs.core.async.put_BANG_.call(null, channel, new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "seed-item", "seed-item", 1596530785), id, text, completed], null));
+        var G__18394 = seq__18379;
+        var G__18395 = chunk__18380;
+        var G__18396 = count__18381;
+        var G__18397 = i__18382 + 1;
+        seq__18379 = G__18394;
+        chunk__18380 = G__18395;
+        count__18381 = G__18396;
+        i__18382 = G__18397;
         continue;
       } else {
-        var temp__4092__auto__ = cljs.core.seq.call(null, seq__18279);
+        var temp__4092__auto__ = cljs.core.seq.call(null, seq__18379);
         if (temp__4092__auto__) {
-          var seq__18279__$1 = temp__4092__auto__;
-          if (cljs.core.chunked_seq_QMARK_.call(null, seq__18279__$1)) {
-            var c__11010__auto__ = cljs.core.chunk_first.call(null, seq__18279__$1);
-            var G__18298 = cljs.core.chunk_rest.call(null, seq__18279__$1);
-            var G__18299 = c__11010__auto__;
-            var G__18300 = cljs.core.count.call(null, c__11010__auto__);
-            var G__18301 = 0;
-            seq__18279 = G__18298;
-            chunk__18280 = G__18299;
-            count__18281 = G__18300;
-            i__18282 = G__18301;
+          var seq__18379__$1 = temp__4092__auto__;
+          if (cljs.core.chunked_seq_QMARK_.call(null, seq__18379__$1)) {
+            var c__11056__auto__ = cljs.core.chunk_first.call(null, seq__18379__$1);
+            var G__18398 = cljs.core.chunk_rest.call(null, seq__18379__$1);
+            var G__18399 = c__11056__auto__;
+            var G__18400 = cljs.core.count.call(null, c__11056__auto__);
+            var G__18401 = 0;
+            seq__18379 = G__18398;
+            chunk__18380 = G__18399;
+            count__18381 = G__18400;
+            i__18382 = G__18401;
             continue;
           } else {
-            var map__18284 = cljs.core.first.call(null, seq__18279__$1);
-            var map__18284__$1 = cljs.core.seq_QMARK_.call(null, map__18284) ? cljs.core.apply.call(null, cljs.core.hash_map, map__18284) : map__18284;
-            var todo = map__18284__$1;
-            var text = cljs.core.get.call(null, map__18284__$1, new cljs.core.Keyword(null, "text", "text", 1017460895));
-            var id = cljs.core.get.call(null, map__18284__$1, new cljs.core.Keyword(null, "id", "id", 1013907597));
-            cljs.core.async.put_BANG_.call(null, channel, new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "seed-item", "seed-item", 1596530785), id, text], null));
-            var G__18302 = cljs.core.next.call(null, seq__18279__$1);
-            var G__18303 = null;
-            var G__18304 = 0;
-            var G__18305 = 0;
-            seq__18279 = G__18302;
-            chunk__18280 = G__18303;
-            count__18281 = G__18304;
-            i__18282 = G__18305;
+            var map__18384 = cljs.core.first.call(null, seq__18379__$1);
+            var map__18384__$1 = cljs.core.seq_QMARK_.call(null, map__18384) ? cljs.core.apply.call(null, cljs.core.hash_map, map__18384) : map__18384;
+            var todo = map__18384__$1;
+            var completed = cljs.core.get.call(null, map__18384__$1, new cljs.core.Keyword(null, "completed", "completed", 3905939901));
+            var text = cljs.core.get.call(null, map__18384__$1, new cljs.core.Keyword(null, "text", "text", 1017460895));
+            var id = cljs.core.get.call(null, map__18384__$1, new cljs.core.Keyword(null, "id", "id", 1013907597));
+            cljs.core.async.put_BANG_.call(null, channel, new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null, "seed-item", "seed-item", 1596530785), id, text, completed], null));
+            var G__18402 = cljs.core.next.call(null, seq__18379__$1);
+            var G__18403 = null;
+            var G__18404 = 0;
+            var G__18405 = 0;
+            seq__18379 = G__18402;
+            chunk__18380 = G__18403;
+            count__18381 = G__18404;
+            i__18382 = G__18405;
             continue;
           }
         } else {

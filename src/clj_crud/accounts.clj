@@ -15,6 +15,8 @@
 (defn with-account-links [{:keys [slug] :as account}]
   (assoc account :links {:self {:rel "self"
                                 :uri (str "/profile/" slug)}
+                         :todos {:rel "todos"
+                                 :uri (str "/todos/" slug)}
                          :edit {:rel "edit"
                                 :uri (str "/profile/" slug "/edit")}
                          :delete {:rel "delete"

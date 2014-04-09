@@ -30,7 +30,8 @@
           d)
         (let [d (h/with-home-uri d ctx)]
           (if (= (get-in ctx [:representation :media-type]) "text/html")
-            {:body (transform (assoc ctx :data d))}
+            {:headers {"Content-Type" "text/html;charset=utf-8"}
+             :body (transform (assoc ctx :data d))}
             (lib-rep/as-response d ctx)))))))
 
 (defn emit [root & clauses]
