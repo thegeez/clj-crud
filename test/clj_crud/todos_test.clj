@@ -75,12 +75,17 @@
                                                 :completed true})
                                  :headers {"X-CSRF-Token" csrf-token})
                         (has (status? 204))
+                        (request "/todos/user1/todos"
+                                 :request-method :delete
+                                 :body (pr-str {:id (:id (first todos))})
+                                 :headers {"X-CSRF-Token" csrf-token})
+                        (has (status? 204))
                         (request "/todos/user1/todos")
                         (has (status? 200))
                         ((fn [res]
                            (let [todos (-> (get-in res [:response :body]) edn/read-string :todos)]
                              (is (= (map (juxt :text :completed) todos)
-                                    [["hello" false] ["updated second todo" false] ["third todo" true]])))
+                                    [["updated second todo" false] ["third todo" true]])))
                            (-> res
                                (k/visit "/logout")
                                (follow-redirect)

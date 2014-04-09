@@ -23,11 +23,10 @@
   (put! channel [:error]))
 
 (defmulti handle
-  (fn [channel action] (first action)))
+  (fn [app action] (first action)))
 
 (defmethod handle :create-item
-  [channel [_ text]]
-  (.log js/console (str "create-item" text))
+  [{:keys [channel]} [_ text]]
   (let [temp-id (uuid/make-random-uuid)]
     (put! channel [:add-item temp-id text])
     (POST (todos-url)
@@ -43,7 +42,7 @@
            :headers {"X-CSRF-Token" (csrf-token)}})))
 
 (defmethod handle :complete-edit
-  [channel [_ id text]]
+  [{:keys [channel]} [_ id text]]
   (PUT (todos-url)
        {:params {:id id
                  :text text}
@@ -62,7 +61,7 @@
         :headers {"X-CSRF-Token" (csrf-token)}}))
 
 (defmethod handle :toggle-item
-  [channel [_ id completed]]
+  [{:keys [channel]} [_ id completed]]
   (PUT (todos-url)
        {:params {:id id
                  :completed completed}
@@ -81,7 +80,7 @@
         :headers {"X-CSRF-Token" (csrf-token)}}))
 
 (defmethod handle :remove-item
-  [channel [_ id]]
+  [{:keys [channel]} [_ id]]
   (DELETE (todos-url)
        {:params {:id id}
         :handler (fn [res]
@@ -98,6 +97,22 @@
                         :description "EDN (CUSTOM)"})
         :headers {"X-CSRF-Token" (csrf-token)}}))
 
+(defmethod handle :clear-completed
+  ;; Given an application state, remove all completed items.
+  [{:keys [state channel]} _]
+  (doseq [{:keys [id completed] :as item} (:items @state)
+          :when completed]
+    (put! channel [:remove-item id])))
+
+(defmethod handle :toggle-all
+  [{:keys [state channel]} _]
+
+  (let [items (:items @state)
+        target (not (every? :completed items))]
+    (doseq [{:keys [id completed] :as item} items
+            :when (= completed (not target))]
+      (put! channel [:toggle-item id target]))))
+
 (defmethod handle :default
   [_ _] nil)
 
@@ -107,7 +122,7 @@
     (go (while true
           (let [action (<! emit)]
             (.log js/console (str "service: " action))
-            (handle channel action))))
+            (handle app action))))
     (GET (todos-url)
          {:handler (fn [res]
                      (doseq [{:keys [id text completed] :as todo} (:todos res)]

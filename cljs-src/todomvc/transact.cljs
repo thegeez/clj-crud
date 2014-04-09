@@ -50,13 +50,6 @@
                id
                #(assoc % :completed completed)))
 
-(defmethod handle :clear-completed
-  ;; Given an application state, remove all completed items.
-  [state _]
-  (update-in state [:items]
-             (fn [items]
-               (remove #(:completed %) items))))
-
 (defmethod handle :start-edit
   ;; Given an application state, start editing the specified item.
   [state [_ id]]
@@ -77,15 +70,8 @@
                   :editing false
                   :text text)))
 
-(defmethod handle :toggle-all
-  [{:keys [items] :as state} _]
-  (let [target (not (every? :completed items))]
-    (assoc state
-      :items (map #(assoc % :completed target) items))))
-
 (defmethod handle :error
   [state _]
-  (.log js/console (str "hahahah" state))
   (assoc state :error true))
 
 (defmethod handle :default

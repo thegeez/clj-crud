@@ -77,7 +77,6 @@
                                (:account ctx)
                                todo)))
   :delete! (fn [ctx]
-             (debug "DELETE!")
              (let [todo-id (-> (get-in ctx [:request :body])
                                slurp
                                edn/read-string
