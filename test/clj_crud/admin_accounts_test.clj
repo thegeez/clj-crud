@@ -91,7 +91,7 @@
       (tc/at? "/admin")
       (visit "/admin/accounts")
       (within [:table#accounts :tbody :tr [:td.name (html/has [:a (html/text-pred #(= "User 1" %))])]]
-              (has (attr? [:a] :href "http://localhost/profile/user1")))
+              (has (attr? [:a] :href "http://localhost/todos/user1")))
       (visit "/profile/user1")
       (follow-redirect)
       (tc/at? "/login")
