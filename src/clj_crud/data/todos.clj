@@ -26,3 +26,6 @@
                           ["id = ? AND account_id = ?" (:id todo) (:id account)])]
     (when-not (= res [1])
       (throw (Exception.  "DB Update has not succeeded")))))
+
+(defn delete-todo [db account todo-id]
+  (jdbc/delete! db :todos ["id = ? AND account_id = ?" todo-id (:id account)]))

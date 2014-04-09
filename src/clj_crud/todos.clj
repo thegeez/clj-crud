@@ -43,7 +43,7 @@
   :as-response (l/as-template-response todos-page-layout))
 
 (defresource todos
-  :allowed-methods [:get :post :put]
+  :allowed-methods [:get :post :put :delete]
   :available-media-types ["application/edn"]
   :authorized? (fn [ctx]
                  (friend/identity (get ctx :request)))
@@ -69,13 +69,22 @@
                          slurp
                          edn/read-string)
                 todo (into {} (for [[k v] (select-keys todo [:id :text :completed])
-                                    :when (some? v)]
+                                    :when (not (nil? v))]
                                 (if (= k :completed)
                                   [k (if v 1 0)]
                                   [k v])))]
             (todos/update-todo (h/db ctx)
                                (:account ctx)
                                todo)))
+  :delete! (fn [ctx]
+             (debug "DELETE!")
+             (let [todo-id (-> (get-in ctx [:request :body])
+                               slurp
+                               edn/read-string
+                               :id)]
+               (todos/delete-todo (h/db ctx)
+                                  (:account ctx)
+                                  todo-id)))
   :handle-ok (fn [ctx]
                {:todos (todos/get-todos (h/db ctx)
                                         (:account ctx))})

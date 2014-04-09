@@ -69,7 +69,7 @@
 
 (q/defcomponent Item
   "An item in the todo list"
-  [[{:keys [id text completed editing]} current-filter] channel]
+  [[{:keys [id text completed editing commited]} current-filter] channel]
   (let [completed (boolean completed)]
     (d/li {:key id
            :className (class-name #{(when completed "completed")
@@ -89,7 +89,8 @@
                  (d/button {:className "destroy"
                             :onClick
                             (fn [_]
-                              (put! channel [:remove-item id]))}))
+                              (when commited
+                                (put! channel [:remove-item id])))}))
           (d/input (merge {:className "edit"
                            :defaultValue text
                            :onKeyDown (fn [evt] (when (enter-key? evt)

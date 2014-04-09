@@ -5,6 +5,12 @@
             [goog.dom :as gdom])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
+(defn DELETE
+  "Not yet in cljs-ajax 0.2.3"
+  [uri & [opts]]
+  (ajax-core/ajax-request uri "DELETE" (ajax-core/transform-opts opts)))
+
+
 (defn todos-url []
   (str (.-URL js/document))
   (str (.. js/window -location -pathname) "/todos"))
@@ -60,6 +66,24 @@
   (PUT (todos-url)
        {:params {:id id
                  :completed completed}
+        :handler (fn [res]
+                   ;; nothing todo
+                   (.log js/console (str "Succesful res: " res)))
+        :error-handler (fn [res]
+                         (.log js/console (str "Fail res: " res))
+                         (error-handler channel))
+        :format (merge (ajax-core/edn-request-format)
+                       {:read (fn [res]
+                                (let [res-text (.getResponseText res)]
+                                  (when (pos? (count res-text))
+                                    (throw (js/Error. (str  "Assumed no content response has content: " res-text))))))
+                        :description "EDN (CUSTOM)"})
+        :headers {"X-CSRF-Token" (csrf-token)}}))
+
+(defmethod handle :remove-item
+  [channel [_ id]]
+  (DELETE (todos-url)
+       {:params {:id id}
         :handler (fn [res]
                    ;; nothing todo
                    (.log js/console (str "Succesful res: " res)))
