@@ -37,7 +37,7 @@
                                            (html/set-attr :href self-link))
                             [:td.name :a] (html/do->
                                            (html/content name)
-                                           (html/set-attr :href self-link))
+                                           (html/set-attr :href todos-link))
                             [:td.created_at] (html/content (str (java.util.Date. created_at)))
                             [:td.updated_at] (html/content (str (java.util.Date. updated_at)))
                             [:td.admin] (html/content (if admin "Admin" "User"))
