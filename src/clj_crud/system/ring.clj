@@ -94,6 +94,10 @@
                     (resource/wrap-resource "/")
                     file-info/wrap-file-info
                     content-type/wrap-content-type
+                    ((fn [handler]
+                       (fn [req]
+                         (-> (handler req)
+                             (update-in [:headers] merge {"Cache-Control" "public, max-age=31536000"})))))
                     wrap-accept-uri
                     wrap-redirect-trailing-slash
                     wrap-stacktrace-to-log)]
