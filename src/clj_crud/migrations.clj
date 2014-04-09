@@ -106,7 +106,7 @@
                        table
                        (serial-id db)
                        [:text "VARCHAR(1024)"]
-                       [:account_id "VARCHAR(256)"]
+                       [:account_id "INTEGER"]
                        [:completed "INT"]
                        [:created_at "BIGINT"]
                        [:updated_at "BIGINT"])))
