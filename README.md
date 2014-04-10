@@ -2,17 +2,24 @@
 
 Simple crud app in Clojure
 
-# Running for development with temporary in process database:
+## Running for development with temporary in process database:
 In ns user, through lein repl/cider etc.:
+```
    (go) ;; to start the component system, localhost:3000 will serve the site
    (reset) ;; to reset the whole component system
+```
 
-# Running production uberjar (for heroku)
+## Running production uberjar (for heroku)
+```
    lein uberjar
    java -jar target/cljs-crud-prod-standalone.jar PORT DB-URL
+```
 
-# Demo accounts
-Create your own through Signup or login using Name: Admin Password: admin for the demo admin account.
+## Demo accounts
+Create your own through Signup or login using 
+```
+   Name: Admin Password: admin for the demo admin account.
+```
 
 # Todo
 - Show password reset link in html when using debug emailer for demo
