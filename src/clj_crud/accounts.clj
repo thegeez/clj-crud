@@ -162,7 +162,8 @@
   :respond-with-entity? true
   :handle-see-other (fn [ctx]
                       (h/location-flash "/forgot-password"
-                                        "Check your email for password reset instructions"))
+                                        (str "Check your email for password reset instructions" 
+                                             "For dev purposes, the link is: " @email/testing-last-sent-email)))
   :handle-ok (fn [ctx]
                {:account (:account ctx)})
   :as-response (l/as-template-response forgot-password-layout))
