@@ -59,7 +59,11 @@
       (press "Reset password")
       (follow-redirect)
       (within [:#flash]
-              (has (text? "Check your email for password reset instructions")))
+              #_(has (text? "Check your email for password reset instructions"))
+              ((fn [res]
+                 (is (.startsWith (first (:content (first (:enlive res))))
+                                  "Check your email for password reset instructions"))
+                 res)))
       ((fn [res]
          (let [{:keys [email content]} @email/testing-last-sent-email]
            (is (= email "one@account.example.com"))
