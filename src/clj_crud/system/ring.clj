@@ -87,17 +87,13 @@
                     anti-forgery/wrap-anti-forgery
                     flash/wrap-flash
                     ;; todo put this in db / split flash / account-session store?
-                    (session/wrap-session {:cookie-name "clj-crud-site"
+                    (session/wrap-session {:cookie-name "ccs"
                                            :store (session-cookie/cookie-store)})
                     keyword-params/wrap-keyword-params
                     params/wrap-params
                     (resource/wrap-resource "/")
                     file-info/wrap-file-info
                     content-type/wrap-content-type
-                    ((fn [handler]
-                       (fn [req]
-                         (-> (handler req)
-                             (update-in [:headers] merge {"Cache-Control" "public, max-age=31536000"})))))
                     wrap-accept-uri
                     wrap-redirect-trailing-slash
                     wrap-stacktrace-to-log)]

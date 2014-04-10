@@ -1,4 +1,4 @@
-(ns clj-crud.chains
+(ns clj-crud.home
   (:require [clojure.tools.logging :refer [debug spy]]
             [clj-crud.util.layout :as l]
             [clj-crud.common :as c]
@@ -19,5 +19,5 @@
   :handle-ok {}
   :as-response (l/as-template-response main-page-layout))
 
-(defroutes chains-routes
+(defroutes home-routes
   (ANY "/" _ main-page))

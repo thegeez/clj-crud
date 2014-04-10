@@ -8,7 +8,7 @@
             [clj-crud.admin-accounts :as admin-accounts]
             [clj-crud.accounts :as accounts]
             [clj-crud.data.accounts :as accounts-data]
-            [clj-crud.chains :as chains]
+            [clj-crud.home :as home]
             [clj-crud.todos :as todos]
             [compojure.core :as compojure]
             [cemerick.friend :as friend]
@@ -18,7 +18,7 @@
 (compojure/defroutes main-routes
   admin-accounts/admin-accounts-routes
   accounts/accounts-routes
-  chains/chains-routes
+  home/home-routes
   todos/todos-routes
   (compojure/ANY "*" _ "Not found")
   )

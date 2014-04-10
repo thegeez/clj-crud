@@ -8,7 +8,8 @@
 
 (defn -main [& args]
   (info "Running main with args: " args)
-  (let [port (Long/parseLong (first args))
+  (let [port (try (Long/parseLong (first args))
+                  (catch Exception _ -1))
         _ (assert (pos? port) (str "Something is wrong with the port argument: " (first args)))
         database-url (let [db-url (second args)]
                        (assert (.startsWith db-url "postgres:")
