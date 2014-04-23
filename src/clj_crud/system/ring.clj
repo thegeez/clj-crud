@@ -11,6 +11,7 @@
             [ring.middleware.file-info :as file-info]
             [ring.middleware.content-type :as content-type]
             [ring.util.response :as response]
+            [ring.util.time :as ring-time]
             [liberator.dev :as lib-dev]))
 
 (defn wrap-database [handler database]
@@ -100,12 +101,20 @@
                          (let [res (handler req)]
                            (info "File res: " res)
                            (if (and (= :get (:request-method req))
-                                    ;; File when using localhost
                                     ;; InputStream when running from
-                                    ;; jar on Heroku
-                                    (or (instance? java.io.InputStream (:body res))
-                                        (instance? java.io.File (:body res))))
-                             (assoc-in res [:headers "Cache-Control"] "public, max-age=31536000")
+                                    ;; heroku
+                                    ;; does not apply to File when
+                                    ;; running from localhost
+                                    (instance? java.io.InputStream (:body res)))
+                             (-> res
+                                 (assoc-in [:headers "Cache-Control"] "public, max-age=31536000")
+                                 (assoc-in [:headers "Expires"]
+                                           ;; 3 days in the future,
+                                           ;; hacky hack
+                                           (ring-time/format-date (-> (java.util.Date.)
+                                                                      .getTime
+                                                                      (+ (* 3 24 60 60 1000))
+                                                                      (java.util.Date.)))))
                              res)))))
                     file-info/wrap-file-info
                     content-type/wrap-content-type
