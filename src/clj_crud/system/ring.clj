@@ -92,6 +92,17 @@
                     keyword-params/wrap-keyword-params
                     params/wrap-params
                     (resource/wrap-resource "/")
+                    ;; add Cache-Control:public, max-age=31536000 to
+                    ;; files, to improve heroku performance, should be
+                    ;; in wrap-resource
+                    ((fn [handler]
+                       (fn wrap-cache-control [req]
+                         (let [res (handler req)]
+                           (info "File res: " res)
+                           (if (and (= :get (:request-method req))
+                                    (instance? java.io.File (:body res)))
+                             (assoc-in res [:headers "Cache-Control"] "public, max-age=31536000")
+                             res)))))
                     file-info/wrap-file-info
                     content-type/wrap-content-type
                     wrap-accept-uri
