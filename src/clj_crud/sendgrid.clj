@@ -14,14 +14,13 @@
   :allowed-methods [:post]
   :available-media-types ["application/json"]
   :post! (fn [ctx]
-           (info "ctx req body" (slurp (get-in ctx [:request :body])))
-           (info "ctx req headers" (slurp (get-in ctx [:request :headers])))
            (let [slug (get-in ctx [:request :params :subject])]
              (when-let [account (accounts/get-account (h/db ctx) slug)]
-               (let [text (subs (get-in ctx [:request :params :text]) 0 1024)]
+               (let [text (get-in ctx [:request :params :text])
+                     text (subs text 0 (min (count text) 1024))]
                  (todos/create-todo (h/db ctx)
                                     account
-                                    text)))))
+                                    {:text text})))))
   :post-redirect? false
   :new? false
   :respond-with-entity? true
