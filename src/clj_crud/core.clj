@@ -10,6 +10,7 @@
             [clj-crud.data.accounts :as accounts-data]
             [clj-crud.home :as home]
             [clj-crud.todos :as todos]
+            [clj-crud.sendgrid :as sendgrid]
             [compojure.core :as compojure]
             [cemerick.friend :as friend]
             [cemerick.friend.workflows :as workflows]
@@ -20,6 +21,7 @@
   accounts/accounts-routes
   home/home-routes
   todos/todos-routes
+  sendgrid/sendgrid-routes
   (compojure/ANY "*" _ "Not found")
   )
 
