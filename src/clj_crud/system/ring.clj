@@ -100,7 +100,11 @@
                          (let [res (handler req)]
                            (info "File res: " res)
                            (if (and (= :get (:request-method req))
-                                    (instance? java.io.File (:body res)))
+                                    ;; File when using localhost
+                                    ;; InputStream when running from
+                                    ;; jar on Heroku
+                                    (or (instance? java.io.InputStream (:body res))
+                                        (instance? java.io.File (:body res))))
                              (assoc-in res [:headers "Cache-Control"] "public, max-age=31536000")
                              res)))))
                     file-info/wrap-file-info
