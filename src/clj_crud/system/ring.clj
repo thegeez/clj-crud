@@ -91,8 +91,8 @@
                     ;; todo put this in db / split flash / account-session store?
                     (session/wrap-session {:cookie-name "ccs"
                                            :store (session-cookie/cookie-store)})
-                    multipart-params/wrap-multipart-params
                     keyword-params/wrap-keyword-params
+                    multipart-params/wrap-multipart-params
                     params/wrap-params
                     (resource/wrap-resource "/")
                     ;; add Cache-Control:public, max-age=31536000 to
