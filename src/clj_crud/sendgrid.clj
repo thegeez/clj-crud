@@ -17,7 +17,7 @@
            (info "mail ctx: " ctx)
            (let [;; get this from mail
                  account (accounts/get-account (h/db ctx) "user1")
-                 text (pr-str (get-in ctx [:request :body]))]
+                 text (pr-str (slurp (get-in ctx [:request :body])))]
              (todos/create-todo (h/db ctx)
                                 account
                                 text)))

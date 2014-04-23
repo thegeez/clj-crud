@@ -3,6 +3,7 @@
             [com.stuartsierra.component :as component]
             [ring.middleware.params :as params]
             [ring.middleware.keyword-params :as keyword-params]
+            [ring.middleware.multipart-params :as multipart-params]
             [clj-crud.system.ring.anti-forgery :as anti-forgery]
             [ring.middleware.session :as session]
             [ring.middleware.session.cookie :as session-cookie]
@@ -90,6 +91,7 @@
                     ;; todo put this in db / split flash / account-session store?
                     (session/wrap-session {:cookie-name "ccs"
                                            :store (session-cookie/cookie-store)})
+                    multipart-params/wrap-multipart-params
                     keyword-params/wrap-keyword-params
                     params/wrap-params
                     (resource/wrap-resource "/")
