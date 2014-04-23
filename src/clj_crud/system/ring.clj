@@ -99,7 +99,6 @@
                     ((fn [handler]
                        (fn wrap-cache-control [req]
                          (let [res (handler req)]
-                           (info "File res: " res)
                            (if (and (= :get (:request-method req))
                                     ;; InputStream when running from
                                     ;; heroku
