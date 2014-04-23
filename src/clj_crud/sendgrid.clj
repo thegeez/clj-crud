@@ -1,5 +1,5 @@
 (ns clj-crud.sendgrid
-  (:require [clojure.tools.logging :refer [debug spy]]
+  (:require [clojure.tools.logging :refer [info debug spy]]
             [clj-crud.common :as c]
             [clj-crud.util.helpers :as h]
             [clj-crud.util.layout :as l]
@@ -14,13 +14,13 @@
   :allowed-methods [:post]
   :available-media-types ["application/json"]
   :post! (fn [ctx]
-           (debug "mail ctx: " ctx)
+           (info "mail ctx: " ctx)
            (let [;; get this from mail
-                 account {:id 1}
+                 account (accounts/get-account (h/db ctx) "user1")
                  text (pr-str (get-in ctx [:request :body]))]
              (todos/create-todo (h/db ctx)
                                 account
-                                {:text text})))
+                                text)))
   :post-redirect? false
   :new? false
   :respond-with-entity? true
