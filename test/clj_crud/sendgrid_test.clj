@@ -6,7 +6,8 @@
             [peridot.core :refer :all]
             [kerodon.core :as k]
             [kerodon.test :refer :all]
-            [ring.util.io :as ring-io]))
+            [ring.util.io :as ring-io]
+            [net.cgrand.enlive-html :as html]))
 
 (deftest sendgrid-test
   (let [todo-body "My todo by email"
@@ -33,9 +34,26 @@
         (k/fill-in "Password" "user1")
         (k/press "Login")
         (follow-redirect)
-        (request "/todos/user1/todos")
+
+        (k/visit "/todos/user1")
         (has (status? 200))
         ((fn [res]
-           (let [todos (-> (get-in res [:response :body]) edn/read-string :todos)]
-             (is (= (-> todos last :text) todo-body))
+           (let [csrf-token (-> (html/select (:enlive res) [:#csrf-token])
+                                first
+                                :attrs
+                                :value)]
+             ;; delete email todo again to not interfere with other tests
+             (-> res
+                 (request "/todos/user1/todos")
+                 (has (status? 200))
+                 ((fn [res]
+                    (let [todos (-> (get-in res [:response :body]) edn/read-string :todos)]
+                      (is (= (-> todos last :text) todo-body))
+                      (-> res
+                          ;; delete email todo again to not interfere with other tests
+                          (request "/todos/user1/todos"
+                                   :request-method :delete
+                                   :body (pr-str {:id (:id (last todos))})
+                                   :headers {"X-CSRF-Token" csrf-token})
+                          (has (status? 204)))))))
              ))))))
