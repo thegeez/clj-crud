@@ -6,7 +6,8 @@
             [clj-crud.data.accounts :as accounts]
             [clj-crud.data.todos :as todos]
             [liberator.core :refer [resource defresource]]
-            [compojure.core :refer [defroutes ANY GET context]]))
+            [compojure.core :refer [defroutes ANY GET context]]
+            [clojure.string :as string]))
 
 ;; handle inbound webhook from sendgrid
 
@@ -14,7 +15,7 @@
   :allowed-methods [:post]
   :available-media-types ["application/json"]
   :post! (fn [ctx]
-           (let [slug (get-in ctx [:request :params :subject])]
+           (let [slug (string/lower-case (get-in ctx [:request :params :subject]))]
              (when-let [account (accounts/get-account (h/db ctx) slug)]
                (let [text (get-in ctx [:request :params :text])
                      text (subs text 0 (min (count text) 1024))]

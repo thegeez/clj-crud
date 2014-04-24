@@ -20,8 +20,13 @@
 (defmethod handle :seed-item
   ;; Given an application state, add a new item with the given text
   [state [_ id text completed]]
-  (-> state
-      (update-in [:items] conj {:id id :text text :completed completed :commited true})))
+  ;; buggy workaround to distinguish between local and remote creations
+  (if (some (fn [t]
+              (.log js/console (str "checking doubles" t id))
+              (= (:id t) id)) (:items state))
+    state
+    (-> state
+        (update-in [:items] conj {:id id :text text :completed completed :commited true}))))
 
 (defmethod handle :add-item
   ;; Given an application state, add a new item with the given text

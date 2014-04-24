@@ -94,17 +94,27 @@
 (defn events [req]
   {:async :http
    :reactor (fn [emit]
+              ;; poor mans message bus
+              (alter-var-root #'clj-crud.data.todos/create-todo
+                              (fn [f]
+                                (fn [db account todo]
+                                  (let [res (f db account todo)
+                                        todo (->> (todos/get-todos db account)
+                                                  (some (fn [t]
+                                                          (when (= (:id t) (long res))
+                                                            t))))]
+                                    (try (emit {:type :chunk
+                                            :data (str "data: "
+                                                       (pr-str [:seed-item (:id todo) (:text todo) (:completed todo)])
+                                                       "\n\n")})
+                                         (catch Exception e
+                                           nil))
+                                    res))))
               (emit {:type :head
                      :status 200
                      :headers {"Content-Type" "text/event-stream"
                                "Cache-Control" "no-cache"
-                               "Connection" "keep-alive"}})
-              (emit {:type :chunk
-                     :data "data: \"hello world\"\n\n"})
-              (future
-                (Thread/sleep 10000)
-                (emit {:type :chunk
-                       :data "data: \"22222222\"\n\n"})))})
+                               "Connection" "keep-alive"}}))})
 
 (defroutes todos-routes
     (ANY "/todos/:slug" _ todos-page)

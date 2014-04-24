@@ -2,7 +2,8 @@
   (:require [cljs.core.async :refer [<! >! put! chan timeout]]
             [ajax.core :refer [GET POST PUT] :as ajax-core]
             [cljs-uuid-utils :as uuid]
-            [goog.dom :as gdom])
+            [goog.dom :as gdom]
+            [cljs.reader :as reader])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn DELETE
@@ -125,7 +126,9 @@
     (let [source (js/EventSource. (events-url))]
       (set! (.-onmessage source)
             (fn [e]
-              (.log js/console e))))
+              (.log js/console e)
+              (let [e (reader/read-string (.-data e))]
+                (put! channel e)))))
     ;; Regular stuff
     (go (while true
           (let [action (<! emit)]
