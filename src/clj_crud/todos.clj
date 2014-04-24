@@ -19,6 +19,22 @@
   (c/emit-application
    ctx
    [:head html/last-child] (html/after (html/select todos-page-html [:head html/first-child]))
+   [:#content] (html/before [{:tag :div
+                              :attrs {:class "panel panel-info"
+                                      :style "margin-top: 60px;"}
+                              :content [{:tag :div
+                                         :attrs {:class "panel-heading"}
+                                         :content [{:tag :h3
+                                                    :attrs {:class "panel-title"}
+                                                    :content ["Add todos via email!"]}]}
+                                        {:tag :ul
+                                         :content [{:tag :li
+                                                    :content ["Email to: todos@mail.thegeez.net"]}
+                                                   {:tag :li
+                                                    :content [(str
+                                                               "Subject: " (:slug (friend/current-authentication (:request ctx))))]}
+                                                   {:tag :li
+                                                    :content ["Body: Your todo!"]}]}]}])
    [:#content] (html/substitute (html/select todos-page-html [:#content]))
    [:#csrf-token] (html/set-attr :value (get-in ctx [:request :session "__anti-forgery-token"]))))
 
