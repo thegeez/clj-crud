@@ -12,8 +12,10 @@
 
 
 (defn todos-url []
-  (str (.-URL js/document))
   (str (.. js/window -location -pathname) "/todos"))
+
+(defn events-url []
+  (str (.. js/window -location -pathname) "/events"))
 
 (defn csrf-token []
   (-> (goog.dom.getElement "csrf-token")
@@ -119,6 +121,12 @@
 (defn start-services [app]
   (.log js/console (str "Url is: " (.-URL js/document)))
   (let [{:keys [channel emit]} app]
+    ;; SSE
+    (let [source (js/EventSource. (events-url))]
+      (set! (.-onmessage source)
+            (fn [e]
+              (.log js/console e))))
+    ;; Regular stuff
     (go (while true
           (let [action (<! emit)]
             (.log js/console (str "service: " action))

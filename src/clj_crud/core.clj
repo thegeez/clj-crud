@@ -3,7 +3,7 @@
             [com.stuartsierra.component :as component]
             [clj-crud.system.database :as database]
             [clj-crud.system.ring :as ring]
-            [clj-crud.system.server :as server]
+            [clj-crud.system.ring.jetty-async-adapter :as jetty-async-adapter]
             [clj-crud.system.email :as email]
             [clj-crud.admin-accounts :as admin-accounts]
             [clj-crud.accounts :as accounts]
@@ -96,7 +96,7 @@
                        :emailer :emailer})
        :emailer (email/log-emailer)
        :server (component/using
-                (server/jetty port)
+                (jetty-async-adapter/async-jetty port)
                 {:handler :ring-handler})})))
 
 (def dev-config {:db-connect-string "jdbc:derby:memory:chains;create=true" :port 3000})
@@ -113,7 +113,7 @@
                        :emailer :emailer})
        :emailer (email/log-emailer)
        :server (component/using
-                (server/jetty port)
+                (jetty-async-adapter/async-jetty port)
                 {:handler :ring-handler})})))
 
 (defn production-config [port database-url]

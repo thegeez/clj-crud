@@ -9,7 +9,9 @@
             [liberator.core :refer [resource defresource]]
             [compojure.core :refer [defroutes ANY GET]]
             [net.cgrand.enlive-html :as html]
-            [cemerick.friend :as friend]))
+            [cemerick.friend :as friend]
+            [ring.util.io :as ring-io])
+  (:import [java.io PipedInputStream PipedOutputStream]))
 
 (def todos-page-html (html/html-resource "templates/todos.html"))
 
@@ -89,6 +91,22 @@
                                         (:account ctx))})
   :as-response (l/as-template-response nil))
 
+(defn events [req]
+  {:async :http
+   :reactor (fn [emit]
+              (emit {:type :head
+                     :status 200
+                     :headers {"Content-Type" "text/event-stream"
+                               "Cache-Control" "no-cache"
+                               "Connection" "keep-alive"}})
+              (emit {:type :chunk
+                     :data "data: \"hello world\"\n\n"})
+              (future
+                (Thread/sleep 10000)
+                (emit {:type :chunk
+                       :data "data: \"22222222\"\n\n"})))})
+
 (defroutes todos-routes
-  (ANY "/todos/:slug" _ todos-page)
-  (ANY "/todos/:slug/todos" _ todos))
+    (ANY "/todos/:slug" _ todos-page)
+    (ANY "/todos/:slug/todos" _ todos)
+    (ANY "/todos/:slug/events" _ events))

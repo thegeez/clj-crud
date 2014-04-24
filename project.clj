@@ -12,6 +12,9 @@
                  [ring/ring-core "1.2.1"]
                  [ring/ring-jetty-adapter "1.2.1"]
 
+                 ;; async SSE
+                 [org.eclipse.jetty/jetty-server "8.1.2.v20120308"]
+
                  ;; application structure
                  [com.stuartsierra/component "0.2.1"]
 
