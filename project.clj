@@ -66,8 +66,8 @@
                                         :output-dir "resources/public/js/out"
                                         :optimizations :whitespace}
                              :notify-command ["notify-send" "cljsbuild"]}
-                       :test {:source-paths ["cljs-src" "cljs-test"]
-                              :incremental? true
+                       :test {:source-paths ["src" ;; for the datascript checkout
+                                             "cljs-src" "cljs-test"]
                               :compiler {:preamble ["react/react.min.js"]
                                          :output-to "cljs-target/cljstest.js"
                                          :optimizations :whitespace
