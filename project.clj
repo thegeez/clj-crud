@@ -51,16 +51,27 @@
                                   [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
                                   [quiescent "0.1.1"]
                                   [cljs-ajax "0.2.3"]
-                                  [org.clojars.franks42/cljs-uuid-utils "0.1.3"]]
-                   :plugins [[lein-cljsbuild "1.0.2"]]
+                                  [org.clojars.franks42/cljs-uuid-utils "0.1.3"]
+                                  [com.facebook/react "0.9.0.1"]
+                                  [datascript "0.1.3"]]
+                   :plugins [[lein-cljsbuild "1.0.2"]
+                             [com.cemerick/clojurescript.test "0.3.0"]]
                    :main user}
              :uberjar {:main clj-crud.main
                        :aot [clj-crud.main]}}
 
-  :cljsbuild {:builds [{:id "todomvc"
-                        :source-paths ["cljs-src"]
-                        :compiler {
-                                   :output-to "resources/public/js/todomvc.js"
-                                   :output-dir "resources/public/js/out"
-                                   :optimizations :whitespace}
-                         :notify-command ["notify-send" "cljsbuild"]}]})
+  :cljsbuild {:builds {:dev {:source-paths ["cljs-src"]
+                             :compiler {
+                                        :output-to "resources/public/js/todomvc.js"
+                                        :output-dir "resources/public/js/out"
+                                        :optimizations :whitespace}
+                             :notify-command ["notify-send" "cljsbuild"]}
+                       :test {:source-paths ["cljs-src" "cljs-test"]
+                              :incremental? true
+                              :compiler {:preamble ["react/react.min.js"]
+                                         :output-to "cljs-target/cljstest.js"
+                                         :optimizations :whitespace
+                                         :pretty-print true}}}
+              :test-commands {"tests" ["phantomjs" :runner
+                                       "cljs-test/bind_polyfill.js"
+                                       "cljs-target/cljstest.js"]}})
