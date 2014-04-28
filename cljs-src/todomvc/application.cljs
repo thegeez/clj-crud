@@ -3,7 +3,8 @@
             [cljs.core.async :refer [<! put! chan]]
             [todomvc.render :as render]
             [todomvc.transact :as transact]
-            [todomvc.services :as services])
+            [todomvc.services :as services]
+            [datascript :as d])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn state-to-string
@@ -31,32 +32,35 @@
 (defn load-app
   "Return a map containing the initial application"
   []
-  {:state (atom (transact/initial-state))
+  {:conn (d/create-conn {})
    :channel (chan)
-   :emit (chan)
-   :transact transact/main
+   :transact transact/handle
    :render-pending? (atom false)
    :render render/main})
 
 (defn init-updates
   "For every value coming from channel;
-   - call transact to update the application state
-   - trigger a render"
-  [{:keys [state channel emit transact render] :as app}]
+   - call transact to update the application state"
+  [{:keys [conn channel transact] :as app}]
   (go (while true
-        (let [transaction (<! channel)] ; wait for next transaction
-          (>! emit transaction)
-          (swap! state transact transaction) ; process transaction
-          (pp-transaction transaction)       ; print transaction
-          (pp-state @state)           ; print state after transaction
-          (render app)))))            ; render after each state change
+        (let [transaction (<! channel) ;; wait for next transaction
+              datoms (transact transaction)
+              _ (.log js/console (str "Datoms" datoms))
+              {:keys [db-after] :as res} (d/transact! conn datoms)] ;; process transaction
+          (.log js/console "db transact done")
+          (.log js/console (pr-str transaction)) ;; print transaction
+          (.log js/console (pr-str db-after)) ;; print state after transaction
+          ))))
 
 (defn ^:export main
   "Application entry point"
   []
-  (let [{:keys [state render] :as app} (load-app)]
+  (let [{:keys [conn channel render-pending? render] :as app} (load-app)]
+    (d/transact! conn [{:db/id -1 :current-filter :all}])
+    (d/listen! conn (fn [report]
+                      (.log js/console (str "Report: " (pr-str report)))
+                      (render render-pending? (:db-after report) channel)))
     (init-updates app)
     (services/start-services app)
-    (pp-state @state)                 ; print initial state
-    (render app)                      ; initial render
-    (def app-hook app)))              ; hook for development/debugging
+    (render render-pending? @conn channel)
+    (def app app)))              ; hook for development/debugging

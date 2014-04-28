@@ -18,25 +18,25 @@ quiescent._STAR_component_STAR_ = null;
 * but will *not* be included in any calculations regarding whether the
 * component should re-render.
 */
-quiescent.component = (function component(renderer){var react_component = React.createClass({"render": (function (){var this$ = this;var _STAR_component_STAR_21453 = quiescent._STAR_component_STAR_;try{quiescent._STAR_component_STAR_ = this$;
+quiescent.component = (function component(renderer){var react_component = React.createClass({"render": (function (){var this$ = this;var _STAR_component_STAR_21760 = quiescent._STAR_component_STAR_;try{quiescent._STAR_component_STAR_ = this$;
 return cljs.core.apply.call(null,renderer,(this$.props["value"]),(this$.props["statics"]));
-}finally {quiescent._STAR_component_STAR_ = _STAR_component_STAR_21453;
+}finally {quiescent._STAR_component_STAR_ = _STAR_component_STAR_21760;
 }}), "shouldComponentUpdate": (function (next_props,_){var this$ = this;return cljs.core.not_EQ_.call(null,(this$.props["value"]),(next_props["value"]));
 })});return (function() { 
-var G__21454__delegate = function (value,static_args){return react_component.call(null,{"statics": static_args, "value": value});
+var G__21761__delegate = function (value,static_args){return react_component.call(null,{"statics": static_args, "value": value});
 };
-var G__21454 = function (value,var_args){
+var G__21761 = function (value,var_args){
 var static_args = null;if (arguments.length > 1) {
   static_args = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1),0);} 
-return G__21454__delegate.call(this,value,static_args);};
-G__21454.cljs$lang$maxFixedArity = 1;
-G__21454.cljs$lang$applyTo = (function (arglist__21455){
-var value = cljs.core.first(arglist__21455);
-var static_args = cljs.core.rest(arglist__21455);
-return G__21454__delegate(value,static_args);
+return G__21761__delegate.call(this,value,static_args);};
+G__21761.cljs$lang$maxFixedArity = 1;
+G__21761.cljs$lang$applyTo = (function (arglist__21762){
+var value = cljs.core.first(arglist__21762);
+var static_args = cljs.core.rest(arglist__21762);
+return G__21761__delegate(value,static_args);
 });
-G__21454.cljs$core$IFn$_invoke$arity$variadic = G__21454__delegate;
-return G__21454;
+G__21761.cljs$core$IFn$_invoke$arity$variadic = G__21761__delegate;
+return G__21761;
 })()
 ;
 });
@@ -49,9 +49,9 @@ quiescent.WrapperComponent = React.createClass({"componentDidMount": (function (
 {return null;
 }
 }), "componentDidUpdate": (function (prev_props,prev_state){var this$ = this;var temp__4092__auto__ = (this$.props["onUpdate"]);if(cljs.core.truth_(temp__4092__auto__))
-{var f = temp__4092__auto__;var _STAR_component_STAR_21456 = quiescent._STAR_component_STAR_;try{quiescent._STAR_component_STAR_ = this$;
+{var f = temp__4092__auto__;var _STAR_component_STAR_21763 = quiescent._STAR_component_STAR_;try{quiescent._STAR_component_STAR_ = this$;
 return f.call(null,this$.getDOMNode());
-}finally {quiescent._STAR_component_STAR_ = _STAR_component_STAR_21456;
+}finally {quiescent._STAR_component_STAR_ = _STAR_component_STAR_21763;
 }} else
 {return null;
 }

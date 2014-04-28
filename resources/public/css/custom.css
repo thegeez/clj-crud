@@ -16,3 +16,9 @@ body {
 .navbar-inverse a.rel-profile {
     color: #000;
 }
+
+span.syncing {
+    float:right;
+    size: small;
+    display: inline;
+}

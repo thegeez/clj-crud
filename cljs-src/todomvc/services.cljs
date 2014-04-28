@@ -1,8 +1,8 @@
 (ns todomvc.services
   (:require [cljs.core.async :refer [<! >! put! chan timeout]]
             [ajax.core :refer [GET POST PUT] :as ajax-core]
-            [cljs-uuid-utils :as uuid]
-            [goog.dom :as gdom])
+            [goog.dom :as gdom]
+            [datascript :as d])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn DELETE
@@ -23,32 +23,30 @@
   (put! channel [:error]))
 
 (defmulti handle
-  (fn [app action] (first action)))
+  (fn [event args db channel] event))
 
 (defmethod handle :create-item
-  [{:keys [channel]} [_ text]]
-  (let [temp-id (uuid/make-random-uuid)]
-    (put! channel [:add-item temp-id text])
-    (POST (todos-url)
-          {:params {:id temp-id
-                    :text text}
-           :handler (fn [res]
-                      (.log js/console (str "Succesful res: " res))
-                      (let [id (:id res)]
-                        (put! channel [:commit-item temp-id id])))
-           :error-handler (fn [res]
-                            (.log js/console (str "FAil res: " res))
-                            (error-handler channel))
-           :headers {"X-CSRF-Token" (csrf-token)}})))
+  [_ [temp-id text] db channel]
+  (POST (todos-url)
+        {:params {:id temp-id
+                  :text text}
+         :handler (fn [res]
+                    (.log js/console (str "Succesful res: " res))
+                    (let [id (:id res)]
+                      (put! channel [:commit-item temp-id id])))
+         :error-handler (fn [res]
+                          (.log js/console (str "FAil res: " res))
+                          (error-handler channel))
+         :headers {"X-CSRF-Token" (csrf-token)}}))
 
 (defmethod handle :complete-edit
-  [{:keys [channel]} [_ id text]]
+  [event [id text] db channel]
   (PUT (todos-url)
        {:params {:id id
                  :text text}
         :handler (fn [res]
-                   ;; nothing todo
-                   (.log js/console (str "Succesful res: " res)))
+                   (.log js/console (str "Succesful res for complete-edit: " res " id is " id " text is " text))
+                   (put! channel [:commit-edit id]))
         :error-handler (fn [res]
                          (.log js/console (str "Fail res: " res))
                          (error-handler channel))
@@ -118,12 +116,18 @@
 
 (defn start-services [app]
   (.log js/console (str "Url is: " (.-URL js/document)))
-  (let [{:keys [channel emit]} app]
-    (go (while true
-          (let [action (<! emit)]
-            (.log js/console (str "service: " action))
-            (handle app action))))
-    (GET (todos-url)
+  (let [{:keys [conn channel]} app]
+    (d/listen! conn (fn [{:keys [db-after] :as report}]
+                      (.log js/console (str "Report: " (pr-str report) "keys" (pr-str (keys (:db-after report
+                                                                                             )))))
+                      (let [[event args] (first (d/q '{:find [?event ?args]
+                                                       :in [$ ?tx]
+                                                       :where [[?e :event ?event ?tx]
+                                                               [?e :args ?args]]}
+                                                     db-after (:max-tx db-after)))]
+                        (handle event args db-after channel))
+                      ))
+    #_(GET (todos-url)
          {:handler (fn [res]
                      (doseq [{:keys [id text completed] :as todo} (:todos res)]
                        (put! channel [:seed-item id text completed])))
