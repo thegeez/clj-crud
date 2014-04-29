@@ -1,9 +1,8 @@
 (ns todomvc.services
-  (:require [cljs.core.async :refer [<! >! put! chan timeout]]
+  (:require [todomvc.transact :as t]
             [ajax.core :refer [GET POST PUT] :as ajax-core]
             [goog.dom :as gdom]
-            [datascript :as d])
-  (:require-macros [cljs.core.async.macros :refer [go]]))
+            [datascript :as d]))
 
 (defn DELETE
   "Not yet in cljs-ajax 0.2.3"
@@ -12,44 +11,43 @@
 
 
 (defn todos-url []
-  (str (.-URL js/document))
   (str (.. js/window -location -pathname) "/todos"))
 
 (defn csrf-token []
   (-> (goog.dom.getElement "csrf-token")
       (.getAttribute "value")))
 
-(defn error-handler [channel]
-  (put! channel [:error]))
+(defn error-handler [conn]
+  (d/transact! conn [[:db.fn/call t/error "fail"]]))
 
 (defmulti handle
-  (fn [event args db channel] event))
+  (fn [event args db conn] event))
 
 (defmethod handle :create-item
-  [_ [temp-id text] db channel]
+  [_ [temp-id text] db conn]
   (POST (todos-url)
         {:params {:id temp-id
                   :text text}
          :handler (fn [res]
                     (.log js/console (str "Succesful res: " res))
                     (let [id (:id res)]
-                      (put! channel [:commit-item temp-id id])))
+                      (d/transact! conn [[:db.fn/call t/commit-item temp-id id]])))
          :error-handler (fn [res]
                           (.log js/console (str "FAil res: " res))
-                          (error-handler channel))
+                          (error-handler conn))
          :headers {"X-CSRF-Token" (csrf-token)}}))
 
 (defmethod handle :complete-edit
-  [event [id text] db channel]
+  [event [id text] db conn]
   (PUT (todos-url)
        {:params {:id id
                  :text text}
         :handler (fn [res]
                    (.log js/console (str "Succesful res for complete-edit: " res " id is " id " text is " text))
-                   (put! channel [:commit-edit id]))
+                   (d/transact! conn [[:db.fn/call t/commit-edit id]]))
         :error-handler (fn [res]
                          (.log js/console (str "Fail res: " res))
-                         (error-handler channel))
+                         (error-handler conn))
         :format (merge (ajax-core/edn-request-format)
                        {:read (fn [res]
                                 (let [res-text (.getResponseText res)]
@@ -59,7 +57,7 @@
         :headers {"X-CSRF-Token" (csrf-token)}}))
 
 (defmethod handle :toggle-item
-  [{:keys [channel]} [_ id completed]]
+  [event [id completed] db conn]
   (PUT (todos-url)
        {:params {:id id
                  :completed completed}
@@ -68,7 +66,7 @@
                    (.log js/console (str "Succesful res: " res)))
         :error-handler (fn [res]
                          (.log js/console (str "Fail res: " res))
-                         (error-handler channel))
+                         (error-handler conn))
         :format (merge (ajax-core/edn-request-format)
                        {:read (fn [res]
                                 (let [res-text (.getResponseText res)]
@@ -78,7 +76,7 @@
         :headers {"X-CSRF-Token" (csrf-token)}}))
 
 (defmethod handle :remove-item
-  [{:keys [channel]} [_ id]]
+  [event [id] db conn]
   (DELETE (todos-url)
        {:params {:id id}
         :handler (fn [res]
@@ -86,7 +84,7 @@
                    (.log js/console (str "Succesful res: " res)))
         :error-handler (fn [res]
                          (.log js/console (str "Fail res: " res))
-                         (error-handler channel))
+                         (error-handler conn))
         :format (merge (ajax-core/edn-request-format)
                        {:read (fn [res]
                                 (let [res-text (.getResponseText res)]
@@ -96,27 +94,40 @@
         :headers {"X-CSRF-Token" (csrf-token)}}))
 
 (defmethod handle :clear-completed
-  ;; Given an application state, remove all completed items.
-  [{:keys [state channel]} _]
-  (doseq [{:keys [id completed] :as item} (:items @state)
-          :when completed]
-    (put! channel [:remove-item id])))
+  [event [ids] db conn]
+  ;; todo make batch delete enpoint and use that
+  (doseq [id ids]
+    (DELETE (todos-url)
+            {:params {:id id}
+             :handler (fn [res]
+                        ;; nothing todo
+                        (.log js/console (str "Succesful res: " res)))
+             :error-handler (fn [res]
+                              (.log js/console (str "Fail res: " res))
+                              (error-handler conn))
+             :format (merge (ajax-core/edn-request-format)
+                            {:read (fn [res]
+                                     (let [res-text (.getResponseText res)]
+                                       (when (pos? (count res-text))
+                                         (throw (js/Error. (str  "Assumed no content response has content: " res-text))))))
+                             :description "EDN (CUSTOM)"})
+             :headers {"X-CSRF-Token" (csrf-token)}})))
 
 (defmethod handle :toggle-all
-  [{:keys [state channel]} _]
-
-  (let [items (:items @state)
-        target (not (every? :completed items))]
-    (doseq [{:keys [id completed] :as item} items
-            :when (= completed (not target))]
-      (put! channel [:toggle-item id target]))))
+  [event _ db conn]
+  (doseq [[id completed] (d/q '{:find [?id ?completed]
+                                :in [$ ?tx]
+                                :where [[?e :id ?id]
+                                        [?e :completed ?completed ?tx]]}
+                              db (:max-tx db))]
+    (handle :toggle-item [id completed] db conn)))
 
 (defmethod handle :default
   [_ _] nil)
 
 (defn start-services [app]
   (.log js/console (str "Url is: " (.-URL js/document)))
-  (let [{:keys [conn channel]} app]
+  (let [{:keys [conn]} app]
     (d/listen! conn (fn [{:keys [db-after] :as report}]
                       (.log js/console (str "Report: " (pr-str report) "keys" (pr-str (keys (:db-after report
                                                                                              )))))
@@ -125,11 +136,11 @@
                                                        :where [[?e :event ?event ?tx]
                                                                [?e :args ?args]]}
                                                      db-after (:max-tx db-after)))]
-                        (handle event args db-after channel))
-                      ))
-    #_(GET (todos-url)
+                        (handle event args db-after conn))))
+    (GET (todos-url)
          {:handler (fn [res]
+                     (.log js/console "todos for seed: " (pr-str (:todos res)))
                      (doseq [{:keys [id text completed] :as todo} (:todos res)]
-                       (put! channel [:seed-item id text completed])))
+                       (d/transact! conn [[:db.fn/call t/seed-item id text completed]])))
           :error-handler (fn [res]
-                           (error-handler channel))})))
+                           (error-handler conn))})))

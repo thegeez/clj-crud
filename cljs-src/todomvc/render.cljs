@@ -1,5 +1,5 @@
 (ns todomvc.render
-  (:require [cljs.core.async :refer [put!]]
+  (:require [todomvc.transact :as t]
             [quiescent :as q :include-macros true]
             [quiescent.dom :as dom]
             [datascript :as d]))
@@ -11,7 +11,7 @@
 
 (q/defcomponent Header
   "The page's header, which includes the primary input"
-  [_ channel]
+  [_ conn]
   (dom/header {:id "header"}
               (dom/h1 {} "todos")
               (dom/input {:id "new-todo"
@@ -20,39 +20,38 @@
                           (fn [evt]
                             (when (enter-key? evt)
                               (let [text (.-value (.-target evt))]
-                                (put! channel [:create-item text])
+                                (d/transact! conn [[:db.fn/call t/create-item text]])
                                 (set! (.-value (.-target evt)) ""))))
                           :autoFocus true})))
 
 (q/defcomponent ItemFilter
   "A filtering button"
-  [current-filter this-filter label href channel]
+  [current-filter this-filter label href conn]
   (dom/li {} (dom/a {:className (when (= current-filter this-filter) "selected")
-                 :href href
-                 :onClick #(do (put! channel [:set-filter this-filter])
-                               false)}
-                label)))
+                     :href href
+                     :onClick #(d/transact! conn [[:db.fn/call t/set-filter this-filter]])}
+                    label)))
 
 (q/defcomponent Filters
   "Buttons to filter the list"
-  [current-filter channel]
+  [current-filter conn]
   (dom/ul {:id "filters"}
-          (ItemFilter current-filter :all "All" "#/" channel)
-          (ItemFilter current-filter :active "Active" "#/active" channel)
-          (ItemFilter current-filter :completed "Completed" "#/completed" channel)))
+          (ItemFilter current-filter :all "All" "#/" conn)
+          (ItemFilter current-filter :active "Active" "#/active" conn)
+          (ItemFilter current-filter :completed "Completed" "#/completed" conn)))
 
 (q/defcomponent Footer
   "The footer at the bottom of the list"
-  [[current-filter items] channel]
+  [[current-filter items] conn]
   (let [completed (count (filter :completed items))
         left (- (count items) completed)]
     (dom/footer {:id "footer"}
                 (dom/span {:id "todo-count"}
                           (dom/strong {} (str left " item(s) left")))
-                (Filters current-filter channel)
+                (Filters current-filter conn)
                 (when (< 0 completed)
                   (dom/button {:id "clear-completed"
-                               :onClick #(put! channel [:clear-completed])}
+                               :onClick #(d/transact! conn [[:db.fn/call t/clear-completed]])}
                               (str "Clear completed (" completed ")"))))))
 
 (defn class-name
@@ -70,7 +69,7 @@
 
 (q/defcomponent Item
   "An item in the todo list"
-  [[{:keys [id text completed editing commited]} current-filter] channel]
+  [[{:keys [id text completed editing commited]} current-filter] conn]
   (let [completed (boolean completed)]
     (dom/li {:key id
              :className (class-name #{(when completed "completed")
@@ -79,7 +78,7 @@
                                       (when editing "editing")})
              :onDoubleClick (fn [_]
                               (when commited
-                                (put! channel [:start-edit id])))}
+                                (d/transact! conn [[:db.fn/call t/start-edit id]])))}
             (dom/div {:className "view"}
                      (dom/input {:className "toggle"
                                  :type "checkbox"
@@ -87,76 +86,75 @@
                                  :onChange
                                  (when commited
                                    (fn [_]
-                                     (put! channel [:toggle-item id (not completed)])))})
+                                     (d/transact! conn [[:db.fn/call t/toggle-item id]])))})
                      (dom/label {} text)
                      (if-not commited
                        (dom/span {:className "syncing"} "[syncing ...]")
                        (dom/button {:className "destroy"
                                     :onClick
                                     (fn [_]
-                                      (put! channel [:remove-item id]))})))
+                                      (d/transact! conn [[:db.fn/call t/remove-item id]]))})))
             (dom/input (merge {:className "edit"
                                :defaultValue text
                                :onKeyDown (fn [evt] (when (enter-key? evt)
                                                       (.blur (.-target evt))))
                                :onBlur (fn [evt]
                                          (let [text (.-value (.-target evt))]
-                                           (put! channel [:complete-edit id text])))}
+                                           (d/transact! conn [[:db.fn/call t/complete-edit id text]])))}
                               (if editing {:autoFocus true} {}))))))
 
 (q/defcomponent TodoList
   "The primary todo list"
-  [[current-filter items] channel]
+  [[current-filter items] conn]
   (apply dom/ul {:id "todo-list"}
-         (map #(Item [% current-filter] channel) items)))
+         (map #(Item [% current-filter] conn) items)))
 
 (q/defcomponent App
   "The root of the application"
-  [{:keys [all-done? current-filter items error]} channel]
+  [{:keys [all-done? current-filter items error]} conn]
   (dom/div {}
            (when error
              (dom/div {:id "todo-error"
-                     :className "alert alert-info"}
-                    "Error occured, reloading page recommended."))
+                       :className "alert alert-info"}
+                      "Error occured, reloading page recommended."))
            (dom/section {:id "todoapp"}
                         (dom/div {}
-                                 (Header nil channel)
+                                 (Header nil conn)
                                  (dom/section {:id "main"}
                                               (dom/input {:id "toggle-all"
                                                           :type "checkbox"
                                                           :checked all-done?
-                                                          :onChange #(put! channel [:toggle-all])})
+                                                          :onChange #(d/transact! conn [[:db.fn/call t/toggle-all]])})
                                               (dom/label {:htmlFor "toggle-all"}
                                                          "Mark all as complete")
-                                              (TodoList [current-filter items] channel))
-                                 (Footer [current-filter items] channel)))))
+                                              (TodoList [current-filter items] conn))
+                                 (Footer [current-filter items] conn)))))
 
 
 ;; API
 
-;; Here we use an atom to tell us if we already have a render queued
-;; up; if so, requesting another render is a no-op
 (defn main
   "Render the given application state tree."
-  [render-pending? db channel]
-  (when (compare-and-set! render-pending? false true)
-    (.requestAnimationFrame js/window
-                            (fn []
-                              (let [items (->> (map #(d/entity db (first %))
-                                                    (d/q '{:find [?e]
-                                                           :where [[?e :id]
-                                                                   [?e :text]
-                                                                   [?e :completed]]}
-                                                         db))
-                                               (sort-by :db/id))
-                                    state {:all-done? (and (seq items)
-                                                           (every? :completed items))
-                                           :current-filter (ffirst (d/q '{:find [?filter]
-                                                                          :where [[_ :current-filter ?filter]]}
-                                                                        db))
-                                           :items items
-                                           :error (d/entity db :error)}]
-                                (.log js/console (str "state is now: " state))
-                                (q/render (App state channel)
-                                          (.getElementById js/document "todopane")))
-                              (reset! render-pending? false)))))
+  [db conn]
+  (.requestAnimationFrame js/window
+                          (fn []
+                            (let [items (->> (map #(d/entity db (first %))
+                                                  (let [res (d/q '{:find [?e ?id]
+                                                                   :where [[?e :id ?id]
+                                                                           #_[?e :text]
+                                                                           #_[?e :completed]]}
+                                                                 db)]
+                                                    (.log js/console "Res items" (pr-str res))
+                                                    (.log js/console "DB now: " (pr-str db))
+                                                    res))
+                                             (sort-by :db/id))
+                                  state {:all-done? (and (seq items)
+                                                         (every? :completed items))
+                                         :current-filter (ffirst (d/q '{:find [?filter]
+                                                                        :where [[_ :filter ?filter]]}
+                                                                      db))
+                                         :items items
+                                         :error (d/entity db :error)}]
+                              (.log js/console (str "state is now: " state))
+                              (q/render (App state conn)
+                                        (.getElementById js/document "todopane"))))))

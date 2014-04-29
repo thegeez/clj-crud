@@ -10,59 +10,73 @@
     (if-let [prev-event-eid (ffirst (d/q '{:find [?e]
                                            :where [[?e :last-event]]}
                                          db))]
-      (do 
-        (.log js/console (str "log-event" prev-event-eid))
-        [(assoc evente :prev-event prev-event-eid)
-         [:db.fn/retractAttribute prev-event-eid :last-event]])
+      [(assoc evente :prev-event prev-event-eid)
+       [:db.fn/retractAttribute prev-event-eid :last-event]]
       [evente])))
 
-(defmulti handle
-  (fn [trans] (first trans)))
+(defn set-filter [db this-filter]
+  (.log js/console "set-filter: " (pr-str this-filter))
+  [[:db.fn/call log-event :set-filter this-filter]
+   (let [e (ffirst (d/q '{:find [?e]
+                          :where [[?e :filter]]}
+                        db))]
+     [:db/add e :filter this-filter])])
 
-#_(defmethod handle :set-filter
-  ;; Given an application state, set the current filter item
-  [[_ this-filter]]
-  (assoc state
-    :current-filter this-filter))
+(defn seed-item  [db id text completed]
+  [[:db.fn/call log-event :seed-item id text completed]
+   {:db/id -1
+    :id id
+    :text text
+    :completed completed
+    :commited true}])
 
-#_(defmethod handle :seed-item
-  ;; Given an application state, add a new item with the given text
-  [state [_ id text completed]]
-  (-> state
-      (update-in [:items] conj {:id id :text text :completed completed :commited true})))
+(defn remove-item [db id]
+  [[:db.fn/call log-event :remove-item id]
+   (let [e (ffirst (d/q '{:find [?e]
+                          :in [$ ?id]
+                          :where [[?e :id ?id]]}
+                        db id))]
+     [:db.fn/retractEntity e])])
 
-#_(defmethod handle :add-item
-  ;; Given an application state, add a new item with the given text
-  [{:keys [next-id] :as state} [_ id text]]
-  (-> state
-      (update-in [:items] conj {:id id :text text :commited false})))
+(defn clear-completed [db]
+  (let [eids+ids (d/q '{:find [?e ?id]
+                        :where [[?e :completed true]
+                                [?e :id ?id]]}
+                      db)]
+    (into [[:db.fn/call log-event :clear-completed (map second eids+ids)]]
+          (for [e (map first eids+ids)]
+            [:db.fn/retractEntity e]))))
 
-
-
-#_(defmethod handle :remove-item
-  ;; Given an application state, destroy the item with the specified ID
-  [state [_ id]]
-  (update-in state [:items]
-             (fn [items]
-               (remove #(= id (:id %)) items))))
-
-#_(defmethod handle :toggle-item
+(defn toggle-item
   ;; Given an application state, toggle the completion status of the
   ;; item with the specified ID
-  [state [_ id completed]]
-  (update-item state
-               id
-               #(assoc % :completed completed)))
+  [db id]
+  (let [[e completed] (first (d/q '{:find [?e ?completed]
+                                    :in [$ ?id]
+                                    :where [[?e :id ?id]
+                                            [?e :completed ?completed]]}
+                                  db id))
+        completed (not completed)]
+    [[:db.fn/call log-event :toggle-item id completed]
+     [:db/add e :completed completed]]))
 
+(defn toggle-all [db]
+  (let [e+id+completed (d/q '{:find [?e ?id ?completed]
+                              :where [[?e :id ?id]
+                                      [?e :completed ?completed]]}
+                            db)
+        target (not (every? (fn [[_ _ completed]] completed) e+id+completed))]
+    (into  [[:db.fn/call log-event :toggle-all]]
+           (for [[e id completed] e+id+completed
+                 :when (= completed (not target))]
+             [:db/add e :completed target]))))
 
+(defn error [db msg]
+  [[:db.fn/call log-event :error msg]
+   {:db/id -1
+    :error msg}])
 
-
-#_(defmethod handle :error
-  [state _]
-  (assoc state :error true))
-
-(defmethod handle :create-item
-  [[_ text]]
+(defn create-item [db text]
   (let [temp-id (uuid/make-random-uuid)]
     [[:db.fn/call log-event :create-item temp-id text]
      {:db/id -1
@@ -71,49 +85,37 @@
       :completed false
       :text text}]))
 
-(defmethod handle :commit-item
-  ;; Given an application state, add a new item with the given text
-  [[_ temp-id id]]
+(defn commit-item [db temp-id id]
   [[:db.fn/call log-event :commit-item temp-id id]
-   [:db.fn/call (fn [db]
-                  (let [e (ffirst (d/q '{:find [?e]
-                                         :in [$ ?id]
-                                         :where [[?e :id ?id]]}
-                                       db temp-id))]
-                    [{:db/id e :id id :commited true}]))]])
+   (let [e (ffirst (d/q '{:find [?e]
+                          :in [$ ?id]
+                          :where [[?e :id ?id]]}
+                        db temp-id))]
+     {:db/id e :id id :commited true})])
 
-(defmethod handle :start-edit
-  [[_ id]]
+(defn start-edit [db id]
   [[:db.fn/call log-event :start-edit id]
-   [:db.fn/call (fn [db]
-                  (let [e (ffirst (d/q '{:find [?e]
-                                         :in [$ ?id]
-                                         :where [[?e :id ?id]]}
-                                       db id))]
-                    [[:db/add e :editing true]]))]])
+   (let [e (ffirst (d/q '{:find [?e]
+                          :in [$ ?id]
+                          :where [[?e :id ?id]]}
+                        db id))]
+     [:db/add e :editing true])])
 
-(defmethod handle :complete-edit
-  [[_ id text]]
-  [[:db.fn/call log-event :complete-edit id text]
-   [:db.fn/call (fn [db]
-                  (let [e (ffirst (d/q '{:find [?e]
-                                         :in [$ ?id]
-                                         :where [[?e :id ?id]]}
-                                       db id))]
-                    [[:db/add e :editing false]
-                     [:db/add e :commited false]
-                     [:db/add e :text text]]))]])
+(defn complete-edit [db id text]
+  (into [[:db.fn/call log-event :complete-edit id text]]
+        (let [e (ffirst (d/q '{:find [?e]
+                               :in [$ ?id]
+                               :where [[?e :id ?id]]}
+                             db id))]
+          [[:db/add e :editing false]
+           [:db/add e :commited false]
+           [:db/add e :text text]])))
 
-(defmethod handle :commit-edit
-  [[_ id]]
+(defn commit-edit [db id]
   [[:db.fn/call log-event :commit-edit id]
-   [:db.fn/call (fn [db]
-                  (let [e (ffirst (d/q '{:find [?e]
-                                         :in [$ ?id]
-                                         :where [[?e :id ?id]]}
-                                       db id))]
-                    [[:db/add e :commited true]]))]])
+   (let [e (ffirst (d/q '{:find [?e]
+                          :in [$ ?id]
+                          :where [[?e :id ?id]]}
+                        db id))]
+     [:db/add e :commited true])])
 
-(defmethod handle :default
-  [trans]
-  nil)
