@@ -126,7 +126,6 @@
   [_ _] nil)
 
 (defn start-services [app]
-  (.log js/console (str "Url is: " (.-URL js/document)))
   (let [{:keys [conn]} app]
     (d/listen! conn (fn [{:keys [db-after] :as report}]
                       (let [[event args] (first (d/q '{:find [?event ?args]

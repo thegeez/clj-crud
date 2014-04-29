@@ -89,7 +89,7 @@
                                      (d/transact! conn [[:db.fn/call t/toggle-item id]])))})
                      (dom/label {} text)
                      (if-not commited
-                       (dom/span {:className "syncing"} "[syncing ...]")
+                       (dom/span {:className "sync glyphicon glyphicon-transfer"} "")
                        (dom/button {:className "destroy"
                                     :onClick
                                     (fn [_]
@@ -149,6 +149,8 @@
                                                                         :where [[_ :filter ?filter]]}
                                                                       db))
                                          :items items
-                                         :error (d/entity db :error)}]
+                                         :error (ffirst (d/q '{:find [?e]
+                                                               :where [[?e :error]]}
+                                                             db))}]
                               (q/render (App state conn)
                                         (.getElementById js/document "todopane"))))))

@@ -41091,10 +41091,10 @@ todomvc.render.Filters = quiescent.component.call(null, function(current_filter,
   return quiescent.dom.ul.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), "filters"], null), todomvc.render.ItemFilter.call(null, current_filter, new cljs.core.Keyword(null, "all", "all", 1014000915), "All", "#/", conn), todomvc.render.ItemFilter.call(null, current_filter, new cljs.core.Keyword(null, "active", "active", 3885920888), "Active", "#/active", conn), todomvc.render.ItemFilter.call(null, current_filter, new cljs.core.Keyword(null, 
   "completed", "completed", 3905939901), "Completed", "#/completed", conn));
 });
-todomvc.render.Footer = quiescent.component.call(null, function(p__12913, conn) {
-  var vec__12914 = p__12913;
-  var current_filter = cljs.core.nth.call(null, vec__12914, 0, null);
-  var items = cljs.core.nth.call(null, vec__12914, 1, null);
+todomvc.render.Footer = quiescent.component.call(null, function(p__74897, conn) {
+  var vec__74898 = p__74897;
+  var current_filter = cljs.core.nth.call(null, vec__74898, 0, null);
+  var items = cljs.core.nth.call(null, vec__74898, 1, null);
   var completed = cljs.core.count.call(null, cljs.core.filter.call(null, new cljs.core.Keyword(null, "completed", "completed", 3905939901), items));
   var left = cljs.core.count.call(null, items) - completed;
   return quiescent.dom.footer.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), "footer"], null), quiescent.dom.span.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), "todo-count"], null), quiescent.dom.strong.call(null, cljs.core.PersistentArrayMap.EMPTY, [cljs.core.str(left), cljs.core.str(" item(s) left")].join(""))), todomvc.render.Filters.call(null, current_filter, conn), 0 < completed ? 
@@ -41120,16 +41120,16 @@ todomvc.render.hidden_QMARK_ = function hidden_QMARK_(completed, current_filter)
     return cljs.core.not.call(null, completed) && cljs.core._EQ_.call(null, current_filter, new cljs.core.Keyword(null, "completed", "completed", 3905939901));
   }
 };
-todomvc.render.Item = quiescent.component.call(null, function(p__12915, conn) {
-  var vec__12916 = p__12915;
-  var map__12917 = cljs.core.nth.call(null, vec__12916, 0, null);
-  var map__12917__$1 = cljs.core.seq_QMARK_.call(null, map__12917) ? cljs.core.apply.call(null, cljs.core.hash_map, map__12917) : map__12917;
-  var commited = cljs.core.get.call(null, map__12917__$1, new cljs.core.Keyword(null, "commited", "commited", 4706580360));
-  var editing = cljs.core.get.call(null, map__12917__$1, new cljs.core.Keyword(null, "editing", "editing", 3420907786));
-  var completed = cljs.core.get.call(null, map__12917__$1, new cljs.core.Keyword(null, "completed", "completed", 3905939901));
-  var text = cljs.core.get.call(null, map__12917__$1, new cljs.core.Keyword(null, "text", "text", 1017460895));
-  var id = cljs.core.get.call(null, map__12917__$1, new cljs.core.Keyword(null, "id", "id", 1013907597));
-  var current_filter = cljs.core.nth.call(null, vec__12916, 1, null);
+todomvc.render.Item = quiescent.component.call(null, function(p__74899, conn) {
+  var vec__74900 = p__74899;
+  var map__74901 = cljs.core.nth.call(null, vec__74900, 0, null);
+  var map__74901__$1 = cljs.core.seq_QMARK_.call(null, map__74901) ? cljs.core.apply.call(null, cljs.core.hash_map, map__74901) : map__74901;
+  var commited = cljs.core.get.call(null, map__74901__$1, new cljs.core.Keyword(null, "commited", "commited", 4706580360));
+  var editing = cljs.core.get.call(null, map__74901__$1, new cljs.core.Keyword(null, "editing", "editing", 3420907786));
+  var completed = cljs.core.get.call(null, map__74901__$1, new cljs.core.Keyword(null, "completed", "completed", 3905939901));
+  var text = cljs.core.get.call(null, map__74901__$1, new cljs.core.Keyword(null, "text", "text", 1017460895));
+  var id = cljs.core.get.call(null, map__74901__$1, new cljs.core.Keyword(null, "id", "id", 1013907597));
+  var current_filter = cljs.core.nth.call(null, vec__74900, 1, null);
   var completed__$1 = cljs.core.boolean$.call(null, completed);
   return quiescent.dom.li.call(null, new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "key", "key", 1014010321), id, new cljs.core.Keyword(null, "className", "className", 1004015509), todomvc.render.class_name.call(null, cljs.core.PersistentHashSet.fromArray([completed__$1 ? "completed" : null, cljs.core.truth_(todomvc.render.hidden_QMARK_.call(null, completed__$1, current_filter)) ? "hidden" : null, cljs.core.truth_(editing) ? "editing" : null], true)), new cljs.core.Keyword(null, 
   "onDoubleClick", "onDoubleClick", 4144140362), function(_) {
@@ -41141,8 +41141,8 @@ todomvc.render.Item = quiescent.component.call(null, function(p__12915, conn) {
   }], null), quiescent.dom.div.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "className", "className", 1004015509), "view"], null), quiescent.dom.input.call(null, new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "className", "className", 1004015509), "toggle", new cljs.core.Keyword(null, "type", "type", 1017479852), "checkbox", new cljs.core.Keyword(null, "checked", "checked", 1756218137), completed__$1, new cljs.core.Keyword(null, "onChange", 
   "onChange", 2050678241), cljs.core.truth_(commited) ? function(_) {
     return datascript.transact_BANG_.call(null, conn, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db.fn", "call", "db.fn/call", 2901959894), todomvc.transact.toggle_item, id], null)], null));
-  } : null], null)), quiescent.dom.label.call(null, cljs.core.PersistentArrayMap.EMPTY, text), cljs.core.not.call(null, commited) ? quiescent.dom.span.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "className", "className", 1004015509), "syncing"], null), "[syncing ...]") : quiescent.dom.button.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "className", "className", 1004015509), "destroy", new cljs.core.Keyword(null, "onClick", 
-  "onClick", 3956969051), function(_) {
+  } : null], null)), quiescent.dom.label.call(null, cljs.core.PersistentArrayMap.EMPTY, text), cljs.core.not.call(null, commited) ? quiescent.dom.span.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "className", "className", 1004015509), "sync glyphicon glyphicon-transfer"], null), "") : quiescent.dom.button.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "className", "className", 1004015509), "destroy", new cljs.core.Keyword(null, 
+  "onClick", "onClick", 3956969051), function(_) {
     return datascript.transact_BANG_.call(null, conn, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db.fn", "call", "db.fn/call", 2901959894), todomvc.transact.remove_item, id], null)], null));
   }], null))), quiescent.dom.input.call(null, cljs.core.merge.call(null, new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "className", "className", 1004015509), "edit", new cljs.core.Keyword(null, "defaultValue", "defaultValue", 4649746210), text, new cljs.core.Keyword(null, "onKeyDown", "onKeyDown", 1534256180), function(evt) {
     if (todomvc.render.enter_key_QMARK_.call(null, evt)) {
@@ -41155,21 +41155,21 @@ todomvc.render.Item = quiescent.component.call(null, function(p__12915, conn) {
     return datascript.transact_BANG_.call(null, conn, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db.fn", "call", "db.fn/call", 2901959894), todomvc.transact.complete_edit, id, text__$1], null)], null));
   }], null), cljs.core.truth_(editing) ? new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "autoFocus", "autoFocus", 2651959259), true], null) : cljs.core.PersistentArrayMap.EMPTY)));
 });
-todomvc.render.TodoList = quiescent.component.call(null, function(p__12919, conn) {
-  var vec__12920 = p__12919;
-  var current_filter = cljs.core.nth.call(null, vec__12920, 0, null);
-  var items = cljs.core.nth.call(null, vec__12920, 1, null);
-  return cljs.core.apply.call(null, quiescent.dom.ul, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), "todo-list"], null), cljs.core.map.call(null, function(p1__12918_SHARP_) {
-    return todomvc.render.Item.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [p1__12918_SHARP_, current_filter], null), conn);
+todomvc.render.TodoList = quiescent.component.call(null, function(p__74903, conn) {
+  var vec__74904 = p__74903;
+  var current_filter = cljs.core.nth.call(null, vec__74904, 0, null);
+  var items = cljs.core.nth.call(null, vec__74904, 1, null);
+  return cljs.core.apply.call(null, quiescent.dom.ul, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), "todo-list"], null), cljs.core.map.call(null, function(p1__74902_SHARP_) {
+    return todomvc.render.Item.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [p1__74902_SHARP_, current_filter], null), conn);
   }, items));
 });
-todomvc.render.App = quiescent.component.call(null, function(p__12921, conn) {
-  var map__12922 = p__12921;
-  var map__12922__$1 = cljs.core.seq_QMARK_.call(null, map__12922) ? cljs.core.apply.call(null, cljs.core.hash_map, map__12922) : map__12922;
-  var error = cljs.core.get.call(null, map__12922__$1, new cljs.core.Keyword(null, "error", "error", 1110689146));
-  var items = cljs.core.get.call(null, map__12922__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
-  var current_filter = cljs.core.get.call(null, map__12922__$1, new cljs.core.Keyword(null, "current-filter", "current-filter", 2062811582));
-  var all_done_QMARK_ = cljs.core.get.call(null, map__12922__$1, new cljs.core.Keyword(null, "all-done?", "all-done?", 3774632259));
+todomvc.render.App = quiescent.component.call(null, function(p__74905, conn) {
+  var map__74906 = p__74905;
+  var map__74906__$1 = cljs.core.seq_QMARK_.call(null, map__74906) ? cljs.core.apply.call(null, cljs.core.hash_map, map__74906) : map__74906;
+  var error = cljs.core.get.call(null, map__74906__$1, new cljs.core.Keyword(null, "error", "error", 1110689146));
+  var items = cljs.core.get.call(null, map__74906__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
+  var current_filter = cljs.core.get.call(null, map__74906__$1, new cljs.core.Keyword(null, "current-filter", "current-filter", 2062811582));
+  var all_done_QMARK_ = cljs.core.get.call(null, map__74906__$1, new cljs.core.Keyword(null, "all-done?", "all-done?", 3774632259));
   return quiescent.dom.div.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.truth_(error) ? quiescent.dom.div.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "id", "id", 1013907597), "todo-error", new cljs.core.Keyword(null, "className", "className", 1004015509), "alert alert-info"], null), "Error occured, reloading page recommended.") : null, quiescent.dom.section.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 
   1013907597), "todoapp"], null), quiescent.dom.div.call(null, cljs.core.PersistentArrayMap.EMPTY, todomvc.render.Header.call(null, null, conn), quiescent.dom.section.call(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), "main"], null), quiescent.dom.input.call(null, new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "id", "id", 1013907597), "toggle-all", new cljs.core.Keyword(null, "type", "type", 1017479852), "checkbox", new cljs.core.Keyword(null, 
   "checked", "checked", 1756218137), all_done_QMARK_, new cljs.core.Keyword(null, "onChange", "onChange", 2050678241), function() {
@@ -41179,13 +41179,14 @@ todomvc.render.App = quiescent.component.call(null, function(p__12921, conn) {
 });
 todomvc.render.main = function main(db, conn) {
   return window.requestAnimationFrame(function() {
-    var items = cljs.core.sort_by.call(null, new cljs.core.Keyword("db", "id", "db/id", 1014111942), cljs.core.map.call(null, function(p1__12923_SHARP_) {
-      return datascript.entity.call(null, db, cljs.core.first.call(null, p1__12923_SHARP_));
+    var items = cljs.core.sort_by.call(null, new cljs.core.Keyword("db", "id", "db/id", 1014111942), cljs.core.map.call(null, function(p1__74907_SHARP_) {
+      return datascript.entity.call(null, db, cljs.core.first.call(null, p1__74907_SHARP_));
     }, datascript.q.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "find", "find", 1017047339), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "?e", "?e", -1640529473, null), new cljs.core.Symbol(null, "?id", "?id", -1640467629, null)], null), new cljs.core.Keyword(null, "where", "where", 1127002201), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 
     3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "?e", "?e", -1640529473, null), new cljs.core.Keyword(null, "id", "id", 1013907597), new cljs.core.Symbol(null, "?id", "?id", -1640467629, null)], null)], null)], null), db)));
     var state = new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "all-done?", "all-done?", 3774632259), cljs.core.seq.call(null, items) && cljs.core.every_QMARK_.call(null, new cljs.core.Keyword(null, "completed", "completed", 3905939901), items), new cljs.core.Keyword(null, "current-filter", "current-filter", 2062811582), cljs.core.ffirst.call(null, datascript.q.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "find", "find", 1017047339), new cljs.core.PersistentVector(null, 
     1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "?filter", "?filter", 1458100784, null)], null), new cljs.core.Keyword(null, "where", "where", 1127002201), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "_", "_", -1640531432, null), new cljs.core.Keyword(null, "filter", "filter", 4034379498), new cljs.core.Symbol(null, "?filter", 
-    "?filter", 1458100784, null)], null)], null)], null), db)), new cljs.core.Keyword(null, "items", "items", 1114430258), items, new cljs.core.Keyword(null, "error", "error", 1110689146), datascript.entity.call(null, db, new cljs.core.Keyword(null, "error", "error", 1110689146))], null);
+    "?filter", 1458100784, null)], null)], null)], null), db)), new cljs.core.Keyword(null, "items", "items", 1114430258), items, new cljs.core.Keyword(null, "error", "error", 1110689146), cljs.core.ffirst.call(null, datascript.q.call(null, new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "find", "find", 1017047339), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "?e", "?e", -1640529473, null)], null), new cljs.core.Keyword(null, 
+    "where", "where", 1127002201), new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "?e", "?e", -1640529473, null), new cljs.core.Keyword(null, "error", "error", 1110689146)], null)], null)], null), db))], null);
     return quiescent.render.call(null, todomvc.render.App.call(null, state, conn), document.getElementById("todopane"));
   });
 };
@@ -42391,23 +42392,23 @@ goog.require("ajax.core");
 goog.require("todomvc.transact");
 goog.require("todomvc.transact");
 todomvc.services.DELETE = function() {
-  var DELETE__delegate = function(uri, p__13069) {
-    var vec__13071 = p__13069;
-    var opts = cljs.core.nth.call(null, vec__13071, 0, null);
+  var DELETE__delegate = function(uri, p__80400) {
+    var vec__80402 = p__80400;
+    var opts = cljs.core.nth.call(null, vec__80402, 0, null);
     return ajax.core.ajax_request.call(null, uri, "DELETE", ajax.core.transform_opts.call(null, opts));
   };
   var DELETE = function(uri, var_args) {
-    var p__13069 = null;
+    var p__80400 = null;
     if (arguments.length > 1) {
-      p__13069 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1), 0);
+      p__80400 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1), 0);
     }
-    return DELETE__delegate.call(this, uri, p__13069);
+    return DELETE__delegate.call(this, uri, p__80400);
   };
   DELETE.cljs$lang$maxFixedArity = 1;
-  DELETE.cljs$lang$applyTo = function(arglist__13072) {
-    var uri = cljs.core.first(arglist__13072);
-    var p__13069 = cljs.core.rest(arglist__13072);
-    return DELETE__delegate(uri, p__13069);
+  DELETE.cljs$lang$applyTo = function(arglist__80403) {
+    var uri = cljs.core.first(arglist__80403);
+    var p__80400 = cljs.core.rest(arglist__80403);
+    return DELETE__delegate(uri, p__80400);
   };
   DELETE.cljs$core$IFn$_invoke$arity$variadic = DELETE__delegate;
   return DELETE;
@@ -42431,10 +42432,10 @@ todomvc.services.handle = function() {
     return event;
   }, new cljs.core.Keyword(null, "default", "default", 2558708147), hierarchy__11191__auto__, method_table__11187__auto__, prefer_table__11188__auto__, method_cache__11189__auto__, cached_hierarchy__11190__auto__);
 }();
-cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "create-item", "create-item", 4768804022), function(_, p__13073, db, conn) {
-  var vec__13074 = p__13073;
-  var temp_id = cljs.core.nth.call(null, vec__13074, 0, null);
-  var text = cljs.core.nth.call(null, vec__13074, 1, null);
+cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "create-item", "create-item", 4768804022), function(_, p__80404, db, conn) {
+  var vec__80405 = p__80404;
+  var temp_id = cljs.core.nth.call(null, vec__80405, 0, null);
+  var text = cljs.core.nth.call(null, vec__80405, 1, null);
   return ajax.core.POST.call(null, todomvc.services.todos_url.call(null), new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null, "params", "params", 4313443576), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "id", "id", 1013907597), temp_id, new cljs.core.Keyword(null, "text", "text", 1017460895), text], null), new cljs.core.Keyword(null, "handler", "handler", 1706707644), function(res) {
     console.log([cljs.core.str("Succesful res: "), cljs.core.str(res)].join(""));
     var id = (new cljs.core.Keyword(null, "id", "id", 1013907597)).cljs$core$IFn$_invoke$arity$1(res);
@@ -42444,10 +42445,10 @@ cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(
     return todomvc.services.error_handler.call(null, conn);
   }, new cljs.core.Keyword(null, "headers", "headers", 1809212152), new cljs.core.PersistentArrayMap(null, 1, ["X-CSRF-Token", todomvc.services.csrf_token.call(null)], null)], null));
 });
-cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "complete-edit", "complete-edit", 1152265616), function(event, p__13075, db, conn) {
-  var vec__13076 = p__13075;
-  var id = cljs.core.nth.call(null, vec__13076, 0, null);
-  var text = cljs.core.nth.call(null, vec__13076, 1, null);
+cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "complete-edit", "complete-edit", 1152265616), function(event, p__80406, db, conn) {
+  var vec__80407 = p__80406;
+  var id = cljs.core.nth.call(null, vec__80407, 0, null);
+  var text = cljs.core.nth.call(null, vec__80407, 1, null);
   return ajax.core.PUT.call(null, todomvc.services.todos_url.call(null), new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null, "params", "params", 4313443576), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "id", "id", 1013907597), id, new cljs.core.Keyword(null, "text", "text", 1017460895), text], null), new cljs.core.Keyword(null, "handler", "handler", 1706707644), function(res) {
     console.log([cljs.core.str("Succesful res for complete-edit: "), cljs.core.str(res), cljs.core.str(" id is "), cljs.core.str(id), cljs.core.str(" text is "), cljs.core.str(text)].join(""));
     return datascript.transact_BANG_.call(null, conn, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db.fn", "call", "db.fn/call", 2901959894), todomvc.transact.commit_edit, id], null)], null));
@@ -42463,10 +42464,10 @@ cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(
     }
   }, new cljs.core.Keyword(null, "description", "description", 3584325486), "EDN (CUSTOM)"], null)), new cljs.core.Keyword(null, "headers", "headers", 1809212152), new cljs.core.PersistentArrayMap(null, 1, ["X-CSRF-Token", todomvc.services.csrf_token.call(null)], null)], null));
 });
-cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "toggle-item", "toggle-item", 4616866142), function(event, p__13077, db, conn) {
-  var vec__13078 = p__13077;
-  var id = cljs.core.nth.call(null, vec__13078, 0, null);
-  var completed = cljs.core.nth.call(null, vec__13078, 1, null);
+cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "toggle-item", "toggle-item", 4616866142), function(event, p__80408, db, conn) {
+  var vec__80409 = p__80408;
+  var id = cljs.core.nth.call(null, vec__80409, 0, null);
+  var completed = cljs.core.nth.call(null, vec__80409, 1, null);
   return ajax.core.PUT.call(null, todomvc.services.todos_url.call(null), new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null, "params", "params", 4313443576), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "id", "id", 1013907597), id, new cljs.core.Keyword(null, "completed", "completed", 3905939901), completed], null), new cljs.core.Keyword(null, "handler", "handler", 1706707644), function(res) {
     return console.log([cljs.core.str("Succesful res: "), cljs.core.str(res)].join(""));
   }, new cljs.core.Keyword(null, "error-handler", "error-handler", 1866823671), function(res) {
@@ -42481,9 +42482,9 @@ cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(
     }
   }, new cljs.core.Keyword(null, "description", "description", 3584325486), "EDN (CUSTOM)"], null)), new cljs.core.Keyword(null, "headers", "headers", 1809212152), new cljs.core.PersistentArrayMap(null, 1, ["X-CSRF-Token", todomvc.services.csrf_token.call(null)], null)], null));
 });
-cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "remove-item", "remove-item", 673860142), function(event, p__13079, db, conn) {
-  var vec__13080 = p__13079;
-  var id = cljs.core.nth.call(null, vec__13080, 0, null);
+cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "remove-item", "remove-item", 673860142), function(event, p__80410, db, conn) {
+  var vec__80411 = p__80410;
+  var id = cljs.core.nth.call(null, vec__80411, 0, null);
   return todomvc.services.DELETE.call(null, todomvc.services.todos_url.call(null), new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null, "params", "params", 4313443576), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), id], null), new cljs.core.Keyword(null, "handler", "handler", 1706707644), function(res) {
     return console.log([cljs.core.str("Succesful res: "), cljs.core.str(res)].join(""));
   }, new cljs.core.Keyword(null, "error-handler", "error-handler", 1866823671), function(res) {
@@ -42498,26 +42499,26 @@ cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(
     }
   }, new cljs.core.Keyword(null, "description", "description", 3584325486), "EDN (CUSTOM)"], null)), new cljs.core.Keyword(null, "headers", "headers", 1809212152), new cljs.core.PersistentArrayMap(null, 1, ["X-CSRF-Token", todomvc.services.csrf_token.call(null)], null)], null));
 });
-cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "clear-completed", "clear-completed", 888981053), function(event, p__13081, db, conn) {
-  var vec__13082 = p__13081;
-  var ids = cljs.core.nth.call(null, vec__13082, 0, null);
-  var seq__13083 = cljs.core.seq.call(null, ids);
-  var chunk__13084 = null;
-  var count__13085 = 0;
-  var i__13086 = 0;
+cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "clear-completed", "clear-completed", 888981053), function(event, p__80412, db, conn) {
+  var vec__80413 = p__80412;
+  var ids = cljs.core.nth.call(null, vec__80413, 0, null);
+  var seq__80414 = cljs.core.seq.call(null, ids);
+  var chunk__80415 = null;
+  var count__80416 = 0;
+  var i__80417 = 0;
   while (true) {
-    if (i__13086 < count__13085) {
-      var id = cljs.core._nth.call(null, chunk__13084, i__13086);
-      todomvc.services.DELETE.call(null, todomvc.services.todos_url.call(null), new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null, "params", "params", 4313443576), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), id], null), new cljs.core.Keyword(null, "handler", "handler", 1706707644), function(seq__13083, chunk__13084, count__13085, i__13086, id) {
+    if (i__80417 < count__80416) {
+      var id = cljs.core._nth.call(null, chunk__80415, i__80417);
+      todomvc.services.DELETE.call(null, todomvc.services.todos_url.call(null), new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null, "params", "params", 4313443576), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), id], null), new cljs.core.Keyword(null, "handler", "handler", 1706707644), function(seq__80414, chunk__80415, count__80416, i__80417, id) {
         return function(res) {
           return console.log([cljs.core.str("Succesful res: "), cljs.core.str(res)].join(""));
         };
-      }(seq__13083, chunk__13084, count__13085, i__13086, id), new cljs.core.Keyword(null, "error-handler", "error-handler", 1866823671), function(seq__13083, chunk__13084, count__13085, i__13086, id) {
+      }(seq__80414, chunk__80415, count__80416, i__80417, id), new cljs.core.Keyword(null, "error-handler", "error-handler", 1866823671), function(seq__80414, chunk__80415, count__80416, i__80417, id) {
         return function(res) {
           console.log([cljs.core.str("Fail res: "), cljs.core.str(res)].join(""));
           return todomvc.services.error_handler.call(null, conn);
         };
-      }(seq__13083, chunk__13084, count__13085, i__13086, id), new cljs.core.Keyword(null, "format", "format", 4040092521), cljs.core.merge.call(null, ajax.core.edn_request_format.call(null), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "read", "read", 1017400584), function(seq__13083, chunk__13084, count__13085, i__13086, id) {
+      }(seq__80414, chunk__80415, count__80416, i__80417, id), new cljs.core.Keyword(null, "format", "format", 4040092521), cljs.core.merge.call(null, ajax.core.edn_request_format.call(null), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "read", "read", 1017400584), function(seq__80414, chunk__80415, count__80416, i__80417, id) {
         return function(res) {
           var res_text = res.getResponseText();
           if (cljs.core.count.call(null, res_text) > 0) {
@@ -42526,43 +42527,43 @@ cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(
             return null;
           }
         };
-      }(seq__13083, chunk__13084, count__13085, i__13086, id), new cljs.core.Keyword(null, "description", "description", 3584325486), "EDN (CUSTOM)"], null)), new cljs.core.Keyword(null, "headers", "headers", 1809212152), new cljs.core.PersistentArrayMap(null, 1, ["X-CSRF-Token", todomvc.services.csrf_token.call(null)], null)], null));
-      var G__13087 = seq__13083;
-      var G__13088 = chunk__13084;
-      var G__13089 = count__13085;
-      var G__13090 = i__13086 + 1;
-      seq__13083 = G__13087;
-      chunk__13084 = G__13088;
-      count__13085 = G__13089;
-      i__13086 = G__13090;
+      }(seq__80414, chunk__80415, count__80416, i__80417, id), new cljs.core.Keyword(null, "description", "description", 3584325486), "EDN (CUSTOM)"], null)), new cljs.core.Keyword(null, "headers", "headers", 1809212152), new cljs.core.PersistentArrayMap(null, 1, ["X-CSRF-Token", todomvc.services.csrf_token.call(null)], null)], null));
+      var G__80418 = seq__80414;
+      var G__80419 = chunk__80415;
+      var G__80420 = count__80416;
+      var G__80421 = i__80417 + 1;
+      seq__80414 = G__80418;
+      chunk__80415 = G__80419;
+      count__80416 = G__80420;
+      i__80417 = G__80421;
       continue;
     } else {
-      var temp__4092__auto__ = cljs.core.seq.call(null, seq__13083);
+      var temp__4092__auto__ = cljs.core.seq.call(null, seq__80414);
       if (temp__4092__auto__) {
-        var seq__13083__$1 = temp__4092__auto__;
-        if (cljs.core.chunked_seq_QMARK_.call(null, seq__13083__$1)) {
-          var c__11077__auto__ = cljs.core.chunk_first.call(null, seq__13083__$1);
-          var G__13091 = cljs.core.chunk_rest.call(null, seq__13083__$1);
-          var G__13092 = c__11077__auto__;
-          var G__13093 = cljs.core.count.call(null, c__11077__auto__);
-          var G__13094 = 0;
-          seq__13083 = G__13091;
-          chunk__13084 = G__13092;
-          count__13085 = G__13093;
-          i__13086 = G__13094;
+        var seq__80414__$1 = temp__4092__auto__;
+        if (cljs.core.chunked_seq_QMARK_.call(null, seq__80414__$1)) {
+          var c__11077__auto__ = cljs.core.chunk_first.call(null, seq__80414__$1);
+          var G__80422 = cljs.core.chunk_rest.call(null, seq__80414__$1);
+          var G__80423 = c__11077__auto__;
+          var G__80424 = cljs.core.count.call(null, c__11077__auto__);
+          var G__80425 = 0;
+          seq__80414 = G__80422;
+          chunk__80415 = G__80423;
+          count__80416 = G__80424;
+          i__80417 = G__80425;
           continue;
         } else {
-          var id = cljs.core.first.call(null, seq__13083__$1);
-          todomvc.services.DELETE.call(null, todomvc.services.todos_url.call(null), new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null, "params", "params", 4313443576), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), id], null), new cljs.core.Keyword(null, "handler", "handler", 1706707644), function(seq__13083, chunk__13084, count__13085, i__13086, id, seq__13083__$1, temp__4092__auto__) {
+          var id = cljs.core.first.call(null, seq__80414__$1);
+          todomvc.services.DELETE.call(null, todomvc.services.todos_url.call(null), new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null, "params", "params", 4313443576), new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null, "id", "id", 1013907597), id], null), new cljs.core.Keyword(null, "handler", "handler", 1706707644), function(seq__80414, chunk__80415, count__80416, i__80417, id, seq__80414__$1, temp__4092__auto__) {
             return function(res) {
               return console.log([cljs.core.str("Succesful res: "), cljs.core.str(res)].join(""));
             };
-          }(seq__13083, chunk__13084, count__13085, i__13086, id, seq__13083__$1, temp__4092__auto__), new cljs.core.Keyword(null, "error-handler", "error-handler", 1866823671), function(seq__13083, chunk__13084, count__13085, i__13086, id, seq__13083__$1, temp__4092__auto__) {
+          }(seq__80414, chunk__80415, count__80416, i__80417, id, seq__80414__$1, temp__4092__auto__), new cljs.core.Keyword(null, "error-handler", "error-handler", 1866823671), function(seq__80414, chunk__80415, count__80416, i__80417, id, seq__80414__$1, temp__4092__auto__) {
             return function(res) {
               console.log([cljs.core.str("Fail res: "), cljs.core.str(res)].join(""));
               return todomvc.services.error_handler.call(null, conn);
             };
-          }(seq__13083, chunk__13084, count__13085, i__13086, id, seq__13083__$1, temp__4092__auto__), new cljs.core.Keyword(null, "format", "format", 4040092521), cljs.core.merge.call(null, ajax.core.edn_request_format.call(null), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "read", "read", 1017400584), function(seq__13083, chunk__13084, count__13085, i__13086, id, seq__13083__$1, temp__4092__auto__) {
+          }(seq__80414, chunk__80415, count__80416, i__80417, id, seq__80414__$1, temp__4092__auto__), new cljs.core.Keyword(null, "format", "format", 4040092521), cljs.core.merge.call(null, ajax.core.edn_request_format.call(null), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "read", "read", 1017400584), function(seq__80414, chunk__80415, count__80416, i__80417, id, seq__80414__$1, temp__4092__auto__) {
             return function(res) {
               var res_text = res.getResponseText();
               if (cljs.core.count.call(null, res_text) > 0) {
@@ -42571,15 +42572,15 @@ cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(
                 return null;
               }
             };
-          }(seq__13083, chunk__13084, count__13085, i__13086, id, seq__13083__$1, temp__4092__auto__), new cljs.core.Keyword(null, "description", "description", 3584325486), "EDN (CUSTOM)"], null)), new cljs.core.Keyword(null, "headers", "headers", 1809212152), new cljs.core.PersistentArrayMap(null, 1, ["X-CSRF-Token", todomvc.services.csrf_token.call(null)], null)], null));
-          var G__13095 = cljs.core.next.call(null, seq__13083__$1);
-          var G__13096 = null;
-          var G__13097 = 0;
-          var G__13098 = 0;
-          seq__13083 = G__13095;
-          chunk__13084 = G__13096;
-          count__13085 = G__13097;
-          i__13086 = G__13098;
+          }(seq__80414, chunk__80415, count__80416, i__80417, id, seq__80414__$1, temp__4092__auto__), new cljs.core.Keyword(null, "description", "description", 3584325486), "EDN (CUSTOM)"], null)), new cljs.core.Keyword(null, "headers", "headers", 1809212152), new cljs.core.PersistentArrayMap(null, 1, ["X-CSRF-Token", todomvc.services.csrf_token.call(null)], null)], null));
+          var G__80426 = cljs.core.next.call(null, seq__80414__$1);
+          var G__80427 = null;
+          var G__80428 = 0;
+          var G__80429 = 0;
+          seq__80414 = G__80426;
+          chunk__80415 = G__80427;
+          count__80416 = G__80428;
+          i__80417 = G__80429;
           continue;
         }
       } else {
@@ -42590,55 +42591,55 @@ cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(
   }
 });
 cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(null, "toggle-all", "toggle-all", 4455256858), function(event, _, db, conn) {
-  var seq__13099 = cljs.core.seq.call(null, datascript.q.call(null, new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "find", "find", 1017047339), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "?id", "?id", -1640467629, null), new cljs.core.Symbol(null, "?completed", "?completed", 1756055205, null)], null), new cljs.core.Keyword(null, "in", "in", 1013907607), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, 
+  var seq__80430 = cljs.core.seq.call(null, datascript.q.call(null, new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "find", "find", 1017047339), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "?id", "?id", -1640467629, null), new cljs.core.Symbol(null, "?completed", "?completed", 1756055205, null)], null), new cljs.core.Keyword(null, "in", "in", 1013907607), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, 
   [new cljs.core.Symbol(null, "$", "$", -1640531491, null), new cljs.core.Symbol(null, "?tx", "?tx", -1640467268, null)], null), new cljs.core.Keyword(null, "where", "where", 1127002201), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "?e", "?e", -1640529473, null), new cljs.core.Keyword(null, "id", "id", 1013907597), new cljs.core.Symbol(null, "?id", "?id", 
   -1640467629, null)], null), new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "?e", "?e", -1640529473, null), new cljs.core.Keyword(null, "completed", "completed", 3905939901), new cljs.core.Symbol(null, "?completed", "?completed", 1756055205, null), new cljs.core.Symbol(null, "?tx", "?tx", -1640467268, null)], null)], null)], null), db, (new cljs.core.Keyword(null, "max-tx", "max-tx", 4227685119)).cljs$core$IFn$_invoke$arity$1(db)));
-  var chunk__13100 = null;
-  var count__13101 = 0;
-  var i__13102 = 0;
+  var chunk__80431 = null;
+  var count__80432 = 0;
+  var i__80433 = 0;
   while (true) {
-    if (i__13102 < count__13101) {
-      var vec__13103 = cljs.core._nth.call(null, chunk__13100, i__13102);
-      var id = cljs.core.nth.call(null, vec__13103, 0, null);
-      var completed = cljs.core.nth.call(null, vec__13103, 1, null);
+    if (i__80433 < count__80432) {
+      var vec__80434 = cljs.core._nth.call(null, chunk__80431, i__80433);
+      var id = cljs.core.nth.call(null, vec__80434, 0, null);
+      var completed = cljs.core.nth.call(null, vec__80434, 1, null);
       todomvc.services.handle.call(null, new cljs.core.Keyword(null, "toggle-item", "toggle-item", 4616866142), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [id, completed], null), db, conn);
-      var G__13105 = seq__13099;
-      var G__13106 = chunk__13100;
-      var G__13107 = count__13101;
-      var G__13108 = i__13102 + 1;
-      seq__13099 = G__13105;
-      chunk__13100 = G__13106;
-      count__13101 = G__13107;
-      i__13102 = G__13108;
+      var G__80436 = seq__80430;
+      var G__80437 = chunk__80431;
+      var G__80438 = count__80432;
+      var G__80439 = i__80433 + 1;
+      seq__80430 = G__80436;
+      chunk__80431 = G__80437;
+      count__80432 = G__80438;
+      i__80433 = G__80439;
       continue;
     } else {
-      var temp__4092__auto__ = cljs.core.seq.call(null, seq__13099);
+      var temp__4092__auto__ = cljs.core.seq.call(null, seq__80430);
       if (temp__4092__auto__) {
-        var seq__13099__$1 = temp__4092__auto__;
-        if (cljs.core.chunked_seq_QMARK_.call(null, seq__13099__$1)) {
-          var c__11077__auto__ = cljs.core.chunk_first.call(null, seq__13099__$1);
-          var G__13109 = cljs.core.chunk_rest.call(null, seq__13099__$1);
-          var G__13110 = c__11077__auto__;
-          var G__13111 = cljs.core.count.call(null, c__11077__auto__);
-          var G__13112 = 0;
-          seq__13099 = G__13109;
-          chunk__13100 = G__13110;
-          count__13101 = G__13111;
-          i__13102 = G__13112;
+        var seq__80430__$1 = temp__4092__auto__;
+        if (cljs.core.chunked_seq_QMARK_.call(null, seq__80430__$1)) {
+          var c__11077__auto__ = cljs.core.chunk_first.call(null, seq__80430__$1);
+          var G__80440 = cljs.core.chunk_rest.call(null, seq__80430__$1);
+          var G__80441 = c__11077__auto__;
+          var G__80442 = cljs.core.count.call(null, c__11077__auto__);
+          var G__80443 = 0;
+          seq__80430 = G__80440;
+          chunk__80431 = G__80441;
+          count__80432 = G__80442;
+          i__80433 = G__80443;
           continue;
         } else {
-          var vec__13104 = cljs.core.first.call(null, seq__13099__$1);
-          var id = cljs.core.nth.call(null, vec__13104, 0, null);
-          var completed = cljs.core.nth.call(null, vec__13104, 1, null);
+          var vec__80435 = cljs.core.first.call(null, seq__80430__$1);
+          var id = cljs.core.nth.call(null, vec__80435, 0, null);
+          var completed = cljs.core.nth.call(null, vec__80435, 1, null);
           todomvc.services.handle.call(null, new cljs.core.Keyword(null, "toggle-item", "toggle-item", 4616866142), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [id, completed], null), db, conn);
-          var G__13113 = cljs.core.next.call(null, seq__13099__$1);
-          var G__13114 = null;
-          var G__13115 = 0;
-          var G__13116 = 0;
-          seq__13099 = G__13113;
-          chunk__13100 = G__13114;
-          count__13101 = G__13115;
-          i__13102 = G__13116;
+          var G__80444 = cljs.core.next.call(null, seq__80430__$1);
+          var G__80445 = null;
+          var G__80446 = 0;
+          var G__80447 = 0;
+          seq__80430 = G__80444;
+          chunk__80431 = G__80445;
+          count__80432 = G__80446;
+          i__80433 = G__80447;
           continue;
         }
       } else {
@@ -42652,76 +42653,75 @@ cljs.core._add_method.call(null, todomvc.services.handle, new cljs.core.Keyword(
   return null;
 });
 todomvc.services.start_services = function start_services(app) {
-  console.log([cljs.core.str("Url is: "), cljs.core.str(document.URL)].join(""));
-  var map__13127 = app;
-  var map__13127__$1 = cljs.core.seq_QMARK_.call(null, map__13127) ? cljs.core.apply.call(null, cljs.core.hash_map, map__13127) : map__13127;
-  var conn = cljs.core.get.call(null, map__13127__$1, new cljs.core.Keyword(null, "conn", "conn", 1016963742));
-  datascript.listen_BANG_.call(null, conn, function(p__13128) {
-    var map__13129 = p__13128;
-    var map__13129__$1 = cljs.core.seq_QMARK_.call(null, map__13129) ? cljs.core.apply.call(null, cljs.core.hash_map, map__13129) : map__13129;
-    var report = map__13129__$1;
-    var db_after = cljs.core.get.call(null, map__13129__$1, new cljs.core.Keyword(null, "db-after", "db-after", 1658340159));
-    var vec__13130 = cljs.core.first.call(null, datascript.q.call(null, new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "find", "find", 1017047339), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "?event", "?event", 259996532, null), new cljs.core.Symbol(null, "?args", "?args", -1579347115, null)], null), new cljs.core.Keyword(null, "in", "in", 1013907607), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, 
+  var map__80458 = app;
+  var map__80458__$1 = cljs.core.seq_QMARK_.call(null, map__80458) ? cljs.core.apply.call(null, cljs.core.hash_map, map__80458) : map__80458;
+  var conn = cljs.core.get.call(null, map__80458__$1, new cljs.core.Keyword(null, "conn", "conn", 1016963742));
+  datascript.listen_BANG_.call(null, conn, function(p__80459) {
+    var map__80460 = p__80459;
+    var map__80460__$1 = cljs.core.seq_QMARK_.call(null, map__80460) ? cljs.core.apply.call(null, cljs.core.hash_map, map__80460) : map__80460;
+    var report = map__80460__$1;
+    var db_after = cljs.core.get.call(null, map__80460__$1, new cljs.core.Keyword(null, "db-after", "db-after", 1658340159));
+    var vec__80461 = cljs.core.first.call(null, datascript.q.call(null, new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null, "find", "find", 1017047339), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "?event", "?event", 259996532, null), new cljs.core.Symbol(null, "?args", "?args", -1579347115, null)], null), new cljs.core.Keyword(null, "in", "in", 1013907607), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, 
     [new cljs.core.Symbol(null, "$", "$", -1640531491, null), new cljs.core.Symbol(null, "?tx", "?tx", -1640467268, null)], null), new cljs.core.Keyword(null, "where", "where", 1127002201), new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "?e", "?e", -1640529473, null), new cljs.core.Keyword(null, "event", "event", 1110795788), new cljs.core.Symbol(null, 
     "?event", "?event", 259996532, null), new cljs.core.Symbol(null, "?tx", "?tx", -1640467268, null)], null), new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Symbol(null, "?e", "?e", -1640529473, null), new cljs.core.Keyword(null, "args", "args", 1016906831), new cljs.core.Symbol(null, "?args", "?args", -1579347115, null)], null)], null)], null), db_after, (new cljs.core.Keyword(null, "max-tx", "max-tx", 4227685119)).cljs$core$IFn$_invoke$arity$1(db_after)));
-    var event = cljs.core.nth.call(null, vec__13130, 0, null);
-    var args = cljs.core.nth.call(null, vec__13130, 1, null);
+    var event = cljs.core.nth.call(null, vec__80461, 0, null);
+    var args = cljs.core.nth.call(null, vec__80461, 1, null);
     return todomvc.services.handle.call(null, event, args, db_after, conn);
   });
   return ajax.core.GET.call(null, todomvc.services.todos_url.call(null), new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null, "handler", "handler", 1706707644), function(res) {
-    var seq__13131 = cljs.core.seq.call(null, (new cljs.core.Keyword(null, "todos", "todos", 1124439135)).cljs$core$IFn$_invoke$arity$1(res));
-    var chunk__13132 = null;
-    var count__13133 = 0;
-    var i__13134 = 0;
+    var seq__80462 = cljs.core.seq.call(null, (new cljs.core.Keyword(null, "todos", "todos", 1124439135)).cljs$core$IFn$_invoke$arity$1(res));
+    var chunk__80463 = null;
+    var count__80464 = 0;
+    var i__80465 = 0;
     while (true) {
-      if (i__13134 < count__13133) {
-        var map__13135 = cljs.core._nth.call(null, chunk__13132, i__13134);
-        var map__13135__$1 = cljs.core.seq_QMARK_.call(null, map__13135) ? cljs.core.apply.call(null, cljs.core.hash_map, map__13135) : map__13135;
-        var todo = map__13135__$1;
-        var completed = cljs.core.get.call(null, map__13135__$1, new cljs.core.Keyword(null, "completed", "completed", 3905939901));
-        var text = cljs.core.get.call(null, map__13135__$1, new cljs.core.Keyword(null, "text", "text", 1017460895));
-        var id = cljs.core.get.call(null, map__13135__$1, new cljs.core.Keyword(null, "id", "id", 1013907597));
+      if (i__80465 < count__80464) {
+        var map__80466 = cljs.core._nth.call(null, chunk__80463, i__80465);
+        var map__80466__$1 = cljs.core.seq_QMARK_.call(null, map__80466) ? cljs.core.apply.call(null, cljs.core.hash_map, map__80466) : map__80466;
+        var todo = map__80466__$1;
+        var completed = cljs.core.get.call(null, map__80466__$1, new cljs.core.Keyword(null, "completed", "completed", 3905939901));
+        var text = cljs.core.get.call(null, map__80466__$1, new cljs.core.Keyword(null, "text", "text", 1017460895));
+        var id = cljs.core.get.call(null, map__80466__$1, new cljs.core.Keyword(null, "id", "id", 1013907597));
         datascript.transact_BANG_.call(null, conn, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 5, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db.fn", "call", "db.fn/call", 2901959894), todomvc.transact.seed_item, id, text, completed], null)], null));
-        var G__13137 = seq__13131;
-        var G__13138 = chunk__13132;
-        var G__13139 = count__13133;
-        var G__13140 = i__13134 + 1;
-        seq__13131 = G__13137;
-        chunk__13132 = G__13138;
-        count__13133 = G__13139;
-        i__13134 = G__13140;
+        var G__80468 = seq__80462;
+        var G__80469 = chunk__80463;
+        var G__80470 = count__80464;
+        var G__80471 = i__80465 + 1;
+        seq__80462 = G__80468;
+        chunk__80463 = G__80469;
+        count__80464 = G__80470;
+        i__80465 = G__80471;
         continue;
       } else {
-        var temp__4092__auto__ = cljs.core.seq.call(null, seq__13131);
+        var temp__4092__auto__ = cljs.core.seq.call(null, seq__80462);
         if (temp__4092__auto__) {
-          var seq__13131__$1 = temp__4092__auto__;
-          if (cljs.core.chunked_seq_QMARK_.call(null, seq__13131__$1)) {
-            var c__11077__auto__ = cljs.core.chunk_first.call(null, seq__13131__$1);
-            var G__13141 = cljs.core.chunk_rest.call(null, seq__13131__$1);
-            var G__13142 = c__11077__auto__;
-            var G__13143 = cljs.core.count.call(null, c__11077__auto__);
-            var G__13144 = 0;
-            seq__13131 = G__13141;
-            chunk__13132 = G__13142;
-            count__13133 = G__13143;
-            i__13134 = G__13144;
+          var seq__80462__$1 = temp__4092__auto__;
+          if (cljs.core.chunked_seq_QMARK_.call(null, seq__80462__$1)) {
+            var c__11077__auto__ = cljs.core.chunk_first.call(null, seq__80462__$1);
+            var G__80472 = cljs.core.chunk_rest.call(null, seq__80462__$1);
+            var G__80473 = c__11077__auto__;
+            var G__80474 = cljs.core.count.call(null, c__11077__auto__);
+            var G__80475 = 0;
+            seq__80462 = G__80472;
+            chunk__80463 = G__80473;
+            count__80464 = G__80474;
+            i__80465 = G__80475;
             continue;
           } else {
-            var map__13136 = cljs.core.first.call(null, seq__13131__$1);
-            var map__13136__$1 = cljs.core.seq_QMARK_.call(null, map__13136) ? cljs.core.apply.call(null, cljs.core.hash_map, map__13136) : map__13136;
-            var todo = map__13136__$1;
-            var completed = cljs.core.get.call(null, map__13136__$1, new cljs.core.Keyword(null, "completed", "completed", 3905939901));
-            var text = cljs.core.get.call(null, map__13136__$1, new cljs.core.Keyword(null, "text", "text", 1017460895));
-            var id = cljs.core.get.call(null, map__13136__$1, new cljs.core.Keyword(null, "id", "id", 1013907597));
+            var map__80467 = cljs.core.first.call(null, seq__80462__$1);
+            var map__80467__$1 = cljs.core.seq_QMARK_.call(null, map__80467) ? cljs.core.apply.call(null, cljs.core.hash_map, map__80467) : map__80467;
+            var todo = map__80467__$1;
+            var completed = cljs.core.get.call(null, map__80467__$1, new cljs.core.Keyword(null, "completed", "completed", 3905939901));
+            var text = cljs.core.get.call(null, map__80467__$1, new cljs.core.Keyword(null, "text", "text", 1017460895));
+            var id = cljs.core.get.call(null, map__80467__$1, new cljs.core.Keyword(null, "id", "id", 1013907597));
             datascript.transact_BANG_.call(null, conn, new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 5, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db.fn", "call", "db.fn/call", 2901959894), todomvc.transact.seed_item, id, text, completed], null)], null));
-            var G__13145 = cljs.core.next.call(null, seq__13131__$1);
-            var G__13146 = null;
-            var G__13147 = 0;
-            var G__13148 = 0;
-            seq__13131 = G__13145;
-            chunk__13132 = G__13146;
-            count__13133 = G__13147;
-            i__13134 = G__13148;
+            var G__80476 = cljs.core.next.call(null, seq__80462__$1);
+            var G__80477 = null;
+            var G__80478 = 0;
+            var G__80479 = 0;
+            seq__80462 = G__80476;
+            chunk__80463 = G__80477;
+            count__80464 = G__80478;
+            i__80465 = G__80479;
             continue;
           }
         } else {
