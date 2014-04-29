@@ -139,14 +139,9 @@
   (.requestAnimationFrame js/window
                           (fn []
                             (let [items (->> (map #(d/entity db (first %))
-                                                  (let [res (d/q '{:find [?e ?id]
-                                                                   :where [[?e :id ?id]
-                                                                           #_[?e :text]
-                                                                           #_[?e :completed]]}
-                                                                 db)]
-                                                    (.log js/console "Res items" (pr-str res))
-                                                    (.log js/console "DB now: " (pr-str db))
-                                                    res))
+                                                  (d/q '{:find [?e ?id]
+                                                         :where [[?e :id ?id]]}
+                                                       db))
                                              (sort-by :db/id))
                                   state {:all-done? (and (seq items)
                                                          (every? :completed items))
@@ -155,6 +150,5 @@
                                                                       db))
                                          :items items
                                          :error (d/entity db :error)}]
-                              (.log js/console (str "state is now: " state))
                               (q/render (App state conn)
                                         (.getElementById js/document "todopane"))))))

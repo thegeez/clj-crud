@@ -15,7 +15,6 @@
       [evente])))
 
 (defn set-filter [db this-filter]
-  (.log js/console "set-filter: " (pr-str this-filter))
   [[:db.fn/call log-event :set-filter this-filter]
    (let [e (ffirst (d/q '{:find [?e]
                           :where [[?e :filter]]}

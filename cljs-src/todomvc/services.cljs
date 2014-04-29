@@ -129,8 +129,6 @@
   (.log js/console (str "Url is: " (.-URL js/document)))
   (let [{:keys [conn]} app]
     (d/listen! conn (fn [{:keys [db-after] :as report}]
-                      (.log js/console (str "Report: " (pr-str report) "keys" (pr-str (keys (:db-after report
-                                                                                             )))))
                       (let [[event args] (first (d/q '{:find [?event ?args]
                                                        :in [$ ?tx]
                                                        :where [[?e :event ?event ?tx]
@@ -139,7 +137,6 @@
                         (handle event args db-after conn))))
     (GET (todos-url)
          {:handler (fn [res]
-                     (.log js/console "todos for seed: " (pr-str (:todos res)))
                      (doseq [{:keys [id text completed] :as todo} (:todos res)]
                        (d/transact! conn [[:db.fn/call t/seed-item id text completed]])))
           :error-handler (fn [res]
