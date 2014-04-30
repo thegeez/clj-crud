@@ -15,7 +15,8 @@
   "Application entry point"
   []
   (let [{:keys [conn render] :as app} (load-app)]
-    (d/transact! conn [{:db/id -1 :filter (get {"#/" :all
+    (d/transact! conn [{:db/id -1 :filter (get {"" :all
+                                                "#/" :all
                                                 "#/active" :active
                                                 "#/completed" :completed}
                                                (.. js/window -location -hash))}])
