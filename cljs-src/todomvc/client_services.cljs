@@ -37,7 +37,7 @@
   ;; todo make batch delete enpoint and use that
   (go (<! (timeout 1000))
       (d/transact! local-conn (for [id ids]
-                                [:db/retractEntity id]))))
+                                [:db.fn/retractEntity id]))))
 
 (defmethod handle :toggle-all
   [event _ db conn local-conn]
