@@ -307,7 +307,7 @@ var temp__4092__auto__ = cljs.core.seq.call(null,s__16967__$1);if(temp__4092__au
 {var s__16967__$2 = temp__4092__auto__;if(cljs.core.chunked_seq_QMARK_.call(null,s__16967__$2))
 {var c__11044__auto__ = cljs.core.chunk_first.call(null,s__16967__$2);var size__11045__auto__ = cljs.core.count.call(null,c__11044__auto__);var b__16969 = cljs.core.chunk_buffer.call(null,size__11045__auto__);if((function (){var i__16968 = 0;while(true){
 if((i__16968 < size__11045__auto__))
-{var id = cljs.core._nth.call(null,c__11044__auto__,i__16968);cljs.core.chunk_append.call(null,b__16969,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db","retractEntity","db/retractEntity",2324609179),id], null));
+{var id = cljs.core._nth.call(null,c__11044__auto__,i__16968);cljs.core.chunk_append.call(null,b__16969,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db.fn","retractEntity","db.fn/retractEntity",4213852396),id], null));
 {
 var G__16984 = (i__16968 + 1);
 i__16968 = G__16984;
@@ -324,7 +324,7 @@ break;
 {return cljs.core.chunk_cons.call(null,cljs.core.chunk.call(null,b__16969),null);
 }
 } else
-{var id = cljs.core.first.call(null,s__16967__$2);return cljs.core.cons.call(null,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db","retractEntity","db/retractEntity",2324609179),id], null),iter__16966.call(null,cljs.core.rest.call(null,s__16967__$2)));
+{var id = cljs.core.first.call(null,s__16967__$2);return cljs.core.cons.call(null,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db.fn","retractEntity","db.fn/retractEntity",4213852396),id], null),iter__16966.call(null,cljs.core.rest.call(null,s__16967__$2)));
 }
 } else
 {return null;

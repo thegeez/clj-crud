@@ -38617,7 +38617,7 @@ cljs.core._add_method.call(null, todomvc.client_services.handle, new cljs.core.K
                             while (true) {
                               if (i__16968 < size__11045__auto__) {
                                 var id = cljs.core._nth.call(null, c__11044__auto__, i__16968);
-                                cljs.core.chunk_append.call(null, b__16969, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db", "retractEntity", "db/retractEntity", 2324609179), id], null));
+                                cljs.core.chunk_append.call(null, b__16969, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db.fn", "retractEntity", "db.fn/retractEntity", 4213852396), id], null));
                                 var G__16984 = i__16968 + 1;
                                 i__16968 = G__16984;
                                 continue;
@@ -38633,7 +38633,7 @@ cljs.core._add_method.call(null, todomvc.client_services.handle, new cljs.core.K
                           }
                         } else {
                           var id = cljs.core.first.call(null, s__16967__$2);
-                          return cljs.core.cons.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db", "retractEntity", "db/retractEntity", 2324609179), id], null), iter__16966.call(null, cljs.core.rest.call(null, s__16967__$2)));
+                          return cljs.core.cons.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword("db.fn", "retractEntity", "db.fn/retractEntity", 4213852396), id], null), iter__16966.call(null, cljs.core.rest.call(null, s__16967__$2)));
                         }
                       } else {
                         return null;
