@@ -1,8 +1,6 @@
 (ns todomvc.client-services
   (:require [todomvc.transact :as t]
-            [datascript :as d]
-            [cljs.core.async :refer [<! >! put! chan timeout]])
-  (:require-macros [cljs.core.async.macros :refer [go]]))
+            [datascript :as d]))
 
 (defmulti handle
   (fn [event args db conn local-conn] event))
@@ -13,31 +11,26 @@
                                      :text text
                                      :completed false}])
         id (get (:tempids tx) -1)]
-    (go (<! (timeout 1000))
-        (d/transact! conn [[:db.fn/call t/commit-item temp-id id]]))))
+    (d/transact! conn [[:db.fn/call t/commit-item temp-id id]])))
 
 (defmethod handle :complete-edit
   [event [id text] db conn local-conn]
   (d/transact! local-conn [[:db/add id :text text]])
-  (go (<! (timeout 1000))
-      (d/transact! conn [[:db.fn/call t/commit-edit id]])))
+  (d/transact! conn [[:db.fn/call t/commit-edit id]]))
 
 (defmethod handle :toggle-item
   [event [id completed] db conn local-conn]
-  (go (<! (timeout 1000))
-      (d/transact! local-conn [[:db/add id :completed completed]])))
+  (d/transact! local-conn [[:db/add id :completed completed]]))
 
 (defmethod handle :remove-item
   [event [id] db conn local-conn]
-  (go (<! (timeout 1000))
-      (d/transact! local-conn [[:db.fn/retractEntity id]])))
+  (d/transact! local-conn [[:db.fn/retractEntity id]]))
 
 (defmethod handle :clear-completed
   [event [ids] db conn local-conn]
   ;; todo make batch delete enpoint and use that
-  (go (<! (timeout 1000))
-      (d/transact! local-conn (for [id ids]
-                                [:db.fn/retractEntity id]))))
+  (d/transact! local-conn (for [id ids]
+                            [:db.fn/retractEntity id])))
 
 (defmethod handle :toggle-all
   [event _ db conn local-conn]
