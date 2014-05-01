@@ -52,7 +52,8 @@
                                   [cljs-ajax "0.2.3"]
                                   [org.clojars.franks42/cljs-uuid-utils "0.1.3"]
                                   [com.facebook/react "0.9.0.1"]
-                                  [datascript "0.1.3"]]
+                                  [datascript "0.1.3"]
+                                  [org.clojure/core.async "0.1.301.0-deb34a-alpha"]]
                    :plugins [[lein-cljsbuild "1.0.2"]
                              [com.cemerick/clojurescript.test "0.3.0"]]
                    :main user}
@@ -70,7 +71,15 @@
                               :compiler {:preamble ["react/react.min.js"]
                                          :output-to "cljs-target/cljstest.js"
                                          :optimizations :whitespace
-                                         :pretty-print true}}}
+                                         :pretty-print true}}
+                       :local {:source-paths ["src" ;; for the datascript checkout
+                                              "cljs-src" "cljs-test"]
+                               :compiler {:output-to "resources/public/js/todomvc-min.js"
+                                          :optimizations :advanced
+                                          :elide-asserts true
+                                          :pretty-print false
+                                          :preamble ["react/react.min.js"]
+                                          :externs ["react/externs/react.js"]}}}
               :test-commands {"tests" ["phantomjs" :runner
                                        "cljs-test/bind_polyfill.js"
                                        "cljs-target/cljstest.js"]}})

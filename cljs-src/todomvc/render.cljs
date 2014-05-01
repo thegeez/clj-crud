@@ -2,7 +2,9 @@
   (:require [todomvc.transact :as t]
             [quiescent :as q :include-macros true]
             [quiescent.dom :as dom]
-            [datascript :as d]))
+            [datascript :as d]
+            [goog.dom :as gdom]
+            [goog.async.AnimationDelay]))
 
 (defn enter-key?
   "Return true if an event was the enter key"
@@ -136,21 +138,21 @@
 (defn main
   "Render the given application state tree."
   [db conn]
-  (.requestAnimationFrame js/window
-                          (fn []
-                            (let [items (->> (map #(d/entity db (first %))
-                                                  (d/q '{:find [?e ?id]
-                                                         :where [[?e :id ?id]]}
-                                                       db))
-                                             (sort-by :db/id))
-                                  state {:all-done? (and (seq items)
-                                                         (every? :completed items))
-                                         :current-filter (ffirst (d/q '{:find [?filter]
-                                                                        :where [[_ :filter ?filter]]}
-                                                                      db))
-                                         :items items
-                                         :error (ffirst (d/q '{:find [?e]
-                                                               :where [[?e :error]]}
-                                                             db))}]
-                              (q/render (App state conn)
-                                        (.getElementById js/document "todopane"))))))
+  (-> (goog.async.AnimationDelay. (fn [ms]
+                                    (let [items (->> (map #(d/entity db (first %))
+                                                          (d/q '{:find [?e ?id]
+                                                                 :where [[?e :id ?id]]}
+                                                               db))
+                                                     (sort-by :db/id))
+                                          state {:all-done? (and (seq items)
+                                                                 (every? :completed items))
+                                                 :current-filter (ffirst (d/q '{:find [?filter]
+                                                                                :where [[_ :filter ?filter]]}
+                                                                              db))
+                                                 :items items
+                                                 :error (ffirst (d/q '{:find [?e]
+                                                                       :where [[?e :error]]}
+                                                                     db))}]
+                                      (q/render (App state conn)
+                                                (goog.dom/getElement "todopane")))))
+      .start))
