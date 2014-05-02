@@ -2,17 +2,31 @@
 
 Simple crud app in Clojure
 
-## Running for development with temporary in process database:
-In ns user, through lein repl/cider etc.:
+### Development
+This uses an in-process/in-memory only database. In the `user` namespace, through `lein repl/cider` etc.:
 ```
    (go) ;; to start the component system, localhost:3000 will serve the site
    (reset) ;; to reset the whole component system
 ```
 
-## Running production uberjar (for heroku)
+### Running production uberjar (for heroku):
 ```
    lein uberjar
    java -jar target/cljs-crud-prod-standalone.jar PORT DB-URL
+```
+
+### Deploy on heroku
+First time, provision a postgrest database (see https://devcenter.heroku.com/articles/heroku-postgresql):
+```
+   heroku addons:add heroku-postgresql:dev
+```
+First time and every time adding a migration:
+```
+   heroku run lein migrate
+```
+Deploying:
+```
+   git push heroku
 ```
 
 ## Demo accounts
@@ -21,15 +35,26 @@ Create your own through Signup or login using
    Name: Admin Password: admin for the demo admin account.
 ```
 
+## Compiling the ClojureScript
+This requires a leiningen [checkout](https://github.com/technomancy/leiningen/blob/master/doc/TUTORIAL.md#checkout-dependencies) of [DataScript](https://github.com/tonsky/datascript) with transaction functions.
+```
+   lein cljsbuild auto dev ;; continues compilation for development
+   lein cljsbuild test
+   lein cljsbuild once local ;; advanced compilation for the client-side only demo
+```
+
+
 # Todo
-- Show password reset link in html when using debug emailer for demo
-- Show demo credentials on login page
 - Default to ssl on Heroku
 - Replace compojure with bidi
 - look into jdbc entities
 - use :base with liberator
 - secure headers etc from clojure.web/with-security
 - Walk through http://www.lispcast.com/clojure-web-security
+- Make pull requests for changes to anti-forgery
+- Sort out ring.middleware.session situation/documentation
+- Re-add something with Server-Sent Events, as done on the hackbattle2014 branch
+- Look into flywheel/browser-repl
 
 ## About
 
