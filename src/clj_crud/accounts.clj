@@ -285,12 +285,15 @@
                  {:account (with-account-links account)})))
   :post! (fn [ctx]
            (let [params (get-in ctx [:request :params])
+                 slug (:slug params)
                  errors (reduce merge {}
                                 [(when-not (contains? params :name)
                                    [:name "Must have name attr"])
                                  (when (zero? (count (get params :name)))
-                                   [:name "Name can not be empty"])])
-                 account-update {:slug (:slug params)
+                                   [:name "Name can not be empty"])
+                                 (when (= slug "admin")
+                                   [:name "Can't change the name of the Admin."])])
+                 account-update {:slug slug
                                  :name (:name params)}]
              (when-not (seq errors)
                (accounts/update-account (h/db ctx) account-update))
