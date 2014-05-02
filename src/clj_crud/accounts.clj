@@ -294,9 +294,9 @@
                                  :name (:name params)}]
              (when-not (seq errors)
                (accounts/update-account (h/db ctx) account-update))
-             {:user (merge account-update
-                           (when (seq errors)
-                             {:errors errors}))}))
+             {:account (merge account-update
+                              (when (seq errors)
+                                {:errors errors}))}))
   :post-redirect? (fn [ctx]
                     (not (get-in ctx [:account :errors])))
   :handle-see-other (fn [ctx]
