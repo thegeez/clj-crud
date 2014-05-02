@@ -144,7 +144,10 @@
   :post! (fn [ctx]
            (let [email (get-in ctx [:request :params :email])
                  errors (reduce merge {}
-                                [(when-not (accounts/valid-email? email)
+                                [(when (= email "admin@example.com")
+                                   ;; don't allow reset admin password
+                                   [:email "Invalid email"])
+                                 (when-not (accounts/valid-email? email)
                                    [:email "Invalid email"])])
                  account {:email email}]
              (if (seq errors)
