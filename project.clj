@@ -52,7 +52,7 @@
                                   [cljs-ajax "0.2.3"]
                                   [org.clojars.franks42/cljs-uuid-utils "0.1.3"]
                                   [com.facebook/react "0.9.0.1"]
-                                  [datascript "0.1.3"]]
+                                  [datascript "0.1.4"]]
                    :plugins [[lein-cljsbuild "1.0.2"]
                              [com.cemerick/clojurescript.test "0.3.0"]]
                    :main user}
@@ -65,14 +65,12 @@
                                         :output-dir "resources/public/js/out"
                                         :optimizations :whitespace}
                              :notify-command ["notify-send" "cljsbuild"]}
-                       :test {:source-paths ["src" ;; for the datascript checkout
-                                             "cljs-src" "cljs-test"]
+                       :test {:source-paths ["cljs-src" "cljs-test"]
                               :compiler {:preamble ["react/react.min.js"]
                                          :output-to "cljs-target/cljstest.js"
                                          :optimizations :whitespace
                                          :pretty-print true}}
-                       :local {:source-paths ["src" ;; for the datascript checkout
-                                              "cljs-src" "cljs-test"]
+                       :local {:source-paths ["cljs-src" "cljs-test"]
                                :compiler {:output-to "resources/public/js/todomvc-min.js"
                                           :optimizations :advanced
                                           :elide-asserts true

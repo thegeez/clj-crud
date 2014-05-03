@@ -36,7 +36,6 @@ Create your own through Signup or login using
 ```
 
 ## Compiling the ClojureScript
-This requires a leiningen [checkout](https://github.com/technomancy/leiningen/blob/master/doc/TUTORIAL.md#checkout-dependencies) of [DataScript](https://github.com/tonsky/datascript) with transaction functions.
 ```
    lein cljsbuild auto dev ;; continues compilation for development
    lein cljsbuild test
@@ -54,7 +53,13 @@ This requires a leiningen [checkout](https://github.com/technomancy/leiningen/bl
 - Make pull requests for changes to anti-forgery
 - Sort out ring.middleware.session situation/documentation
 - Re-add something with Server-Sent Events, as done on the hackbattle2014 branch
-- Look into flywheel/browser-repl
+- Look into figwheel/browser-repl
+
+# Done
+- ~~Mock sending password reset email~~
+- ~~Ghost user accounts as admin~~
+- ~~Add anti-forgery check~~
+- ~~Add transaction functions to Datascript~~
 
 ## About
 
