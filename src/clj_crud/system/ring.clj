@@ -1,5 +1,6 @@
 (ns clj-crud.system.ring
   (:require [clojure.tools.logging :refer [info debug spy error]]
+            [clojure.string :as string]
             [com.stuartsierra.component :as component]
             [ring.middleware.params :as params]
             [ring.middleware.keyword-params :as keyword-params]
@@ -123,10 +124,30 @@
     (fn wrap-common [req]
      (handler req))))
 
+(defn wrap-dev-cljs [handler match replace]
+  (fn [req]
+    (let [res (handler req)]
+      (if (and (.startsWith (get-in res [:headers "Content-Type"] "") "text/html" )
+               (not (.contains ^String (str "" (get req :query-string)) "prod")))
+        (-> res
+            (update-in [:body]
+                       (fn [body]
+                         (-> body
+                             (cond->
+                              (not (string? body))
+                              slurp)
+                             (string/replace match replace))))
+            (update-in [:headers] dissoc "Content-Length" "Last-Modified"))
+        res))))
+
 (defn wrap-dev [handler]
   (let [handler (-> handler
                     ;; have seen jetty crash on header too full with :header
                     (lib-dev/wrap-trace :ui)
+                    (wrap-dev-cljs
+                     "<script type=\"text/javascript\" src=\"/public/js/todomvc-min.js\"></script>"
+                     "<script type=\"text/javascript\" src=\"http://fb.me/react-0.9.0.js\"></script>
+                      <script type=\"text/javascript\" src=\"/public/js/todomvc-dev.js\"></script>")
                     wrap-swank)]
     (fn wrap-dev [req]
       (handler req))))

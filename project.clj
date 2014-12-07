@@ -61,7 +61,7 @@
 
   :cljsbuild {:builds {:dev {:source-paths ["cljs-src"]
                              :compiler {
-                                        :output-to "resources/public/js/todomvc.js"
+                                        :output-to "resources/public/js/todomvc-dev.js"
                                         :output-dir "resources/public/js/out"
                                         :optimizations :whitespace}
                              :notify-command ["notify-send" "cljsbuild"]}
@@ -76,7 +76,14 @@
                                           :elide-asserts true
                                           :pretty-print false
                                           :preamble ["react/react.min.js"]
-                                          :externs ["react/externs/react.js"]}}}
+                                          :externs ["react/externs/react.js"]}}
+                       :prod {:source-paths ["cljs-src" "cljs-test"]
+                              :compiler {:output-to "resources/public/js/todomvc-min.js"
+                                         :optimizations :advanced
+                                         :elide-asserts true
+                                         :pretty-print false
+                                         :preamble ["react/react.min.js"]
+                                         :externs ["react/externs/react.js"]}}}
               :test-commands {"tests" ["phantomjs" :runner
                                        "cljs-test/bind_polyfill.js"
                                        "cljs-target/cljstest.js"]}})

@@ -40,6 +40,7 @@ Create your own through Signup or login using
    lein cljsbuild auto dev ;; continues compilation for development
    lein cljsbuild test
    lein cljsbuild once local ;; advanced compilation for the client-side only demo
+   lein cljsbuild once prod ;; advanced compilation for production
 ```
 
 
