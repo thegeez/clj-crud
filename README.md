@@ -16,7 +16,7 @@ This uses an in-process/in-memory only database. In the `user` namespace, throug
 ```
 
 ### Deploy on heroku
-First time, provision a postgrest database (see https://devcenter.heroku.com/articles/heroku-postgresql):
+First time, provision a PostgreSQL database (see https://devcenter.heroku.com/articles/heroku-postgresql):
 ```
    heroku addons:add heroku-postgresql:dev
 ```
